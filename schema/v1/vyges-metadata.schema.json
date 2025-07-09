@@ -1,0 +1,2594 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vyges.com/schema/v1/vyges-metadata.schema.json",
+  "title": "Vyges IP Metadata",
+  "description": "Metadata manifest for reusable silicon IP blocks in the Vyges ecosystem.",
+  "x-version": "1.0.0",
+  "contact": {
+    "name": "Vyges Community",
+    "url": "https://github.com/vyges/vyges-metadata-spec",
+    "email": "https://github.com/vyges/vyges-metadata-spec/issues"
+  },
+  "x-author": "Shivaram Mysore",
+  "x-company": "Vyges Inc.",
+  "x-copyright": "Copyright © 2025 Vyges Inc. All rights reserved.",
+  "x-documentation": "https://github.com/vyges/vyges-metadata-spec",
+  "x-support": "https://github.com/vyges/vyges-metadata-spec/issues",
+  "x-api-version": "v1",
+  "x-case-convention": {
+    "parameters": "camelCase",
+    "enums": "SCREAMING_SNAKE_CASE",
+    "endpoints": "kebab-case"
+  },
+  "type": "object",
+  "required": ["name", "x-version", "license", "interfaces", "template", "target", "design_type", "maturity"],
+  "properties": {
+    "target": {
+      "type": "array",
+      "description": "Target platforms this IP supports",
+      "items": {
+        "type": "string",
+        "enum": ["asic", "fpga"]
+      },
+      "minItems": 1,
+      "examples": [["asic"], ["fpga"], ["asic", "fpga"]]
+    },
+    "design_type": {
+      "type": "array",
+      "description": "Design types this IP supports",
+      "items": {
+        "type": "string",
+        "enum": ["digital", "analog", "mixed-signal", "hard-ip"]
+      },
+      "minItems": 1,
+      "examples": [["digital"], ["analog"], ["mixed-signal"], ["digital", "analog"]]
+    },
+    "name": {
+      "type": "string",
+      "description": "Unique package name, typically in the format 'namespace/ip-name'",
+      "examples": ["vyges/spi-controller", "acme/pcie-phy", "openhw/cva6"]
+    },
+    "x-version": {
+      "type": "string",
+      "description": "Schema version for tracking purposes",
+      "examples": ["1.0.0", "2.0.0"]
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of this IP block (e.g. 1.2.3)",
+      "examples": ["1.0.0", "2.1.3", "0.5.0"]
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when this IP was first created",
+      "examples": ["2024-01-15T10:30:00Z", "2023-12-01T09:15:00Z"]
+    },
+    "updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when this IP was last updated",
+      "examples": ["2024-01-20T14:45:00Z", "2024-01-15T16:20:00Z"]
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of what the IP block does",
+      "examples": ["SPI master controller with configurable clock divider", "High-speed PCIe Gen4 PHY with encrypted RTL payload"]
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX-compatible license identifier (e.g., Apache-2.0, MIT, CERN-OHL-S)",
+      "examples": ["Apache-2.0", "MIT", "CERN-OHL-S", "GPL-3.0", "Proprietary"]
+    },
+    "maturity": {
+      "type": "string",
+      "enum": ["prototype", "alpha", "beta", "production", "deprecated"],
+      "description": "Indicates readiness or lifecycle state of the IP",
+      "examples": ["production", "beta", "prototype"]
+    },
+    "automation": {
+      "type": "object",
+      "description": "Automation requirements and capabilities",
+      "properties": {
+        "minimal_required": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "fpga", "test", "flows"]
+          },
+          "description": "Minimum fields required for basic automation",
+          "examples": [["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "fpga", "test", "flows"]]
+        },
+        "recommended_for_automation": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "commercial", "community"]
+          },
+          "description": "Recommended fields for enhanced automation",
+          "examples": [["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "community"]]
+        },
+        "automation_level": {
+          "type": "string",
+          "enum": ["basic", "enhanced", "full"],
+          "description": "Level of automation support this IP provides",
+          "default": "basic",
+          "examples": ["basic", "enhanced", "full"]
+        },
+        "blocking_issues": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Issues that prevent automation (e.g., missing source, encrypted IP)",
+          "examples": [["encrypted_ip", "requires_nda"], ["missing_source"], []]
+        }
+      },
+      "examples": [
+        {
+          "automation_level": "enhanced",
+          "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "fpga", "test", "flows"],
+          "recommended_for_automation": ["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "community"]
+        },
+        {
+          "automation_level": "basic",
+          "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "delivery", "toolRequirements"],
+          "recommended_for_automation": ["commercial", "compliance"],
+          "blocking_issues": ["encrypted_ip", "requires_nda"]
+        }
+      ]
+    },
+    "maintainers": {
+      "type": "array",
+      "description": "List of maintainers responsible for this IP block",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { 
+            "type": "string",
+            "description": "Full name of the maintainer",
+            "examples": ["Shivaram Mysore", "John Doe", "Jane Smith"]
+          },
+          "email": { 
+            "type": "string", 
+            "format": "email",
+            "description": "Contact email address",
+            "examples": ["shivaram@vyges.com", "john.doe@acme.com"]
+          },
+          "github": { 
+            "type": "string",
+            "description": "GitHub username for collaboration",
+            "examples": ["smysore", "johndoe", "janesmith"]
+          }
+        },
+        "required": ["name"]
+      },
+      "examples": [
+        [
+          {
+            "name": "Shivaram Mysore",
+            "email": "shivaram@vyges.com",
+            "github": "smysore"
+          }
+        ],
+        [
+          {
+            "name": "John Doe",
+            "email": "john.doe@acme.com",
+            "github": "johndoe"
+          },
+          {
+            "name": "Jane Smith",
+            "github": "janesmith"
+          }
+        ]
+      ]
+    },
+    "branding": {
+      "type": "object",
+      "description": "Optional branding metadata for provider attribution.",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "Name of the company, organization, or individual maintaining the IP.",
+          "examples": ["Vyges Inc.", "Acme Semiconductor", "OpenHW Group"]
+        },
+        "logo": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to a logo image (SVG or PNG preferred).",
+          "examples": ["https://vyges.com/images/logo.svg", "https://acme.com/logo.png"]
+        },
+        "website": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to the official IP page or provider's site.",
+          "examples": ["https://vyges.com", "https://acme.com/ip/pcie-phy"]
+        },
+        "usage": {
+          "type": "string",
+          "description": "Optional note describing how branding may be used (e.g., attribution only).",
+          "examples": ["Attribution only", "Logo may be used in documentation", "Contact for commercial use"]
+        }
+      },
+      "required": ["provider"],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "provider": "Vyges Inc.",
+          "logo": "https://vyges.com/images/logo.svg",
+          "website": "https://vyges.com",
+          "usage": "Attribution only"
+        },
+        {
+          "provider": "Acme Semiconductor",
+          "website": "https://acme.com/ip/pcie-phy",
+          "usage": "Contact for commercial use"
+        }
+      ]
+    },
+    "template": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9._-]+@[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "minLength": 3,
+      "description": "Name and version of the template used (e.g., vyges-ip-template@1.0.0)",
+      "examples": ["vyges-ip-template@1.0.0"]
+    },
+    "meta": {
+      "type": "object",
+      "description": "Additional metadata for future extensibility",
+      "properties": {
+        "template": {
+          "type": "object",
+          "description": "Template-related metadata",
+          "properties": {
+            "generator": {
+              "type": "string",
+              "description": "Tool or service that generated this IP from the template",
+              "examples": ["vyges-cli", "cookiecutter", "github-template"]
+            },
+            "init_tool": {
+              "type": "string",
+              "description": "Initialization tool used (e.g., vyges-cli, cookiecutter)",
+              "examples": ["vyges-cli", "cookiecutter", "yo"]
+            },
+            "template_version": {
+              "type": "string",
+              "description": "Version of the template when this IP was generated",
+              "examples": ["1.0.0", "2.1.0"]
+            },
+            "generated_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 timestamp when this IP was generated from the template",
+              "examples": ["2024-01-15T10:30:00Z", "2023-12-01T09:15:00Z"]
+            }
+          },
+          "examples": [
+            {
+              "generator": "vyges-cli",
+              "init_tool": "vyges-cli",
+              "template_version": "1.0.0",
+              "generated_at": "2024-01-15T10:30:00Z"
+            }
+          ]
+        },
+        "generated_by": {
+          "type": "string",
+          "description": "Tool or service that created this metadata file",
+          "examples": ["vyges-cli", "manual", "github-action"]
+        },
+        "schema": {
+          "type": "object",
+          "description": "Schema version and compatibility information",
+          "properties": {
+            "version": {
+              "type": "string",
+              "description": "Version of the vyges-metadata schema used",
+              "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+              "examples": ["1.0.0", "0.1.0"]
+            },
+            "compatible_versions": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of compatible schema versions",
+              "examples": [["1.0.0", "1.1.0"], ["0.1.0", "0.2.0"]]
+            },
+            "generated_with": {
+              "type": "string",
+              "description": "Tool that generated this metadata file",
+              "examples": ["vyges-cli", "json-schema-generator"]
+            }
+          },
+          "required": ["version"],
+          "examples": [
+            {
+              "version": "1.0.0",
+              "compatible_versions": ["1.0.0", "1.1.0"],
+              "generated_with": "vyges-cli"
+            }
+          ]
+        }
+      },
+      "additionalProperties": true,
+      "examples": [
+        {
+          "template": {
+            "generator": "vyges-cli",
+            "init_tool": "vyges-cli",
+            "template_version": "1.0.0",
+            "generated_at": "2024-01-15T10:30:00Z"
+          },
+          "generated_by": "vyges-cli",
+          "schema": {
+            "version": "1.0.0",
+            "compatible_versions": ["1.0.0", "1.1.0"],
+            "generated_with": "vyges-cli"
+          }
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "description": "Source code location and versioning information",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["git", "archive"],
+          "description": "Type of source reference",
+          "examples": ["git", "archive"]
+        },
+        "url": { 
+          "type": "string", 
+          "format": "uri",
+          "description": "URL to the source repository or archive",
+          "examples": ["https://github.com/vyges/spi-controller", "https://github.com/acme/pcie-phy-encrypted"]
+        },
+        "commit": { 
+          "type": "string",
+          "description": "Git commit hash or version identifier",
+          "examples": ["a1b2c3d", "main", "v1.0.0"]
+        },
+        "hash": { 
+          "type": "string", 
+          "description": "SHA256 for archive-based sources",
+          "examples": ["sha256:abc123...", "sha256:def456..."]
+        },
+        "private": {
+          "type": "boolean",
+          "description": "Whether the repository is private or contains proprietary content",
+          "examples": [false, true]
+        },
+        "containsEncryptedPayload": {
+          "type": "boolean",
+          "description": "Whether the repository contains encrypted or proprietary IP",
+          "examples": [false, true]
+        },
+        "indexing": {
+          "type": "boolean",
+          "description": "Whether Vyges should index the repository contents",
+          "default": true,
+          "examples": [true, false]
+        }
+      },
+      "required": ["type", "url"],
+      "examples": [
+        {
+          "type": "git",
+          "url": "https://github.com/vyges/spi-controller",
+          "commit": "a1b2c3d",
+          "private": false,
+          "containsEncryptedPayload": false,
+          "indexing": true
+        },
+        {
+          "type": "git",
+          "url": "https://github.com/acme/pcie-phy-encrypted",
+          "private": true,
+          "containsEncryptedPayload": true,
+          "indexing": false
+        }
+      ]
+    },
+    "interfaces": {
+      "type": "array",
+      "description": "One or more external interfaces this IP exposes",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["bus", "io", "interrupt", "clock", "reset"],
+            "description": "Interface type category",
+            "examples": ["bus", "io", "interrupt"]
+          },
+          "direction": {
+            "type": "string",
+            "enum": ["input", "output", "inout"],
+            "description": "Signal direction: input (to IP), output (from IP), or inout (bidirectional)",
+            "examples": ["input", "output", "inout"]
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Bus protocol name, e.g. AXI4-Lite, APB, TileLink",
+            "examples": ["APB", "AXI4-Lite", "TileLink", "SPI", "I2C"]
+          },
+          "width": { 
+            "type": "integer",
+            "description": "Interface width in bits (for bus interfaces)",
+            "examples": [32, 64, 128, 8]
+          },
+          "signals": {
+            "type": "array",
+            "description": "List of signals in this interface",
+            "items": {
+              "type": "object",
+              "required": ["name", "direction"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Signal name as it appears in the RTL",
+                  "examples": ["PCLK", "PRESETn", "PADDR", "PWDATA", "PRDATA"]
+                },
+                "direction": {
+                  "type": "string",
+                  "enum": ["input", "output", "inout"],
+                  "description": "Signal direction relative to the IP block",
+                  "examples": ["input", "output", "inout"]
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Signal width in bits (1 for single-bit signals)",
+                  "examples": [1, 8, 32, 64]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["data", "control", "clock", "reset", "interrupt", "status"],
+                  "description": "Signal category for better understanding",
+                  "examples": ["clock", "reset", "data", "control"]
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Human-readable description of the signal's purpose",
+                  "examples": ["APB clock signal", "APB reset signal", "APB address bus"]
+                },
+                "active_level": {
+                  "type": "string",
+                  "enum": ["high", "low"],
+                  "description": "Active level for control signals (e.g., reset, enable)",
+                  "examples": ["high", "low"]
+                }
+              },
+              "examples": [
+                {
+                  "name": "PCLK",
+                  "direction": "input",
+                  "type": "clock",
+                  "description": "APB clock signal"
+                },
+                {
+                  "name": "PRESETn",
+                  "direction": "input",
+                  "type": "reset",
+                  "active_level": "low",
+                  "description": "APB reset signal"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "examples": [
+        [
+          {
+            "type": "bus",
+            "direction": "input",
+            "protocol": "APB",
+            "width": 32,
+            "signals": [
+              {
+                "name": "PCLK",
+                "direction": "input",
+                "type": "clock",
+                "description": "APB clock signal"
+              },
+              {
+                "name": "PRESETn",
+                "direction": "input",
+                "type": "reset",
+                "active_level": "low",
+                "description": "APB reset signal"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "parameters": {
+      "type": "array",
+      "description": "Parameterizable configuration fields",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": { 
+            "type": "string",
+            "description": "Parameter name as used in the RTL",
+            "examples": ["CLOCK_DIV", "DATA_WIDTH", "ENABLE_FEATURE", "FREQUENCY_MHZ"]
+          },
+          "type": { 
+            "type": "string", 
+            "enum": ["int", "bool", "string", "real"],
+            "description": "Parameter data type",
+            "examples": ["int", "bool", "string", "real"]
+          },
+          "default": {
+            "description": "Default value for the parameter",
+            "examples": [8, true, "default_value", 100.5]
+          },
+          "description": { 
+            "type": "string",
+            "description": "Human-readable description of the parameter's purpose",
+            "examples": ["Clock divider for SPI clock generation", "Enable advanced features", "Target frequency in MHz"]
+          },
+          "range": {
+            "type": "object",
+            "properties": {
+              "min": { "description": "Minimum allowed value", "examples": [2, 0, 1.0] },
+              "max": { "description": "Maximum allowed value", "examples": [256, 100, 1000.0] },
+              "step": { "description": "Step size for numeric parameters", "examples": [1, 0.1, 10] }
+            },
+            "description": "Valid range for the parameter",
+            "examples": [
+              { "min": 2, "max": 256, "step": 1 },
+              { "min": 0, "max": 100 },
+              { "min": 1.0, "max": 1000.0, "step": 0.1 }
+            ]
+          },
+          "units": {
+            "type": "string",
+            "description": "Units for the parameter (e.g., MHz, bits, cycles)",
+            "examples": ["cycles", "bits", "MHz", "ns", "bytes"]
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether this parameter is required",
+            "default": false,
+            "examples": [true, false]
+          }
+        },
+        "examples": [
+          {
+            "name": "CLOCK_DIV",
+            "type": "int",
+            "default": 8,
+            "description": "Clock divider for SPI clock generation",
+            "range": { "min": 2, "max": 256 },
+            "units": "cycles",
+            "required": false
+          },
+          {
+            "name": "DATA_WIDTH",
+            "type": "int",
+            "default": 8,
+            "description": "Data width for SPI transactions",
+            "range": { "min": 1, "max": 32 },
+            "units": "bits",
+            "required": true
+          }
+        ]
+      },
+      "examples": [
+        [
+          {
+            "name": "CLOCK_DIV",
+            "type": "int",
+            "default": 8,
+            "description": "Clock divider for SPI clock generation",
+            "range": { "min": 2, "max": 256 },
+            "units": "cycles",
+            "required": false
+          },
+          {
+            "name": "DATA_WIDTH",
+            "type": "int",
+            "default": 8,
+            "description": "Data width for SPI transactions",
+            "range": { "min": 1, "max": 32 },
+            "units": "bits",
+            "required": true
+          }
+        ]
+      ]
+    },
+    "verification": {
+      "type": "object",
+      "description": "Legacy verification metadata (use 'test' and 'flows' sections instead)",
+      "properties": {
+        "testbenches": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of testbench files or frameworks",
+          "examples": [["test_spi_controller.py", "test_apb_interface.py"], ["tb_spi.v"]]
+        },
+        "framework": {
+          "type": "string",
+          "description": "Test framework used (e.g., cocotb, UVM)",
+          "examples": ["cocotb", "UVM", "SystemVerilog", "VUnit"]
+        },
+        "coverage": {
+          "type": "object",
+          "description": "Code coverage metrics",
+          "properties": {
+            "lines": { 
+              "type": "number", 
+              "minimum": 0, 
+              "maximum": 100,
+              "description": "Line coverage percentage",
+              "examples": [95, 88, 100]
+            },
+            "branches": { 
+              "type": "number", 
+              "minimum": 0, 
+              "maximum": 100,
+              "description": "Branch coverage percentage",
+              "examples": [88, 92, 100]
+            }
+          },
+          "examples": [
+            { "lines": 95, "branches": 88 },
+            { "lines": 100, "branches": 100 }
+          ]
+        },
+        "formal": {
+          "type": "object",
+          "description": "Formal verification results",
+          "properties": {
+            "tools": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of formal verification tools used",
+              "examples": [["yosys-smtbmc", "sby"], ["jtag", "symbiyosys"]]
+            },
+            "status": {
+              "type": "string",
+              "enum": ["passed", "partial", "failed", "untested"],
+              "description": "Formal verification status",
+              "examples": ["passed", "partial", "untested"]
+            }
+          },
+          "examples": [
+            {
+              "tools": ["yosys-smtbmc", "sby"],
+              "status": "passed"
+            },
+            {
+              "tools": ["jtag"],
+              "status": "partial"
+            }
+          ]
+        }
+      },
+      "examples": [
+        {
+          "testbenches": ["test_spi_controller.py"],
+          "framework": "cocotb",
+          "coverage": { "lines": 95, "branches": 88 },
+          "formal": {
+            "tools": ["yosys-smtbmc"],
+            "status": "passed"
+          }
+        }
+      ]
+    },
+    "test": {
+      "type": "object",
+      "description": "Testing and verification status information",
+      "properties": {
+        "coverage": {
+          "type": "boolean",
+          "description": "Whether code coverage is enabled for this IP",
+          "examples": [true, false]
+        },
+        "testbenches": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of testbench frameworks used (e.g., cocotb, UVM, SystemVerilog)",
+          "examples": [["cocotb"], ["UVM", "SystemVerilog"], ["VUnit"]]
+        },
+        "simulators": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of simulators used for testing (e.g., verilator, iverilog, ModelSim)",
+          "examples": [["verilator"], ["iverilog", "ModelSim"], ["VCS", "Xcelium"]]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["passing", "failing", "partial", "untested"],
+          "description": "Overall test status",
+          "examples": ["passing", "partial", "untested"]
+        }
+      },
+      "required": ["status"],
+      "examples": [
+        {
+          "coverage": true,
+          "testbenches": ["cocotb"],
+          "simulators": ["verilator"],
+          "status": "passing"
+        },
+        {
+          "testbenches": ["UVM"],
+          "simulators": ["VCS"],
+          "status": "partial"
+        }
+      ]
+    },
+    "flows": {
+      "type": "object",
+      "description": "Design flow verification status for different tools and processes",
+      "properties": {
+        "verilator": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["verified", "partial", "failed", "untested"],
+              "description": "Verilator simulation and linting status",
+              "examples": ["verified", "partial", "untested"]
+            }
+          },
+          "required": ["status"],
+          "examples": [
+            { "status": "verified" },
+            { "status": "partial" }
+          ]
+        },
+        "openlane": {
+          "type": "object",
+          "properties": {
+            "pdks": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of PDKs tested with OpenLane (e.g., sky130B, gf180mcuC, ihp-sg13g2)",
+              "examples": [["sky130B", "gf180mcuC"], ["sky130B"], ["ihp-sg13g2"]]
+            },
+            "status": {
+              "type": "string",
+              "enum": ["tested", "partial", "failed", "untested"],
+              "description": "OpenLane synthesis and place-and-route status",
+              "examples": ["tested", "partial", "untested"]
+            }
+          },
+          "required": ["status"],
+          "examples": [
+            {
+              "pdks": ["sky130B", "gf180mcuC", "ihp-sg13g2"],
+              "status": "tested"
+            },
+            {
+              "pdks": ["sky130B"],
+              "status": "partial"
+            }
+          ]
+        },
+        "vivado": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["verified", "partial", "failed", "untested"],
+              "description": "Xilinx Vivado synthesis and implementation status",
+              "examples": ["verified", "partial", "untested"]
+            }
+          },
+          "required": ["status"],
+          "examples": [
+            { "status": "verified" },
+            { "status": "partial" }
+          ]
+        }
+      },
+      "examples": [
+        {
+          "verilator": { "status": "verified" },
+          "openlane": { 
+            "pdks": ["sky130B", "gf180mcuC", "ihp-sg13g2"],
+            "status": "tested"
+          },
+          "vivado": { "status": "verified" }
+        },
+        {
+          "verilator": { "status": "partial" },
+          "openlane": { 
+            "pdks": ["sky130B"],
+            "status": "partial"
+          }
+        }
+      ]
+    },
+    "toolchain_support": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of EDA tools or simulators this IP has been tested with",
+      "examples": [["verilator", "yosys"], ["VCS", "Design Compiler"], ["iverilog", "ModelSim"]]
+    },
+    "target_pdks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "PDKs this IP has been validated against (e.g., sky130B, gf180mcuC, ihp-sg13g2)",
+      "examples": [["sky130B", "gf180mcuC"], ["sky130B"], ["tsmc28", "gf12"]]
+    },
+    "integration": {
+      "type": "object",
+      "description": "Integration examples and wrappers",
+      "properties": {
+        "examples": {
+          "type": "array",
+          "description": "List of integration examples",
+          "items": {
+            "type": "object",
+            "properties": {
+              "target": { 
+                "type": "string",
+                "enum": ["simulation", "fpga", "asic"],
+                "description": "Target platform for the example",
+                "examples": ["simulation", "fpga", "asic"]
+              },
+              "wrapper": { 
+                "type": "string",
+                "description": "Path to wrapper file or module name",
+                "examples": ["examples/spi_wrapper.v", "examples/fpga_wrapper.v", "spi_top"]
+              },
+              "tb": { 
+                "type": "string",
+                "description": "Path to testbench file",
+                "examples": ["examples/spi_tb.v", "test/spi_integration_tb.py", "tb_spi.v"]
+              }
+            },
+            "examples": [
+              {
+                "target": "simulation",
+                "wrapper": "examples/spi_wrapper.v",
+                "tb": "examples/spi_tb.v"
+              },
+              {
+                "target": "fpga",
+                "wrapper": "examples/fpga_wrapper.v",
+                "tb": "test/spi_integration_tb.py"
+              }
+            ]
+          }
+        }
+      },
+      "examples": [
+        {
+          "examples": [
+            {
+              "target": "simulation",
+              "wrapper": "examples/spi_wrapper.v",
+              "tb": "examples/spi_tb.v"
+            },
+            {
+              "target": "fpga",
+              "wrapper": "examples/fpga_wrapper.v",
+              "tb": "test/spi_integration_tb.py"
+            }
+          ]
+        }
+      ]
+    },
+    "trust_profile": {
+      "type": "object",
+      "description": "Security and trust indicators for the IP",
+      "properties": {
+        "reproducible_build": { 
+          "type": "boolean",
+          "description": "Whether the build is reproducible from source",
+          "examples": [true, false]
+        },
+        "fuzzed": { 
+          "type": "boolean",
+          "description": "Whether the IP has been fuzz tested",
+          "examples": [true, false]
+        },
+        "lint_clean": { 
+          "type": "boolean",
+          "description": "Whether the IP passes linting checks",
+          "examples": [true, false]
+        },
+        "signed": { 
+          "type": "boolean",
+          "description": "Whether the IP is cryptographically signed",
+          "examples": [true, false]
+        }
+      },
+      "examples": [
+        {
+          "reproducible_build": true,
+          "fuzzed": true,
+          "lint_clean": true,
+          "signed": false
+        },
+        {
+          "reproducible_build": true,
+          "lint_clean": true,
+          "fuzzed": false,
+          "signed": true
+        }
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Searchable tags for categorizing and discovering the IP",
+      "examples": [["spi", "controller", "apb", "master"], ["pcie", "phy", "encrypted", "mixed-signal"], ["uart", "serial", "communication"]]
+    },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Keywords for search and discovery",
+      "examples": [["serial", "protocol", "master", "slave", "communication"], ["high-speed", "phy", "gen4", "encrypted"], ["asynchronous", "serial", "uart"]]
+    },
+    "registry": {
+      "type": "object",
+      "description": "Registry information for catalog discovery and management",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["draft", "submitted", "approved", "rejected", "deprecated"],
+          "description": "Current status in the registry approval process",
+          "default": "draft",
+          "examples": ["draft", "submitted", "approved", "rejected"]
+        },
+        "submission_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when this IP was submitted to the registry",
+          "examples": ["2024-01-15T10:30:00Z", "2024-01-16T14:20:00Z"]
+        },
+        "approval_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when this IP was approved for the registry",
+          "examples": ["2024-01-16T14:20:00Z", "2024-01-17T09:15:00Z"]
+        },
+        "verified_by": {
+          "type": "string",
+          "description": "GitHub username of the person who verified this IP for registry inclusion",
+          "examples": ["vyges-team", "smysore", "johndoe"]
+        },
+        "registry_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique identifier for this IP in the registry (auto-generated if not provided)",
+          "examples": ["spi-controller-v1", "pcie-phy-v3", "uart-controller-v2"]
+        },
+        "compliance_check": {
+          "type": "object",
+          "description": "Compliance validation results",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["pending", "passing", "failing"],
+              "description": "Current compliance status",
+              "examples": ["pending", "passing", "failing"]
+            },
+            "last_checked": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 timestamp of last compliance check",
+              "examples": ["2024-01-16T14:20:00Z", "2024-01-15T16:30:00Z"]
+            },
+            "checker_version": {
+              "type": "string",
+              "description": "Version of compliance checker used",
+              "examples": ["1.0.0", "0.9.5", "2.1.0"]
+            },
+            "issues": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of compliance issues found",
+              "examples": [[], ["missing_description", "invalid_license"], ["encrypted_ip"]]
+            }
+          },
+          "examples": [
+            {
+              "status": "passing",
+              "last_checked": "2024-01-16T14:20:00Z",
+              "checker_version": "1.0.0",
+              "issues": []
+            },
+            {
+              "status": "failing",
+              "last_checked": "2024-01-15T16:30:00Z",
+              "checker_version": "0.9.5",
+              "issues": ["missing_description", "invalid_license"]
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "examples": [
+        {
+          "status": "approved",
+          "submission_date": "2024-01-15T10:30:00Z",
+          "approval_date": "2024-01-16T14:20:00Z",
+          "verified_by": "vyges-team",
+          "registry_id": "spi-controller-v1",
+          "compliance_check": {
+            "status": "passing",
+            "last_checked": "2024-01-16T14:20:00Z",
+            "checker_version": "1.0.0",
+            "issues": []
+          }
+        },
+        {
+          "status": "draft",
+          "registry_id": "pcie-phy-v3"
+        }
+      ]
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["communication", "memory", "processing", "interface", "security", "analog", "digital", "mixed-signal", "peripheral", "accelerator", "controller", "bridge", "converter", "clock", "power", "sensor", "actuator", "debug", "test"]
+      },
+      "description": "High-level functional categories",
+      "examples": [["interface", "controller", "communication"], ["mixed-signal", "interface"], ["memory", "digital"], ["analog", "power"]]
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "List of other IP blocks or libraries this IP depends on",
+      "items": {
+        "type": "object",
+        "required": ["name", "version"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the dependent IP or library",
+            "examples": ["openhw/apb-bridge", "pulp-platform/common_cells", "lowrisc/prim"]
+          },
+          "version": {
+            "type": "string",
+            "description": "Required version range (e.g., ^1.2.0, >=2.0.0)",
+            "examples": ["^1.0.0", ">=2.0.0", "~1.2.0", "1.0.0"]
+          },
+          "type": {
+            "type": "string",
+            "enum": ["ip", "library", "tool"],
+            "description": "Type of dependency",
+            "examples": ["ip", "library", "tool"]
+          },
+          "optional": {
+            "type": "boolean",
+            "description": "Whether this dependency is optional",
+            "default": false,
+            "examples": [true, false]
+          },
+          "license": {
+            "type": "string",
+            "description": "SPDX identifier of the dependency's license",
+            "examples": ["Apache-2.0", "CERN-OHL-S", "MIT", "GPL-3.0"]
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["git", "archive", "registry"],
+                "examples": ["git", "archive", "registry"]
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "examples": ["https://github.com/openhwgroup/apb-bridge", "https://github.com/pulp-platform/common_cells"]
+              },
+              "commit": {
+                "type": "string",
+                "examples": ["a1b2c3d", "main", "v1.0.0"]
+              },
+              "hash": {
+                "type": "string",
+                "examples": ["sha256:abc123...", "sha256:def456..."]
+              },
+              "indexing": {
+                "type": "boolean",
+                "default": true,
+                "examples": [true, false]
+              }
+            },
+            "examples": [
+              {
+                "type": "git",
+                "url": "https://github.com/openhwgroup/apb-bridge",
+                "commit": "a1b2c3d",
+                "indexing": true
+              },
+              {
+                "type": "registry",
+                "url": "https://registry.vyges.com/ip/apb-bridge",
+                "indexing": false
+              }
+            ]
+          },
+          "autoFetch": {
+            "type": "boolean",
+            "description": "Whether this dependency should be auto-downloaded by the Vyges CLI",
+            "default": false,
+            "examples": [true, false]
+          },
+          "attribution": {
+            "type": "string",
+            "description": "Required attribution text or URL if OSS license demands it",
+            "examples": ["Copyright 2024 OpenHW Group. Licensed under CERN-OHL-S.", "Portions Copyright 2023 FOSSi Foundation"]
+          }
+        },
+        "examples": [
+          {
+            "name": "openhw/apb-bridge",
+            "version": "^1.0.0",
+            "type": "ip",
+            "license": "CERN-OHL-S",
+            "source": {
+              "type": "git",
+              "url": "https://github.com/openhwgroup/apb-bridge",
+              "commit": "a1b2c3d"
+            },
+            "autoFetch": true,
+            "attribution": "Copyright 2024 OpenHW Group. Licensed under CERN-OHL-S."
+          },
+          {
+            "name": "pulp-platform/common_cells",
+            "version": ">=1.0.0",
+            "type": "library",
+            "optional": true,
+            "license": "Apache-2.0"
+          }
+        ]
+      },
+      "examples": [
+        [
+          {
+            "name": "openhw/apb-bridge",
+            "version": "^1.0.0",
+            "type": "ip",
+            "license": "CERN-OHL-S",
+            "source": {
+              "type": "git",
+              "url": "https://github.com/openhwgroup/apb-bridge",
+              "commit": "a1b2c3d"
+            },
+            "autoFetch": true,
+            "attribution": "Copyright 2024 OpenHW Group. Licensed under CERN-OHL-S."
+          }
+        ],
+        [
+          {
+            "name": "pulp-platform/common_cells",
+            "version": ">=1.0.0",
+            "type": "library",
+            "optional": true,
+            "license": "Apache-2.0"
+          },
+          {
+            "name": "lowrisc/prim",
+            "version": "~1.0.0",
+            "type": "ip",
+            "license": "Apache-2.0",
+            "source": {
+              "type": "git",
+              "url": "https://github.com/lowrisc/opentitan",
+              "commit": "main"
+            }
+          }
+        ]
+      ]
+    },
+    "documentation": {
+      "type": "object",
+      "description": "Documentation links and resources",
+      "properties": {
+        "readme": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the main README file",
+          "examples": ["https://github.com/vyges/spi-controller/blob/main/README.md", "https://docs.vyges.com/spi-controller"]
+        },
+        "datasheet": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the datasheet or technical specification",
+          "examples": ["https://docs.vyges.com/spi-controller/datasheet.pdf", "https://acme.com/pcie-phy/datasheet"]
+        },
+        "user_guide": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the user guide or manual",
+          "examples": ["https://docs.vyges.com/spi-controller/user-guide", "https://acme.com/pcie-phy/manual"]
+        },
+        "api_docs": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to API documentation",
+          "examples": ["https://docs.vyges.com/spi-controller/api", "https://acme.com/pcie-phy/api"]
+        }
+      },
+      "examples": [
+        {
+          "readme": "https://github.com/vyges/spi-controller/blob/main/README.md",
+          "datasheet": "https://docs.vyges.com/spi-controller/datasheet.pdf",
+          "user_guide": "https://docs.vyges.com/spi-controller/user-guide",
+          "api_docs": "https://docs.vyges.com/spi-controller/api"
+        },
+        {
+          "readme": "https://github.com/acme/pcie-phy-encrypted/blob/main/README.md",
+          "datasheet": "https://acme.com/pcie-phy/datasheet"
+        }
+      ]
+    },
+    "fpga": {
+      "type": "object",
+      "description": "FPGA-specific configuration and requirements",
+      "properties": {
+        "toolchain": {
+          "type": "string",
+          "enum": ["vivado", "quartus", "yosys", "symbiflow"],
+          "description": "Primary FPGA toolchain used",
+          "examples": ["vivado", "quartus", "yosys", "symbiflow"]
+        },
+        "board": {
+          "type": "string",
+          "description": "Name of the supported FPGA board",
+          "examples": ["arty-a7-35", "nexys-a7-100t", "de10-nano", "ice40-hx8k-b-evn"]
+        },
+        "cfu_playground_compatible": {
+          "type": "boolean",
+          "description": "Whether this IP is compatible with CFU Playground",
+          "examples": [true, false]
+        },
+        "constraints": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of constraint files (.xdc, .sdc, etc.)",
+          "examples": [["constraints.xdc", "timing.sdc"], ["arty-a7-35.xdc"], ["de10-nano.sdc"]]
+        },
+        "hard_ip": {
+          "type": "boolean",
+          "description": "Whether this is a hard IP block (vendor-provided)",
+          "examples": [true, false]
+        },
+        "vendor": {
+          "type": "string",
+          "enum": ["xilinx", "intel", "lattice", "microchip"],
+          "description": "FPGA vendor for hard IP blocks",
+          "examples": ["xilinx", "intel", "lattice", "microchip"]
+        }
+      },
+      "required": ["toolchain"],
+      "examples": [
+        {
+          "toolchain": "vivado",
+          "board": "arty-a7-35",
+          "cfu_playground_compatible": true,
+          "constraints": ["constraints.xdc", "timing.sdc"]
+        },
+        {
+          "toolchain": "yosys",
+          "board": "ice40-hx8k-b-evn",
+          "constraints": ["ice40-hx8k-b-evn.pcf"]
+        },
+        {
+          "toolchain": "quartus",
+          "board": "de10-nano",
+          "hard_ip": true,
+          "vendor": "intel",
+          "constraints": ["de10-nano.sdc"]
+        }
+      ]
+    },
+    "asic": {
+      "type": "object",
+      "description": "ASIC-specific configuration and requirements",
+      "properties": {
+        "flavor": {
+          "type": "string",
+          "enum": ["digital", "analog", "mixed-signal"],
+          "description": "ASIC design type",
+          "examples": ["digital", "analog", "mixed-signal"]
+        },
+        "pdks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of supported PDKs (e.g., sky130B, gf180mcuC, ihp-sg13g2)",
+          "examples": [["sky130B", "sky130A"], ["gf180mcuC"], ["ihp-sg13g2", "sky130B"]]
+        },
+        "synthesis_tool": {
+          "type": "string",
+          "enum": ["openlane", "design_compiler", "genus", "yosys"],
+          "description": "Primary synthesis tool for digital flows",
+          "examples": ["openlane", "design_compiler", "genus", "yosys"]
+        },
+        "clock_freq_mhz": {
+          "type": "number",
+          "description": "Target clock frequency in MHz",
+          "examples": [100, 250, 500, 1000]
+        },
+        "constraints": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of constraint files (.sdc, etc.)",
+          "examples": [["constraints.sdc"], ["timing.sdc", "area.sdc"], []]
+        },
+        "tools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of tools used (e.g., ngspice, xschem for analog)",
+          "examples": [["yosys", "openroad"], ["ngspice", "xschem"], ["openlane", "magic"]]
+        },
+        "analog_models": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of analog model files (.spice, .ams, etc.)",
+          "examples": [["models.spice"], ["analog.ams", "models.spice"], []]
+        },
+        "symbol_views": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of symbol view files",
+          "examples": [["symbol.sym"], ["spi_controller.sym"], []]
+        },
+        "layout_views": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of layout view files",
+          "examples": [["layout.gds"], ["spi_controller.gds", "spi_controller.lef"], []]
+        },
+        "digital_partition": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of digital RTL files for mixed-signal flows",
+          "examples": [["spi_controller.v"], ["spi_controller.sv", "spi_fifo.v"], []]
+        },
+        "analog_partition": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of analog files for mixed-signal flows",
+          "examples": [["analog.spice"], ["analog.ams", "analog.spice"], []]
+        },
+        "co_simulation": {
+          "type": "object",
+          "description": "Co-simulation configuration for mixed-signal flows",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "description": "Co-simulation tool (e.g., ams-designer)",
+              "examples": ["ams-designer", "spectre", "hspice"]
+            },
+            "interface_signals": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of interface signals between digital and analog partitions",
+              "examples": [["clk", "rst_n", "data_in", "data_out"], ["adc_in", "dac_out"], []]
+            }
+          },
+          "examples": [
+            {
+              "tool": "ams-designer",
+              "interface_signals": ["clk", "rst_n", "data_in", "data_out"]
+            },
+            {
+              "tool": "spectre",
+              "interface_signals": ["adc_in", "dac_out"]
+            }
+          ]
+        }
+      },
+      "examples": [
+        {
+          "flavor": "digital",
+          "pdks": ["sky130B", "sky130A"],
+          "synthesis_tool": "openlane",
+          "clock_freq_mhz": 100,
+          "constraints": ["constraints.sdc"],
+          "tools": ["yosys", "openroad"]
+        },
+        {
+          "flavor": "analog",
+          "pdks": ["sky130B"],
+          "tools": ["ngspice", "xschem"],
+          "analog_models": ["models.spice"],
+          "symbol_views": ["symbol.sym"],
+          "layout_views": ["layout.gds"]
+        },
+        {
+          "flavor": "mixed-signal",
+          "pdks": ["sky130B"],
+          "synthesis_tool": "openlane",
+          "clock_freq_mhz": 250,
+          "digital_partition": ["spi_controller.v"],
+          "analog_partition": ["analog.spice"],
+          "co_simulation": {
+            "tool": "ams-designer",
+            "interface_signals": ["clk", "rst_n", "data_in", "data_out"]
+          }
+        }
+      ]
+    },
+    "delivery": {
+      "type": "object",
+      "description": "IP delivery and access information",
+      "properties": {
+        "encryptedRTL": {
+          "type": "boolean",
+          "description": "Whether the RTL is encrypted or proprietary",
+          "examples": [true, false]
+        },
+        "encryptedModels": {
+          "type": "boolean",
+          "description": "Whether analog models are encrypted",
+          "examples": [true, false]
+        },
+        "formats": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of delivered file formats (e.g., verilog, vhdl, lib, db, gds, spice)",
+          "examples": [["verilog", "vhdl"], ["spice", "gds"], ["verilog", "lib", "db"]]
+        },
+        "requiresNDA": {
+          "type": "boolean",
+          "description": "Whether an NDA is required for access",
+          "examples": [true, false]
+        },
+        "access": {
+          "type": "string",
+          "description": "Contact information or URL for requesting access",
+          "examples": ["https://acme.com/contact", "sales@acme.com", "Contact sales@vyges.com for access"]
+        },
+        "licenseModel": {
+          "type": "string",
+          "enum": ["evaluation", "per-project", "royalty", "proprietary"],
+          "description": "Type of licensing model",
+          "examples": ["evaluation", "per-project", "royalty", "proprietary"]
+        },
+        "partnerPortal": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to partner portal for licensing",
+          "examples": ["https://partners.acme.com", "https://licensing.vyges.com"]
+        }
+      },
+      "examples": [
+        {
+          "encryptedRTL": false,
+          "encryptedModels": false,
+          "formats": ["verilog", "vhdl"],
+          "requiresNDA": false
+        },
+        {
+          "encryptedRTL": true,
+          "encryptedModels": true,
+          "formats": ["lib", "db", "gds"],
+          "requiresNDA": true,
+          "access": "https://acme.com/contact",
+          "licenseModel": "per-project",
+          "partnerPortal": "https://partners.acme.com"
+        }
+      ]
+    },
+    "toolRequirements": {
+      "type": "object",
+      "description": "Tool requirements for using this IP",
+      "properties": {
+        "simulation": {
+          "type": "string",
+          "description": "Required simulation tool (e.g., VCS, ModelSim, verilator)",
+          "examples": ["verilator", "VCS", "ModelSim", "iverilog"]
+        },
+        "synthesis": {
+          "type": "string",
+          "description": "Required synthesis tool (e.g., Design Compiler, OpenLane)",
+          "examples": ["yosys", "Design Compiler", "OpenLane", "genus"]
+        },
+        "physical": {
+          "type": "string",
+          "description": "Required physical design tool (e.g., Innovus, OpenLane)",
+          "examples": ["openroad", "Innovus", "OpenLane", "icc"]
+        },
+        "layout": {
+          "type": "string",
+          "description": "Required layout tool (e.g., Virtuoso, Magic)",
+          "examples": ["magic", "Virtuoso", "klayout", "xschem"]
+        },
+        "verification": {
+          "type": "string",
+          "description": "Required verification tool (e.g., Calibre, PVS)",
+          "examples": ["calibre", "PVS", "klayout", "netgen"]
+        },
+        "version_notes": {
+          "type": "object",
+          "description": "Optional version requirements and compatibility notes for tools",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "examples": [
+            {
+              "verilator": "4.0+ for SystemVerilog, 5.0+ for latest optimizations",
+              "yosys": "0.9+ for basic synthesis, 0.23+ for advanced features",
+              "vivado": "2023.1+ recommended for latest features",
+              "edalock": "See EDA Lock manifest for exact tool versions and reproducible builds"
+            }
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes about tool requirements",
+          "examples": ["Requires commercial tools for full functionality", "Open-source toolchain supported", "See README for detailed setup instructions"]
+        }
+      },
+      "examples": [
+        {
+          "simulation": "verilator",
+          "synthesis": "yosys",
+          "physical": "openroad",
+          "layout": "magic",
+          "verification": "netgen",
+          "notes": "Open-source toolchain supported"
+        },
+        {
+          "simulation": "VCS",
+          "synthesis": "Design Compiler",
+          "physical": "Innovus",
+          "layout": "Virtuoso",
+          "verification": "calibre",
+          "version_notes": {
+            "VCS": "2023.06+ required",
+            "Design Compiler": "2023.03+ recommended"
+          },
+          "notes": "Requires commercial tools for full functionality"
+        }
+      ]
+    },
+    "commercial": {
+      "type": "object",
+      "description": "Commercial/licensing contact and monetization options",
+      "properties": {
+        "contact_email": {
+          "type": "string",
+          "format": "email",
+          "description": "Contact email for commercial inquiries",
+          "examples": ["sales@acme.com", "licensing@vyges.com", "contact@example.com"]
+        },
+        "sales_page": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to sales or licensing page",
+          "examples": ["https://acme.com/sales", "https://vyges.com/licensing", "https://example.com/pricing"]
+        },
+        "pricing_model": {
+          "type": "string",
+          "enum": ["free", "evaluation", "subscription", "one-time", "royalty", "custom", "contact-us"],
+          "description": "Pricing model for this IP",
+          "examples": ["free", "evaluation", "subscription", "one-time", "royalty", "custom", "contact-us"]
+        },
+        "available_regions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of regions/countries this IP can be licensed in",
+          "examples": [["US", "EU", "JP"], ["US", "CA"], ["Global"], ["US", "EU", "UK", "JP", "KR"]]
+        }
+      },
+      "examples": [
+        {
+          "contact_email": "sales@acme.com",
+          "sales_page": "https://acme.com/sales",
+          "pricing_model": "one-time",
+          "available_regions": ["US", "EU", "JP"]
+        },
+        {
+          "pricing_model": "free",
+          "available_regions": ["Global"]
+        },
+        {
+          "contact_email": "licensing@vyges.com",
+          "pricing_model": "contact-us",
+          "available_regions": ["US", "EU", "UK", "JP", "KR"]
+        }
+      ]
+    },
+    "packaging": {
+      "type": "object",
+      "description": "Packaging and standard integration support",
+      "properties": {
+        "ipxact": {
+          "type": "boolean",
+          "description": "IP-XACT packaging compatibility",
+          "examples": [true, false]
+        },
+        "edalock": {
+          "type": "boolean",
+          "description": "EDA Lock manifest support (for reproducible toolchains). When true, an EDA Lock manifest file should be present in the IP package.",
+          "examples": [true, false]
+        },
+        "format": {
+          "type": "string",
+          "enum": ["verilog", "vhdl", "chisel", "spice", "ams", "mixed"],
+          "description": "Primary HDL format",
+          "examples": ["verilog", "vhdl", "chisel", "spice", "ams", "mixed"]
+        }
+      },
+      "examples": [
+        {
+          "ipxact": true,
+          "edalock": true,
+          "format": "verilog"
+        },
+        {
+          "ipxact": false,
+          "edalock": true,
+          "format": "vhdl"
+        },
+        {
+          "ipxact": false,
+          "edalock": false,
+          "format": "spice"
+        }
+      ]
+    },
+    "compliance": {
+      "type": "object",
+      "description": "Security and compliance metadata",
+      "properties": {
+        "sbom": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to Software Bill of Materials (SBOM)",
+          "examples": ["https://github.com/vyges/spi-controller/blob/main/sbom.json", "https://acme.com/ip/sbom.xml"]
+        },
+        "known_cves": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of known CVE IDs affecting this IP (if applicable)",
+          "examples": [[], ["CVE-2023-1234"], ["CVE-2023-5678", "CVE-2023-9012"]]
+        },
+        "threat_model": {
+          "type": "string",
+          "description": "Optional high-level threat model or attack surfaces",
+          "examples": ["Side-channel attacks on cryptographic operations", "Timing attacks on memory access patterns", "Fault injection on control signals"]
+        }
+      },
+      "examples": [
+        {
+          "sbom": "https://github.com/vyges/spi-controller/blob/main/sbom.json",
+          "known_cves": [],
+          "threat_model": "Side-channel attacks on cryptographic operations"
+        },
+        {
+          "sbom": "https://acme.com/ip/sbom.xml",
+          "known_cves": ["CVE-2023-1234"],
+          "threat_model": "Timing attacks on memory access patterns"
+        }
+      ]
+    },
+    "community": {
+      "type": "object",
+      "description": "Community and ecosystem contributions",
+      "properties": {
+        "issues": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to GitHub issues or support forum",
+          "examples": ["https://github.com/vyges/spi-controller/issues", "https://forum.vyges.com", "https://acme.com/support"]
+        },
+        "contributions": {
+          "type": "boolean",
+          "description": "Is the project accepting external contributions?",
+          "examples": [true, false]
+        },
+        "chat": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to Discord, Gitter, Slack, or Zulip",
+          "examples": ["https://discord.gg/vyges", "https://gitter.im/vyges/community", "https://vyges.slack.com"]
+        }
+      },
+      "examples": [
+        {
+          "issues": "https://github.com/vyges/spi-controller/issues",
+          "contributions": true,
+          "chat": "https://discord.gg/vyges"
+        },
+        {
+          "issues": "https://acme.com/support",
+          "contributions": false,
+          "chat": "https://acme.slack.com"
+        }
+      ]
+    },
+    "demo": {
+      "type": "object",
+      "description": "Interactive or downloadable demo availability",
+      "properties": {
+        "sandbox_link": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to interactive demo or sandbox",
+          "examples": ["https://demo.vyges.com/spi-controller", "https://acme.com/demo/pcie-phy", "https://playground.vyges.com"]
+        },
+        "emulation_video": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to demonstration video",
+          "examples": ["https://youtube.com/watch?v=abc123", "https://acme.com/demo/video.mp4", "https://vyges.com/demo/spi-controller.mp4"]
+        },
+        "testbench_example": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to example testbench or simulation files",
+          "examples": ["https://github.com/vyges/spi-controller/tree/main/tb", "https://acme.com/examples/testbench.zip"]
+        },
+        "integration_example": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to integration example or wrapper code",
+          "examples": ["https://github.com/vyges/spi-controller/tree/main/examples", "https://acme.com/examples/integration.zip"]
+        }
+      },
+      "examples": [
+        {
+          "sandbox_link": "https://demo.vyges.com/spi-controller",
+          "emulation_video": "https://youtube.com/watch?v=abc123",
+          "testbench_example": "https://github.com/vyges/spi-controller/tree/main/tb",
+          "integration_example": "https://github.com/vyges/spi-controller/tree/main/examples"
+        },
+        {
+          "emulation_video": "https://acme.com/demo/video.mp4",
+          "testbench_example": "https://acme.com/examples/testbench.zip"
+        }
+      ]
+    },
+    "performance": {
+      "type": "object",
+      "description": "Performance characteristics and benchmarks",
+      "properties": {
+        "max_frequency_mhz": {
+          "type": "number",
+          "description": "Maximum operating frequency in MHz",
+          "examples": [100, 250, 500, 1000]
+        },
+        "power_consumption_mw": {
+          "type": "number",
+          "description": "Typical power consumption in milliwatts",
+          "examples": [10, 50, 100, 500]
+        },
+        "area_mm2": {
+          "type": "number",
+          "description": "Silicon area in square millimeters",
+          "examples": [0.01, 0.1, 1.0, 5.0]
+        },
+        "gate_count": {
+          "type": "integer",
+          "description": "Approximate gate count",
+          "examples": [1000, 5000, 10000, 50000]
+        },
+        "benchmarks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { 
+                "type": "string",
+                "examples": ["Throughput", "Latency", "Efficiency", "Bandwidth"]
+              },
+              "value": { 
+                "type": "string",
+                "examples": ["100", "5", "85%", "1.5"]
+              },
+              "unit": { 
+                "type": "string",
+                "examples": ["Mbps", "ns", "%", "Gbps"]
+              },
+              "description": { 
+                "type": "string",
+                "examples": ["Maximum data transfer rate", "End-to-end latency", "Power efficiency", "Memory bandwidth"]
+              }
+            },
+            "required": ["name", "value"],
+            "examples": [
+              {
+                "name": "Throughput",
+                "value": "100",
+                "unit": "Mbps",
+                "description": "Maximum data transfer rate"
+              },
+              {
+                "name": "Latency",
+                "value": "5",
+                "unit": "ns",
+                "description": "End-to-end latency"
+              }
+            ]
+          },
+          "description": "Custom benchmark results",
+          "examples": [
+            [
+              {
+                "name": "Throughput",
+                "value": "100",
+                "unit": "Mbps",
+                "description": "Maximum data transfer rate"
+              },
+              {
+                "name": "Latency",
+                "value": "5",
+                "unit": "ns",
+                "description": "End-to-end latency"
+              }
+            ],
+            [
+              {
+                "name": "Efficiency",
+                "value": "85",
+                "unit": "%",
+                "description": "Power efficiency"
+              }
+            ]
+          ]
+        }
+      },
+      "examples": [
+        {
+          "max_frequency_mhz": 100,
+          "power_consumption_mw": 10,
+          "area_mm2": 0.01,
+          "gate_count": 1000,
+          "benchmarks": [
+            {
+              "name": "Throughput",
+              "value": "100",
+              "unit": "Mbps",
+              "description": "Maximum data transfer rate"
+            }
+          ]
+        },
+        {
+          "max_frequency_mhz": 500,
+          "power_consumption_mw": 100,
+          "area_mm2": 1.0,
+          "gate_count": 10000
+        }
+      ]
+    },
+    "reliability": {
+      "type": "object",
+      "description": "Reliability and quality metrics",
+      "properties": {
+        "fault_tolerance": {
+          "type": "string",
+          "enum": ["none", "basic", "advanced", "mission_critical"],
+          "description": "Level of fault tolerance implemented",
+          "examples": ["none", "basic", "advanced", "mission_critical"]
+        },
+        "error_detection": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of error detection mechanisms (e.g., parity, ECC, CRC)",
+          "examples": [["parity"], ["ECC", "CRC"], ["parity", "ECC", "CRC", "checksum"]]
+        },
+        "test_coverage": {
+          "type": "object",
+          "properties": {
+            "line_coverage": { 
+              "type": "number", 
+              "minimum": 0, 
+              "maximum": 100,
+              "examples": [85, 90, 95, 100]
+            },
+            "branch_coverage": { 
+              "type": "number", 
+              "minimum": 0, 
+              "maximum": 100,
+              "examples": [80, 85, 90, 95]
+            },
+            "functional_coverage": { 
+              "type": "number", 
+              "minimum": 0, 
+              "maximum": 100,
+              "examples": [90, 95, 98, 100]
+            }
+          },
+          "description": "Test coverage percentages",
+          "examples": [
+            {
+              "line_coverage": 90,
+              "branch_coverage": 85,
+              "functional_coverage": 95
+            },
+            {
+              "line_coverage": 95,
+              "branch_coverage": 90,
+              "functional_coverage": 98
+            }
+          ]
+        },
+        "mtbf_hours": {
+          "type": "number",
+          "description": "Mean Time Between Failures in hours",
+          "examples": [1000, 10000, 100000, 1000000]
+        }
+      },
+      "examples": [
+        {
+          "fault_tolerance": "basic",
+          "error_detection": ["parity", "CRC"],
+          "test_coverage": {
+            "line_coverage": 90,
+            "branch_coverage": 85,
+            "functional_coverage": 95
+          },
+          "mtbf_hours": 10000
+        },
+        {
+          "fault_tolerance": "mission_critical",
+          "error_detection": ["ECC", "CRC", "checksum"],
+          "test_coverage": {
+            "line_coverage": 95,
+            "branch_coverage": 90,
+            "functional_coverage": 98
+          },
+          "mtbf_hours": 100000
+        }
+      ]
+    },
+    "certification": {
+      "type": "object",
+      "description": "Industry certifications and standards compliance",
+      "properties": {
+        "iso_26262": {
+          "type": "string",
+          "enum": ["none", "qm", "asil_a", "asil_b", "asil_c", "asil_d"],
+          "description": "ISO 26262 Automotive Safety Integrity Level",
+          "examples": ["none", "qm", "asil_a", "asil_b", "asil_c", "asil_d"]
+        },
+        "ieee_1149_1": {
+          "type": "boolean",
+          "description": "IEEE 1149.1 JTAG boundary scan compliance",
+          "examples": [true, false]
+        },
+        "ieee_1500": {
+          "type": "boolean",
+          "description": "IEEE 1500 embedded core test compliance",
+          "examples": [true, false]
+        },
+        "other_certifications": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of other certifications or standards",
+          "examples": [["DO-254"], ["IEC 61508"], ["ISO 9001", "DO-254"]]
+        }
+      },
+      "examples": [
+        {
+          "iso_26262": "asil_b",
+          "ieee_1149_1": true,
+          "ieee_1500": false,
+          "other_certifications": ["DO-254"]
+        },
+        {
+          "iso_26262": "none",
+          "ieee_1149_1": false,
+          "ieee_1500": false,
+          "other_certifications": []
+        }
+      ]
+    },
+    "ai_copilot": {
+      "type": "object",
+      "description": "AI copilot integration and prompts",
+      "properties": {
+        "prompt_to_generate_tb": {
+          "type": "string",
+          "description": "Suggested prompt to generate testbench using AI",
+          "examples": [
+            "Generate a SystemVerilog testbench for an SPI controller with configurable clock polarity and phase",
+            "Create a comprehensive testbench for a PCIe PHY with multiple test scenarios",
+            "Write a UVM testbench for a UART controller with FIFO support"
+          ]
+        },
+        "prompt_to_instantiate": {
+          "type": "string",
+          "description": "Suggested prompt to instantiate in larger system",
+          "examples": [
+            "Instantiate an SPI controller in a SystemVerilog top-level module with APB interface",
+            "Create a wrapper for PCIe PHY with clock generation and reset logic",
+            "Integrate UART controller into a microcontroller system with interrupt handling"
+          ]
+        },
+        "prompt_to_integrate": {
+          "type": "string",
+          "description": "Suggested prompt for system integration",
+          "examples": [
+            "Integrate SPI controller into a SoC with multiple peripherals and DMA support",
+            "Connect PCIe PHY to a root complex with proper clock domain crossing",
+            "Add UART controller to an embedded system with multiple communication protocols"
+          ]
+        },
+        "ai_compatible": {
+          "type": "boolean",
+          "description": "Whether this IP is optimized for AI-assisted design",
+          "examples": [true, false]
+        }
+      },
+      "examples": [
+        {
+          "prompt_to_generate_tb": "Generate a SystemVerilog testbench for an SPI controller with configurable clock polarity and phase",
+          "prompt_to_instantiate": "Instantiate an SPI controller in a SystemVerilog top-level module with APB interface",
+          "prompt_to_integrate": "Integrate SPI controller into a SoC with multiple peripherals and DMA support",
+          "ai_compatible": true
+        },
+        {
+          "prompt_to_generate_tb": "Create a comprehensive testbench for a PCIe PHY with multiple test scenarios",
+          "prompt_to_instantiate": "Create a wrapper for PCIe PHY with clock generation and reset logic",
+          "ai_compatible": false
+        }
+      ]
+    },
+    "roadmap": {
+      "type": "object",
+      "description": "Future development plans and roadmap",
+      "properties": {
+        "planned_features": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of planned features or improvements",
+          "examples": [
+            ["DMA support", "Interrupt handling", "Power management"],
+            ["Multi-lane support", "Advanced error correction"],
+            ["Enhanced security features", "Performance optimizations"]
+          ]
+        },
+        "deprecation_plan": {
+          "type": "string",
+          "description": "Deprecation timeline and migration path",
+          "examples": [
+            "Version 2.0 will be deprecated in Q4 2024. Migration guide available at https://docs.vyges.com/migration",
+            "No deprecation planned",
+            "Legacy interface will be removed in v3.0. Use new API for future development."
+          ]
+        },
+        "version_schedule": {
+          "type": "object",
+          "properties": {
+            "next_major": { 
+              "type": "string", 
+              "format": "date",
+              "examples": ["2024-12-01", "2025-03-15", "2025-06-01"]
+            },
+            "next_minor": { 
+              "type": "string", 
+              "format": "date",
+              "examples": ["2024-09-01", "2024-11-15", "2025-02-01"]
+            },
+            "maintenance_until": { 
+              "type": "string", 
+              "format": "date",
+              "examples": ["2026-12-31", "2027-06-30", "2028-01-01"]
+            }
+          },
+          "description": "Planned version release schedule",
+          "examples": [
+            {
+              "next_major": "2024-12-01",
+              "next_minor": "2024-09-01",
+              "maintenance_until": "2026-12-31"
+            },
+            {
+              "next_minor": "2024-11-15",
+              "maintenance_until": "2027-06-30"
+            }
+          ]
+        }
+      },
+      "examples": [
+        {
+          "planned_features": ["DMA support", "Interrupt handling", "Power management"],
+          "deprecation_plan": "Version 2.0 will be deprecated in Q4 2024. Migration guide available at https://docs.vyges.com/migration",
+          "version_schedule": {
+            "next_major": "2024-12-01",
+            "next_minor": "2024-09-01",
+            "maintenance_until": "2026-12-31"
+          }
+        },
+        {
+          "planned_features": ["Multi-lane support", "Advanced error correction"],
+          "deprecation_plan": "No deprecation planned"
+        }
+      ]
+    },
+    "compatibility": {
+      "type": "object",
+      "description": "Compatibility information and version constraints",
+      "properties": {
+        "min_vyges_version": {
+          "type": "string",
+          "description": "Minimum Vyges platform version required",
+          "examples": ["1.0.0", "2.0.0", "3.0.0"]
+        },
+        "max_vyges_version": {
+          "type": "string",
+          "description": "Maximum Vyges platform version supported",
+          "examples": ["3.0.0", "4.0.0", "latest"]
+        },
+        "breaking_changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "version": { 
+                "type": "string",
+                "examples": ["2.0.0", "3.0.0", "4.0.0"]
+              },
+              "description": { 
+                "type": "string",
+                "examples": ["API interface changed", "Parameter names updated", "New required fields added"]
+              },
+              "migration_guide": { 
+                "type": "string", 
+                "format": "uri",
+                "examples": ["https://docs.vyges.com/migration/v2", "https://docs.vyges.com/migration/v3"]
+              }
+            },
+            "required": ["version", "description"],
+            "examples": [
+              {
+                "version": "2.0.0",
+                "description": "API interface changed",
+                "migration_guide": "https://docs.vyges.com/migration/v2"
+              },
+              {
+                "version": "3.0.0",
+                "description": "Parameter names updated"
+              }
+            ]
+          },
+          "description": "List of breaking changes and migration guides",
+          "examples": [
+            [
+              {
+                "version": "2.0.0",
+                "description": "API interface changed",
+                "migration_guide": "https://docs.vyges.com/migration/v2"
+              }
+            ],
+            [
+              {
+                "version": "3.0.0",
+                "description": "Parameter names updated"
+              },
+              {
+                "version": "4.0.0",
+                "description": "New required fields added",
+                "migration_guide": "https://docs.vyges.com/migration/v4"
+              }
+            ]
+          ]
+        },
+        "deprecated_since": {
+          "type": "string",
+          "description": "Version when this IP was deprecated",
+          "examples": ["2.0.0", "3.0.0", "4.0.0"]
+        },
+        "replacement": {
+          "type": "string",
+          "description": "Name of the replacement IP (if deprecated)",
+          "examples": ["spi-controller-v2", "pcie-phy-v3", "uart-controller-v2"]
+        }
+      },
+      "examples": [
+        {
+          "min_vyges_version": "1.0.0",
+          "max_vyges_version": "3.0.0",
+          "breaking_changes": [
+            {
+              "version": "2.0.0",
+              "description": "API interface changed",
+              "migration_guide": "https://docs.vyges.com/migration/v2"
+            }
+          ]
+        },
+        {
+          "min_vyges_version": "2.0.0",
+          "deprecated_since": "3.0.0",
+          "replacement": "spi-controller-v2"
+        }
+      ]
+    },
+    "localization": {
+      "type": "object",
+      "description": "Internationalization and localization support",
+      "properties": {
+        "supported_languages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of supported language codes (e.g., en, zh, ja)",
+          "examples": [["en"], ["en", "zh"], ["en", "zh", "ja", "ko"]]
+        },
+        "documentation_languages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Languages in which documentation is available",
+          "examples": [["en"], ["en", "zh"], ["en", "zh", "ja", "ko"]]
+        },
+        "localized_descriptions": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Description in different languages",
+          "examples": [
+            {
+              "en": "High-performance SPI controller with configurable parameters",
+              "zh": "高性能SPI控制器，具有可配置参数",
+              "ja": "設定可能なパラメータを持つ高性能SPIコントローラー"
+            },
+            {
+              "en": "PCIe PHY supporting multiple generations",
+              "zh": "支持多代PCIe PHY",
+              "ja": "複数の世代をサポートするPCIe PHY"
+            }
+          ]
+        }
+      },
+      "examples": [
+        {
+          "supported_languages": ["en", "zh"],
+          "documentation_languages": ["en", "zh"],
+          "localized_descriptions": {
+            "en": "High-performance SPI controller with configurable parameters",
+            "zh": "高性能SPI控制器，具有可配置参数"
+          }
+        },
+        {
+          "supported_languages": ["en"],
+          "documentation_languages": ["en"],
+          "localized_descriptions": {
+            "en": "PCIe PHY supporting multiple generations"
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "target": {
+            "contains": { "const": "fpga" }
+          }
+        }
+      },
+      "then": {
+        "required": ["fpga"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "target": {
+            "contains": { "const": "asic" }
+          }
+        }
+      },
+      "then": {
+        "required": ["asic"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "design_type": {
+            "contains": { "const": "analog" }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "asic": {
+            "required": ["flavor", "pdks", "tools", "analog_models", "symbol_views", "layout_views"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "design_type": {
+            "contains": { "const": "digital" }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "asic": {
+            "required": ["flavor", "pdks", "synthesis_tool"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "design_type": {
+            "contains": { "const": "mixed-signal" }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "asic": {
+            "required": ["flavor", "pdks", "digital_partition", "analog_partition", "co_simulation"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "design_type": {
+            "contains": { "const": "hard-ip" }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "fpga": {
+            "required": ["hard_ip", "vendor"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "automation": {
+            "properties": {
+              "automation_level": { "const": "enhanced" }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": ["parameters", "dependencies", "toolRequirements"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "automation": {
+            "properties": {
+              "automation_level": { "const": "full" }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": ["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "source": {
+            "properties": {
+              "containsEncryptedPayload": { "const": true }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "automation": {
+            "properties": {
+              "blocking_issues": {
+                "contains": { "const": "encrypted_ip" }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "name": "vyges/spi-controller",
+      "version": "1.0.0",
+      "template": "vyges-ip-template@1.0.0",
+      "description": "SPI master controller with configurable clock divider",
+      "license": "Apache-2.0",
+      "maturity": "production",
+      "target": ["asic", "fpga"],
+      "design_type": ["digital"],
+      "automation": {
+        "automation_level": "enhanced",
+        "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "fpga", "test", "flows"],
+        "recommended_for_automation": ["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "community"]
+      },
+      "created": "2024-01-15T10:30:00Z",
+      "updated": "2024-01-20T14:45:00Z",
+      "interfaces": [
+        {
+          "type": "bus",
+          "direction": "input",
+          "protocol": "APB",
+          "width": 32,
+          "signals": [
+            {
+              "name": "PCLK",
+              "direction": "input",
+              "type": "clock",
+              "description": "APB clock signal"
+            },
+            {
+              "name": "PRESETn",
+              "direction": "input",
+              "type": "reset",
+              "active_level": "low",
+              "description": "APB reset signal"
+            }
+          ]
+        }
+      ],
+      "asic": {
+        "flavor": "digital",
+        "pdks": ["sky130B", "gf180mcuC", "ihp-sg13g2"],
+        "synthesis_tool": "openlane",
+        "clock_freq_mhz": 100
+      },
+      "fpga": {
+        "toolchain": "vivado",
+        "board": "arty-a7",
+        "cfu_playground_compatible": true,
+        "constraints": ["fpga/constraints/arty.xdc"]
+      },
+      "test": {
+        "status": "passing",
+        "testbenches": ["cocotb"],
+        "simulators": ["verilator"]
+      },
+      "flows": {
+        "verilator": { "status": "verified" },
+        "openlane": { "status": "tested", "pdks": ["sky130B", "gf180mcuC","ihp-sg13g2"] }
+      },
+      "packaging": {
+        "ipxact": true,
+        "format": "verilog"
+      },
+      "community": {
+        "contributions": true,
+        "issues": "https://github.com/vyges/spi-controller/issues"
+      },
+      "dependencies": [
+        {
+          "name": "openhw/apb-bridge",
+          "version": "^1.0.0",
+          "type": "ip",
+          "license": "CERN-OHL-S",
+          "source": {
+            "type": "git",
+            "url": "https://github.com/openhwgroup/apb-bridge",
+            "commit": "a1b2c3d"
+          },
+          "autoFetch": true,
+          "attribution": "Copyright 2024 OpenHW Group. Licensed under CERN-OHL-S."
+        }
+      ],
+      "parameters": [
+        {
+          "name": "CLOCK_DIV",
+          "type": "int",
+          "default": 8,
+          "description": "Clock divider for SPI clock generation",
+          "range": { "min": 2, "max": 256 },
+          "units": "cycles",
+          "required": false
+        },
+        {
+          "name": "DATA_WIDTH",
+          "type": "int",
+          "default": 8,
+          "description": "Data width for SPI transactions",
+          "range": { "min": 1, "max": 32 },
+          "units": "bits",
+          "required": true
+        }
+      ],
+      "performance": {
+        "max_frequency_mhz": 100,
+        "power_consumption_mw": 5.2,
+        "area_mm2": 0.15,
+        "gate_count": 2500
+      },
+      "reliability": {
+        "fault_tolerance": "basic",
+        "error_detection": ["parity"],
+        "test_coverage": {
+          "line_coverage": 95,
+          "branch_coverage": 88,
+          "functional_coverage": 92
+        }
+      },
+      "categories": ["interface", "controller", "communication"],
+      "tags": ["spi", "controller", "apb", "master"],
+      "keywords": ["serial", "protocol", "master", "slave", "communication"],
+      "registry": {
+        "status": "approved",
+        "submission_date": "2024-01-15T10:30:00Z",
+        "approval_date": "2024-01-16T14:20:00Z",
+        "verified_by": "vyges-team",
+        "registry_id": "spi-controller-v1",
+        "compliance_check": {
+          "status": "passing",
+          "last_checked": "2024-01-16T14:20:00Z",
+          "checker_version": "1.0.0",
+          "issues": []
+        }
+      }
+    },
+    {
+      "name": "acme/pcie-phy-encrypted",
+      "version": "3.2.1",
+      "template": "vyges-ip-template@1.0.0",
+      "description": "High-speed PCIe Gen4 PHY with encrypted RTL payload",
+      "license": "Proprietary",
+      "maturity": "production",
+      "target": ["asic"],
+      "design_type": ["mixed-signal"],
+      "automation": {
+        "automation_level": "basic",
+        "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "delivery", "toolRequirements"],
+        "recommended_for_automation": ["commercial", "compliance"],
+        "blocking_issues": ["encrypted_ip", "requires_nda"]
+      },
+      "asic": {
+        "flavor": "mixed-signal",
+        "pdks": ["tsmc28", "gf12"],
+        "digital_partition": ["rtl/pcie_phy_wrapper.v"],
+        "analog_partition": ["analog/pcie_phy_analog.spice"],
+        "co_simulation": {
+          "tool": "ams-designer",
+          "interface_signals": ["tx_data", "rx_data", "clk", "reset"]
+        }
+      },
+      "delivery": {
+        "encryptedRTL": true,
+        "encryptedModels": true,
+        "formats": ["vhdl", "lib", "db", "lef", "gds"],
+        "requiresNDA": true,
+        "access": "Contact licensing@acme.com for evaluation",
+        "licenseModel": "per-project"
+      },
+      "toolRequirements": {
+        "simulation": "Synopsys VCS or Cadence Xcelium",
+        "synthesis": "Synopsys Design Compiler",
+        "physical": "Cadence Innovus"
+      },
+      "source": {
+        "type": "git",
+        "url": "https://github.com/acme/pcie-phy-encrypted",
+        "private": true,
+        "containsEncryptedPayload": true,
+        "indexing": false
+      },
+      "commercial": {
+        "contact_email": "licensing@acme.com",
+        "pricing_model": "per-project",
+        "available_regions": ["US", "EU", "APAC"]
+      },
+      "compliance": {
+        "sbom": "https://acme.com/sbom/pcie-phy-3.2.1.json"
+      },
+      "tags": ["pcie", "phy", "encrypted", "mixed-signal"]
+    }
+  ]
+}
+

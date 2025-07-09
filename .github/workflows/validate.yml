@@ -1,0 +1,58 @@
+name: Validate Schema and Examples
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm install -g ajv-cli jsonlint
+        
+    - name: Validate schema syntax
+      run: |
+        echo "Validating schema syntax..."
+        jsonlint schema/v1/vyges-metadata.schema.json
+        
+    - name: Validate schema against JSON Schema draft
+      run: |
+        echo "Validating schema against JSON Schema draft..."
+        node validate-examples.js --schema-only
+        
+    - name: Validate examples against schema
+      run: |
+        echo "Validating examples against schema..."
+        node validate-examples.js
+        
+    - name: Check for required fields in examples
+      run: |
+        echo "Checking required fields in examples..."
+        for file in examples/*.json; do
+          echo "Checking $file..."
+          jq -e '.name and .x-version and .license and .interfaces and .template and .target and .design_type and .maturity' "$file" > /dev/null || {
+            echo "ERROR: $file is missing required fields"
+            exit 1
+          }
+        done
+        
+    - name: Validate UI schema
+      run: |
+        echo "Validating UI schema..."
+        if [ -f "schema/v1/vyges-metadata.ui-schema.json" ]; then
+          jsonlint schema/v1/vyges-metadata.ui-schema.json
+        fi 

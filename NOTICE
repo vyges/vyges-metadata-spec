@@ -1,0 +1,17 @@
+Vyges Metadata Specification
+Copyright 2025 Vyges Inc.
+
+This product includes software developed by Vyges Inc. (https://vyges.com).
+
+Contributors:
+- Shivaram Mysore (shivaram@vyges.com) - Primary author and maintainer
+
+This specification defines a standardized JSON Schema format for describing 
+reusable silicon IP blocks, enabling automated discovery, integration, and 
+management of hardware IP across different design flows and platforms.
+
+For more information about this project, visit:
+https://github.com/vyges/vyges-metadata-spec
+
+This NOTICE file is for informational purposes only and does not modify the 
+Apache License 2.0 under which this software is distributed. 

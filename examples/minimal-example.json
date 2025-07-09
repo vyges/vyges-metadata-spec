@@ -1,0 +1,34 @@
+{
+  "name": "example/led-controller",
+  "x-version": "1.0.0",
+  "description": "Simple LED controller with PWM dimming",
+  "license": "MIT",
+  "maturity": "beta",
+  "target": ["fpga"],
+  "design_type": ["digital"],
+  "interfaces": [
+    {
+      "name": "led",
+      "type": "bus",
+      "direction": "output",
+      "protocol": "custom",
+      "width": 1,
+      "signals": [
+        {
+          "name": "led_out",
+          "direction": "output",
+          "type": "data",
+          "description": "LED output signal"
+        }
+      ]
+    }
+  ],
+  "template": "vyges-ip-template@1.0.0",
+  "automation": {
+    "automation_level": "basic"
+  },
+  "fpga": {
+    "toolchain": "vivado",
+    "board": "generic-fpga-board"
+  }
+} 

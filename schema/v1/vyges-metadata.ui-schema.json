@@ -1,0 +1,984 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vyges.com/schema/v1/vyges-metadata.ui-schema.json",
+  "$comment": "UI schema for rendering and organizing metadata forms for Vyges IP blocks",
+  "title": "Vyges IP Metadata UI Schema",
+  "description": "UI layout, grouping, and ordering information for Vyges IP metadata forms",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "ui": {
+      "type": "object",
+      "description": "UI configuration for the entire form",
+      "properties": {
+        "title": {
+          "type": "string",
+          "default": "Vyges IP Metadata"
+        },
+        "description": {
+          "type": "string",
+          "default": "Configure metadata for your IP block"
+        },
+        "layout": {
+          "type": "string",
+          "enum": ["tabs", "sections", "wizard"],
+          "default": "tabs"
+        },
+        "show_required_fields_first": {
+          "type": "boolean",
+          "default": true
+        },
+        "collapsible_sections": {
+          "type": "boolean",
+          "default": true
+        },
+        "show_advanced_by_default": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "description": "Form sections with ordering and grouping",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Section identifier"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section display title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Section description"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Icon for the section (e.g., 'info', 'settings', 'code')"
+          },
+          "order": {
+            "type": "integer",
+            "description": "Display order (lower numbers first)"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Fields included in this section"
+          },
+          "required": {
+            "type": "boolean",
+            "default": false
+          },
+          "collapsible": {
+            "type": "boolean",
+            "default": true
+          },
+          "expanded": {
+            "type": "boolean",
+            "default": true
+          },
+          "conditional": {
+            "type": "object",
+            "properties": {
+              "field": { "type": "string" },
+              "value": { "description": "Value that enables this section" },
+              "operator": {
+                "type": "string",
+                "enum": ["equals", "contains", "not_equals", "greater_than", "less_than"],
+                "default": "equals"
+              }
+            }
+          }
+        },
+        "required": ["id", "title", "order", "fields"]
+      }
+    },
+    "field_configs": {
+      "type": "object",
+      "description": "Individual field configurations",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "widget": {
+            "type": "string",
+            "enum": ["text", "textarea", "select", "multiselect", "checkbox", "radio", "date", "email", "url", "number", "array", "object", "file", "code"],
+            "description": "Widget type for rendering"
+          },
+          "placeholder": {
+            "type": "string",
+            "description": "Placeholder text"
+          },
+          "help": {
+            "type": "string",
+            "description": "Help text or tooltip"
+          },
+          "default": {
+            "description": "Default value"
+          },
+          "validation": {
+            "type": "object",
+            "properties": {
+              "pattern": { "type": "string" },
+              "min": { "type": "number" },
+              "max": { "type": "number" },
+              "minLength": { "type": "number" },
+              "maxLength": { "type": "number" }
+            }
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": { "type": "string" },
+                "value": { "description": "Option value" },
+                "description": { "type": "string" }
+              },
+              "required": ["label", "value"]
+            }
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "value": { "description": "Required value" },
+                "operator": {
+                  "type": "string",
+                  "enum": ["equals", "contains", "not_equals"],
+                  "default": "equals"
+                }
+              },
+              "required": ["field", "value"]
+            }
+          },
+          "advanced": {
+            "type": "boolean",
+            "default": false
+          },
+          "readonly": {
+            "type": "boolean",
+            "default": false
+          },
+          "hidden": {
+            "type": "boolean",
+            "default": false
+          },
+          "order": {
+            "type": "integer",
+            "description": "Field order within section"
+          },
+          "width": {
+            "type": "string",
+            "enum": ["full", "half", "third", "quarter"],
+            "default": "full"
+          }
+        }
+      }
+    },
+    "templates": {
+      "type": "object",
+      "description": "Pre-configured templates for different IP types",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "icon": { "type": "string" },
+          "defaults": {
+            "type": "object",
+            "description": "Default values for this template"
+          },
+          "required_sections": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "optional_sections": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["name", "description"]
+      }
+    }
+  },
+  "required": ["ui", "sections", "field_configs"],
+  "default": {
+    "ui": {
+      "title": "Vyges IP Metadata",
+      "description": "Configure metadata for your IP block",
+      "layout": "tabs",
+      "show_required_fields_first": true,
+      "collapsible_sections": true,
+      "show_advanced_by_default": false
+    },
+    "sections": [
+      {
+        "id": "basic_info",
+        "title": "Basic Information",
+        "description": "Core IP identification and description",
+        "icon": "info",
+        "order": 1,
+        "required": true,
+        "expanded": true,
+        "fields": ["name", "x-version", "description", "license", "maturity", "created", "updated"]
+      },
+      {
+        "id": "target_platforms",
+        "title": "Target Platforms",
+        "description": "Supported platforms and design types",
+        "icon": "target",
+        "order": 2,
+        "required": true,
+        "expanded": true,
+        "fields": ["target", "design_type"]
+      },
+      {
+        "id": "interfaces",
+        "title": "Interfaces",
+        "description": "External interfaces and protocols",
+        "icon": "interface",
+        "order": 3,
+        "required": true,
+        "expanded": true,
+        "fields": ["interfaces"]
+      },
+      {
+        "id": "asic_config",
+        "title": "ASIC Configuration",
+        "description": "ASIC-specific settings and requirements",
+        "icon": "asic",
+        "order": 4,
+        "conditional": {
+          "field": "target",
+          "value": "asic",
+          "operator": "contains"
+        },
+        "fields": ["asic"],
+        "expanded": false
+      },
+      {
+        "id": "fpga_config",
+        "title": "FPGA Configuration",
+        "description": "FPGA-specific settings and requirements",
+        "icon": "fpga",
+        "order": 5,
+        "conditional": {
+          "field": "target",
+          "value": "fpga",
+          "operator": "contains"
+        },
+        "fields": ["fpga"],
+        "expanded": false
+      },
+      {
+        "id": "parameters",
+        "title": "Parameters",
+        "description": "Configurable parameters and constraints",
+        "icon": "settings",
+        "order": 6,
+        "fields": ["parameters"],
+        "expanded": false
+      },
+      {
+        "id": "dependencies",
+        "title": "Dependencies",
+        "description": "Required IP blocks and libraries",
+        "icon": "dependencies",
+        "order": 7,
+        "fields": ["dependencies"],
+        "expanded": true,
+        "collapsible": false
+      },
+      {
+        "id": "testing",
+        "title": "Testing & Verification",
+        "description": "Test status and verification results",
+        "icon": "test",
+        "order": 8,
+        "fields": ["test", "flows", "verification"],
+        "expanded": false
+      },
+      {
+        "id": "performance",
+        "title": "Performance & Reliability",
+        "description": "Performance metrics and quality indicators",
+        "icon": "performance",
+        "order": 9,
+        "advanced": true,
+        "fields": ["performance", "reliability", "certification"],
+        "expanded": false
+      },
+      {
+        "id": "commercial",
+        "title": "Commercial & Licensing",
+        "description": "Commercial information and licensing details",
+        "icon": "commercial",
+        "order": 10,
+        "advanced": true,
+        "fields": ["commercial", "delivery", "toolRequirements"],
+        "expanded": false
+      },
+      {
+        "id": "community",
+        "title": "Community & Support",
+        "description": "Community engagement and support resources",
+        "icon": "community",
+        "order": 11,
+        "advanced": true,
+        "fields": ["community", "demo", "maintainers"],
+        "expanded": false
+      },
+      {
+        "id": "compliance",
+        "title": "Compliance & Security",
+        "description": "Security, compliance, and certification information",
+        "icon": "security",
+        "order": 12,
+        "advanced": true,
+        "fields": ["compliance", "trust_profile"],
+        "expanded": false
+      },
+      {
+        "id": "packaging",
+        "title": "Packaging & Standards",
+        "description": "Packaging formats and industry standards",
+        "icon": "package",
+        "order": 13,
+        "advanced": true,
+        "fields": ["packaging"],
+        "expanded": false
+      },
+      {
+        "id": "ai_copilot",
+        "title": "AI Copilot",
+        "description": "AI integration and automation support",
+        "icon": "ai",
+        "order": 14,
+        "advanced": true,
+        "fields": ["ai_copilot", "automation"],
+        "expanded": false
+      },
+      {
+        "id": "analytics",
+        "title": "Analytics & Roadmap",
+        "description": "Usage analytics and future planning",
+        "icon": "analytics",
+        "order": 15,
+        "advanced": true,
+        "fields": ["usage_analytics", "roadmap"],
+        "expanded": false
+      },
+      {
+        "id": "metadata",
+        "title": "Metadata & Templates",
+        "description": "Template information and metadata",
+        "icon": "template",
+        "order": 16,
+        "advanced": true,
+        "fields": ["template", "meta", "source"],
+        "expanded": false
+      },
+      {
+        "id": "categorization",
+        "title": "Categorization & Discovery",
+        "description": "Tags, categories, and search optimization",
+        "icon": "tags",
+        "order": 17,
+        "fields": ["tags", "keywords", "categories"],
+        "expanded": false
+      },
+      {
+        "id": "registry",
+        "title": "Registry Metadata",
+        "description": "Registry status, compliance, and approval information for catalog inclusion.",
+        "icon": "registry",
+        "order": 18.5,
+        "advanced": true,
+        "fields": ["registry"],
+        "expanded": false
+      },
+      {
+        "id": "documentation",
+        "title": "Documentation",
+        "description": "Documentation links and resources",
+        "icon": "docs",
+        "order": 18,
+        "fields": ["documentation"],
+        "expanded": false
+      },
+      {
+        "id": "branding",
+        "title": "Branding",
+        "description": "Branding and attribution information",
+        "icon": "brand",
+        "order": 19,
+        "advanced": true,
+        "fields": ["branding"],
+        "expanded": false
+      },
+      {
+        "id": "compatibility",
+        "title": "Compatibility",
+        "description": "Version compatibility and migration information",
+        "icon": "compatibility",
+        "order": 20,
+        "advanced": true,
+        "fields": ["compatibility"],
+        "expanded": false
+      },
+      {
+        "id": "localization",
+        "title": "Localization",
+        "description": "Multi-language support and localization",
+        "icon": "language",
+        "order": 21,
+        "advanced": true,
+        "fields": ["localization"],
+        "expanded": false
+      }
+    ],
+    "field_configs": {
+      "name": {
+        "widget": "text",
+        "placeholder": "namespace/ip-name",
+        "help": "Unique package name in namespace/ip-name format",
+        "validation": {
+          "pattern": "^[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+$",
+          "minLength": 3
+        },
+        "order": 1,
+        "width": "full"
+      },
+      "x-version": {
+        "widget": "text",
+        "placeholder": "1.0.0",
+        "help": "Schema version for tracking purposes (major.minor.patch)",
+        "validation": {
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "order": 2,
+        "width": "third"
+      },
+      "description": {
+        "widget": "textarea",
+        "placeholder": "Brief description of what this IP does...",
+        "help": "Clear, concise description of the IP's functionality",
+        "order": 3,
+        "width": "full"
+      },
+      "license": {
+        "widget": "select",
+        "help": "SPDX-compatible license identifier",
+        "options": [
+          {"label": "Apache 2.0", "value": "Apache-2.0"},
+          {"label": "MIT", "value": "MIT"},
+          {"label": "GPL-3.0", "value": "GPL-3.0"},
+          {"label": "CERN-OHL-S", "value": "CERN-OHL-S"},
+          {"label": "CERN-OHL-P", "value": "CERN-OHL-P"},
+          {"label": "CERN-OHL-W", "value": "CERN-OHL-W"},
+          {"label": "BSD-3-Clause", "value": "BSD-3-Clause"},
+          {"label": "LGPL-2.1", "value": "LGPL-2.1"},
+          {"label": "Proprietary", "value": "Proprietary"},
+          {"label": "Other", "value": "other"}
+        ],
+        "order": 4,
+        "width": "third"
+      },
+      "maturity": {
+        "widget": "select",
+        "help": "Current development stage",
+        "options": [
+          {"label": "Prototype", "value": "prototype", "description": "Early development, not ready for use"},
+          {"label": "Alpha", "value": "alpha", "description": "Internal testing, limited functionality"},
+          {"label": "Beta", "value": "beta", "description": "Public testing, API may change"},
+          {"label": "Production", "value": "production", "description": "Stable, ready for production use"},
+          {"label": "Deprecated", "value": "deprecated", "description": "No longer maintained"}
+        ],
+        "order": 5,
+        "width": "third"
+      },
+      "target": {
+        "widget": "multiselect",
+        "help": "Target platforms this IP supports",
+        "options": [
+          {"label": "ASIC", "value": "asic"},
+          {"label": "FPGA", "value": "fpga"}
+        ],
+        "order": 1,
+        "width": "half"
+      },
+      "design_type": {
+        "widget": "multiselect",
+        "help": "Design types this IP supports",
+        "options": [
+          {"label": "Digital", "value": "digital"},
+          {"label": "Analog", "value": "analog"},
+          {"label": "Mixed-Signal", "value": "mixed-signal"},
+          {"label": "Hard IP", "value": "hard-ip"}
+        ],
+        "order": 2,
+        "width": "half"
+      },
+      "interfaces": {
+        "widget": "array",
+        "help": "External interfaces this IP exposes",
+        "order": 1,
+        "width": "full"
+      },
+      "asic": {
+        "widget": "object",
+        "help": "ASIC-specific configuration",
+        "order": 1,
+        "width": "full"
+      },
+      "fpga": {
+        "widget": "object",
+        "help": "FPGA-specific configuration",
+        "order": 1,
+        "width": "full"
+      },
+      "parameters": {
+        "widget": "array",
+        "help": "Configurable parameters for the IP",
+        "order": 1,
+        "width": "full"
+      },
+      "dependencies": {
+        "widget": "array",
+        "help": "Other IP blocks or libraries required for this IP",
+        "order": 1,
+        "width": "full",
+        "itemConfig": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "widget": "text",
+              "placeholder": "namespace/ip-name",
+              "help": "Name of the dependency"
+            },
+            "version": {
+              "widget": "text",
+              "placeholder": "^1.0.0",
+              "help": "Semantic version or version range"
+            },
+            "type": {
+              "widget": "select",
+              "options": [
+                {"label": "IP Block", "value": "ip"},
+                {"label": "Library", "value": "library"},
+                {"label": "Tool", "value": "tool"}
+              ]
+            },
+            "license": {
+              "widget": "select",
+              "options": [
+                {"label": "Apache 2.0", "value": "Apache-2.0"},
+                {"label": "MIT", "value": "MIT"},
+                {"label": "GPL-3.0", "value": "GPL-3.0"},
+                {"label": "CERN-OHL-S", "value": "CERN-OHL-S"},
+                {"label": "CERN-OHL-P", "value": "CERN-OHL-P"},
+                {"label": "CERN-OHL-W", "value": "CERN-OHL-W"},
+                {"label": "BSD-3-Clause", "value": "BSD-3-Clause"},
+                {"label": "LGPL-2.1", "value": "LGPL-2.1"},
+                {"label": "Other", "value": "other"}
+              ]
+            },
+            "source": {
+              "widget": "object",
+              "properties": {
+                "type": {
+                  "widget": "select",
+                  "options": [
+                    {"label": "Git", "value": "git"},
+                    {"label": "Archive", "value": "archive"},
+                    {"label": "Registry", "value": "registry"}
+                  ]
+                },
+                "url": {
+                  "widget": "url",
+                  "placeholder": "https://..."
+                },
+                "commit": {
+                  "widget": "text",
+                  "placeholder": "a1b2c3d"
+                },
+                "hash": {
+                  "widget": "text",
+                  "placeholder": "sha256:..."
+                }
+              }
+            },
+            "attribution": {
+              "widget": "textarea",
+              "placeholder": "e.g. 'Portions Copyright 2023 FOSSi Foundation'",
+              "help": "Required attribution text for OSS licenses",
+              "advanced": true
+            },
+            "autoFetch": {
+              "widget": "checkbox",
+              "help": "Auto-download during code generation"
+            },
+            "codegen_hint": {
+              "widget": "select",
+              "options": [
+                {"label": "Downloadable", "value": "downloadable"},
+                {"label": "Non-downloadable", "value": "non-downloadable"},
+                {"label": "Requires Approval", "value": "requires-approval"}
+              ],
+              "help": "Hint to downstream tools about dependency handling",
+              "advanced": true
+            }
+          }
+        }
+      },
+      "test": {
+        "widget": "object",
+        "help": "Testing and verification status",
+        "order": 1,
+        "width": "full"
+      },
+      "flows": {
+        "widget": "object",
+        "help": "Design flow verification status",
+        "order": 2,
+        "width": "full"
+      },
+      "performance": {
+        "widget": "object",
+        "help": "Performance characteristics and benchmarks",
+        "order": 1,
+        "width": "full",
+        "advanced": true
+      },
+      "reliability": {
+        "widget": "object",
+        "help": "Reliability and quality metrics",
+        "order": 2,
+        "width": "full",
+        "advanced": true
+      },
+      "certification": {
+        "widget": "object",
+        "help": "Industry certifications and standards",
+        "order": 3,
+        "width": "full",
+        "advanced": true
+      },
+      "commercial": {
+        "widget": "object",
+        "help": "Commercial and licensing information",
+        "order": 1,
+        "width": "full",
+        "advanced": true
+      },
+      "delivery": {
+        "widget": "object",
+        "help": "IP delivery and access information",
+        "order": 2,
+        "width": "full",
+        "advanced": true
+      },
+      "toolRequirements": {
+        "widget": "object",
+        "help": "Required tools for using this IP",
+        "order": 3,
+        "width": "full",
+        "advanced": true,
+        "properties": {
+          "simulation": {
+            "widget": "text",
+            "placeholder": "verilator",
+            "help": "Required simulation tool"
+          },
+          "synthesis": {
+            "widget": "text",
+            "placeholder": "yosys",
+            "help": "Required synthesis tool"
+          },
+          "physical": {
+            "widget": "text",
+            "placeholder": "openlane",
+            "help": "Required physical design tool"
+          },
+          "layout": {
+            "widget": "text",
+            "placeholder": "magic",
+            "help": "Required layout tool"
+          },
+          "verification": {
+            "widget": "text",
+            "placeholder": "calibre",
+            "help": "Required verification tool"
+          },
+          "version_notes": {
+            "widget": "object",
+            "help": "Optional version requirements and compatibility notes for tools. Add version notes for tools that need specific versions.",
+            "advanced": true
+          },
+          "notes": {
+            "widget": "textarea",
+            "placeholder": "Additional notes about tool requirements...",
+            "help": "General notes about tool requirements"
+          }
+        }
+      },
+      "community": {
+        "widget": "object",
+        "help": "Community engagement and support",
+        "order": 1,
+        "width": "full",
+        "advanced": true
+      },
+      "demo": {
+        "widget": "object",
+        "help": "Demo and evaluation resources",
+        "order": 2,
+        "width": "full",
+        "advanced": true
+      },
+      "maintainers": {
+        "widget": "array",
+        "help": "IP maintainers and contributors",
+        "order": 3,
+        "width": "full",
+        "advanced": true
+      },
+      "compliance": {
+        "widget": "object",
+        "help": "Security and compliance information",
+        "order": 1,
+        "width": "full",
+        "advanced": true
+      },
+      "trust_profile": {
+        "widget": "object",
+        "help": "Security and trust indicators",
+        "order": 2,
+        "width": "full",
+        "advanced": true
+      },
+      "packaging": {
+        "widget": "object",
+        "help": "Packaging formats and standards",
+        "order": 1,
+        "width": "full",
+        "advanced": true
+      },
+      "ai_copilot": {
+        "widget": "object",
+        "help": "AI copilot integration support",
+        "order": 1,
+        "width": "full",
+        "advanced": true
+      },
+      "automation": {
+        "widget": "object",
+        "help": "Automation requirements and capabilities",
+        "order": 2,
+        "width": "full",
+        "advanced": true
+      },
+      "usage_analytics": {
+        "widget": "object",
+        "help": "Usage statistics and analytics",
+        "order": 1,
+        "width": "full",
+        "advanced": true,
+        "readonly": true,
+        "privacy_notice": {
+          "widget": "textarea",
+          "readonly": true,
+          "default": "We only track aggregated, anonymized usage of IP blocks. No personal or design data is collected.",
+          "help": "Privacy notice for analytics collection"
+        }
+      },
+      "roadmap": {
+        "widget": "object",
+        "help": "Future development plans",
+        "order": 2,
+        "width": "full",
+        "advanced": true
+      },
+      "template": {
+        "widget": "text",
+        "placeholder": "vyges-ip-template@1.0.0",
+        "help": "Template used to generate this IP",
+        "order": 1,
+        "width": "full",
+        "advanced": true
+      },
+      "meta": {
+        "widget": "object",
+        "help": "Additional metadata for extensibility",
+        "order": 2,
+        "width": "full",
+        "advanced": true
+      },
+      "source": {
+        "widget": "object",
+        "help": "Source code location and versioning",
+        "order": 3,
+        "width": "full",
+        "advanced": true
+      },
+      "tags": {
+        "widget": "array",
+        "help": "Searchable tags for discovery",
+        "placeholder": "Add tags...",
+        "order": 1,
+        "width": "full"
+      },
+      "keywords": {
+        "widget": "array",
+        "help": "Additional keywords for search",
+        "placeholder": "Add keywords...",
+        "order": 2,
+        "width": "full"
+      },
+      "categories": {
+        "widget": "multiselect",
+        "help": "Functional categories",
+        "options": [
+          {"label": "Communication", "value": "communication"},
+          {"label": "Memory", "value": "memory"},
+          {"label": "Processing", "value": "processing"},
+          {"label": "Interface", "value": "interface"},
+          {"label": "Security", "value": "security"},
+          {"label": "Analog", "value": "analog"},
+          {"label": "Digital", "value": "digital"},
+          {"label": "Mixed-Signal", "value": "mixed-signal"},
+          {"label": "Peripheral", "value": "peripheral"},
+          {"label": "Accelerator", "value": "accelerator"},
+          {"label": "Controller", "value": "controller"},
+          {"label": "Bridge", "value": "bridge"},
+          {"label": "Converter", "value": "converter"},
+          {"label": "Clock", "value": "clock"},
+          {"label": "Power", "value": "power"},
+          {"label": "Sensor", "value": "sensor"},
+          {"label": "Actuator", "value": "actuator"},
+          {"label": "Debug", "value": "debug"},
+          {"label": "Test", "value": "test"}
+        ],
+        "order": 3,
+        "width": "full"
+      },
+      "documentation": {
+        "widget": "object",
+        "help": "Documentation links and resources",
+        "order": 1,
+        "width": "full"
+      },
+      "branding": {
+        "widget": "object",
+        "help": "Branding and attribution information",
+        "order": 1,
+        "width": "full",
+        "advanced": true
+      },
+      "compatibility": {
+        "widget": "object",
+        "help": "Version compatibility information",
+        "order": 1,
+        "width": "full",
+        "advanced": true
+      },
+      "localization": {
+        "widget": "object",
+        "help": "Multi-language support",
+        "order": 1,
+        "width": "full",
+        "advanced": true
+      },
+      "verification": {
+        "widget": "object",
+        "help": "Legacy verification metadata",
+        "order": 3,
+        "width": "full",
+        "advanced": true,
+        "hidden": true
+      }
+    },
+    "templates": {
+      "digital_ip": {
+        "name": "Digital IP",
+        "description": "Standard digital IP block with RTL",
+        "icon": "digital",
+        "defaults": {
+          "design_type": ["digital"],
+          "maturity": "production",
+          "packaging": {"format": "verilog"},
+          "automation": {"automation_level": "enhanced"},
+          "defaultCategory": "interface",
+          "suggestedTags": ["digital", "rtl", "synthesis"]
+        },
+        "required_sections": ["basic_info", "target_platforms", "interfaces", "asic_config", "fpga_config", "parameters", "testing"],
+        "optional_sections": ["dependencies", "performance", "community", "compliance"]
+      },
+      "analog_ip": {
+        "name": "Analog IP",
+        "description": "Analog or mixed-signal IP block",
+        "icon": "analog",
+        "defaults": {
+          "design_type": ["analog"],
+          "target": ["asic"],
+          "maturity": "production",
+          "packaging": {"format": "spice"},
+          "defaultCategory": "analog",
+          "suggestedTags": ["analog", "spice", "layout"]
+        },
+        "required_sections": ["basic_info", "target_platforms", "interfaces", "asic_config", "testing"],
+        "optional_sections": ["performance", "reliability", "certification", "commercial"]
+      },
+      "fpga_ip": {
+        "name": "FPGA IP",
+        "description": "FPGA-specific IP block",
+        "icon": "fpga",
+        "defaults": {
+          "target": ["fpga"],
+          "design_type": ["digital"],
+          "maturity": "production",
+          "defaultCategory": "interface",
+          "suggestedTags": ["fpga", "digital", "synthesis"]
+        },
+        "required_sections": ["basic_info", "target_platforms", "interfaces", "fpga_config", "parameters", "testing"],
+        "optional_sections": ["dependencies", "performance", "community"]
+      },
+      "proprietary_ip": {
+        "name": "Proprietary IP",
+        "description": "Commercial/proprietary IP block",
+        "icon": "commercial",
+        "defaults": {
+          "license": "Proprietary",
+          "maturity": "production",
+          "delivery": {"encryptedRTL": true},
+          "automation": {"automation_level": "basic"},
+          "defaultCategory": "interface",
+          "suggestedTags": ["proprietary", "encrypted", "commercial"]
+        },
+        "required_sections": ["basic_info", "target_platforms", "interfaces", "commercial", "delivery"],
+        "optional_sections": ["performance", "compliance", "certification"]
+      },
+      "prototype_ip": {
+        "name": "Prototype IP",
+        "description": "Early prototype or experimental IP",
+        "icon": "prototype",
+        "defaults": {
+          "maturity": "prototype",
+          "automation": {"automation_level": "basic"},
+          "defaultCategory": "interface",
+          "suggestedTags": ["prototype", "experimental", "development"]
+        },
+        "required_sections": ["basic_info", "target_platforms", "interfaces"],
+        "optional_sections": ["asic_config", "fpga_config", "parameters", "testing"]
+      }
+    }
+  }
+} 
