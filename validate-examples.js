@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Ajv = require('ajv');
+const add2020 = require('ajv/dist/2020').default;
 
 const schemaPath = path.join(__dirname, 'schema/v1/vyges-metadata.schema.json');
 const examplesDir = path.join(__dirname, 'examples');
@@ -11,6 +12,9 @@ const schemaOnly = args.includes('--schema-only');
 
 const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf-8'));
 const ajv = new Ajv({ strict: false, allErrors: true, schemaId: '$id', code: { source: true }, $data: true });
+
+// Add draft 2020-12 meta-schema support
+add2020(ajv);
 
 // Validate schema itself
 try {
