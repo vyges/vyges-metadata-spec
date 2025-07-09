@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { default: Ajv2020 } = require('ajv/dist/2020');
+const Ajv = require('ajv');
 
 const schemaPath = path.join(__dirname, 'schema/v1/vyges-metadata.schema.json');
 const examplesDir = path.join(__dirname, 'examples');
@@ -10,7 +10,7 @@ const args = process.argv.slice(2);
 const schemaOnly = args.includes('--schema-only');
 
 const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf-8'));
-const ajv = new Ajv2020({ strict: false, allErrors: true, schemaId: '$id' });
+const ajv = new Ajv({ strict: false, allErrors: true, schemaId: '$id', code: { source: true }, $data: true });
 
 // Validate schema itself
 try {
