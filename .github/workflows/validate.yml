@@ -3,8 +3,18 @@ name: Validate Schema and Examples
 on:
   push:
     branches: [ main, develop ]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - 'NOTICE'
+      - 'LICENSE'
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - 'NOTICE'
+      - 'LICENSE'
 
 jobs:
   validate:

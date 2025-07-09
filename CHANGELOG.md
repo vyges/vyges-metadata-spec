@@ -12,10 +12,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive examples directory
 - Contributing guidelines
 - Apache 2.0 license
+- NOTICE file for proper attribution
+- Validation script with AJV v8+ support
+- CI/CD pipeline with schema and example validation
 
 ### Changed
 - Updated contact information to point to GitHub issues
 - Fixed documentation URLs to point to GitHub repository
+- Improved schema validation with draft 2020-12 JSON Schema support
+- Enhanced GitHub Actions workflow with proper dependency installation
+- Fixed jq syntax for required field validation
+- Optimized CI workflow to skip validation for markdown-only changes
+- Updated README with correct Vyges URL and removed non-public tools references
+
+### Fixed
+- Schema validation errors with AJV v8+ compatibility
+- GitHub Actions workflow failures due to missing dependencies
+- Required field validation in CI pipeline
+- Documentation links and project references
 
 ## [1.0.0] - 2025-01-15
 
