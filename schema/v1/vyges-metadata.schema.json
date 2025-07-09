@@ -130,7 +130,7 @@
         },
         {
           "automation_level": "basic",
-          "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "delivery", "toolRequirements"],
+          "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "fpga", "test", "flows"],
           "recommended_for_automation": ["commercial", "compliance"],
           "blocking_issues": ["encrypted_ip", "requires_nda"]
         }
@@ -2401,6 +2401,7 @@
   "examples": [
     {
       "name": "vyges/spi-controller",
+      "x-version": "1.0.0",
       "version": "1.0.0",
       "template": "vyges-ip-template@1.0.0",
       "description": "SPI master controller with configurable clock divider",
@@ -2412,6 +2413,14 @@
         "automation_level": "enhanced",
         "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "fpga", "test", "flows"],
         "recommended_for_automation": ["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "community"]
+      },
+      "toolRequirements": {
+        "simulation": "verilator",
+        "synthesis": "yosys",
+        "physical": "openroad",
+        "layout": "magic",
+        "verification": "netgen",
+        "notes": "Open-source toolchain supported"
       },
       "created": "2024-01-15T10:30:00Z",
       "updated": "2024-01-20T14:45:00Z",
@@ -2536,6 +2545,7 @@
     },
     {
       "name": "acme/pcie-phy-encrypted",
+      "x-version": "1.0.0",
       "version": "3.2.1",
       "template": "vyges-ip-template@1.0.0",
       "description": "High-speed PCIe Gen4 PHY with encrypted RTL payload",
@@ -2543,10 +2553,46 @@
       "maturity": "production",
       "target": ["asic"],
       "design_type": ["mixed-signal"],
+      "interfaces": [
+        {
+          "type": "bus",
+          "direction": "input",
+          "protocol": "PCIe",
+          "width": 64,
+          "signals": [
+            {
+              "name": "pcie_clk",
+              "direction": "input",
+              "type": "clock",
+              "description": "PCIe reference clock"
+            },
+            {
+              "name": "pcie_rst_n",
+              "direction": "input",
+              "type": "reset",
+              "active_level": "low",
+              "description": "PCIe reset signal"
+            },
+            {
+              "name": "tx_data",
+              "direction": "output",
+              "type": "data",
+              "width": 64,
+              "description": "Transmit data"
+            },
+            {
+              "name": "rx_data",
+              "direction": "input",
+              "type": "data",
+              "width": 64,
+              "description": "Receive data"
+            }
+          ]
+        }
+      ],
       "automation": {
         "automation_level": "basic",
-        "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "delivery", "toolRequirements"],
-        "recommended_for_automation": ["commercial", "compliance"],
+        "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "fpga", "test", "flows"],
         "blocking_issues": ["encrypted_ip", "requires_nda"]
       },
       "asic": {
@@ -2581,7 +2627,7 @@
       },
       "commercial": {
         "contact_email": "licensing@acme.com",
-        "pricing_model": "per-project",
+        "pricing_model": "one-time",
         "available_regions": ["US", "EU", "APAC"]
       },
       "compliance": {
