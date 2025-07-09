@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const Ajv = require('ajv');
-const add2020 = require('ajv/dist/2020').default;
 
 const schemaPath = path.join(__dirname, 'schema/v1/vyges-metadata.schema.json');
 const examplesDir = path.join(__dirname, 'examples');
@@ -11,10 +10,35 @@ const args = process.argv.slice(2);
 const schemaOnly = args.includes('--schema-only');
 
 const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf-8'));
-const ajv = new Ajv({ strict: false, allErrors: true, schemaId: '$id', code: { source: true }, $data: true });
+const ajv = new Ajv({ 
+  strict: false, 
+  allErrors: true, 
+  schemaId: '$id',
+  code: { source: true }, 
+  $data: true,
+  // Enable draft 2020-12 features
+  allowUnionTypes: true,
+  allowMatchingProperties: true,
+  allowMultipleOf: true
+});
 
-// Add draft 2020-12 meta-schema support
-add2020(ajv);
+// Add the draft 2020-12 meta-schema explicitly
+const metaSchema = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "$id": { "type": "string" },
+    "$ref": { "type": "string" },
+    "$defs": { "type": "object" },
+    "type": { "type": "string" },
+    "properties": { "type": "object" },
+    "required": { "type": "array", "items": { "type": "string" } },
+    "additionalProperties": { "type": "boolean" }
+  }
+};
+ajv.addMetaSchema(metaSchema);
 
 // Validate schema itself
 try {
