@@ -47,7 +47,7 @@ jobs:
         echo "Checking required fields in examples..."
         for file in examples/*.json; do
           echo "Checking $file..."
-          jq -e '.name and .x-version and .license and .interfaces and .template and .target and .design_type and .maturity' "$file" > /dev/null || {
+          jq -e '.name and .["x-version"] and .license and .interfaces and .template and .target and .design_type and .maturity' "$file" > /dev/null || {
             echo "ERROR: $file is missing required fields"
             exit 1
           }
