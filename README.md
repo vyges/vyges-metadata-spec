@@ -163,8 +163,7 @@ This specification is licensed under the Apache License 2.0. See [LICENSE](LICEN
 
 ## Related Projects
 
-- [Vyges Website](https://github.com/vyges/vyges_website) - Official website and documentation
-- [Vyges Tools](https://github.com/vyges/vyges-tools) - Validation and integration tools
+- [Vyges Website](https://vyges.com/) - Official website and documentation
 
 ---
 
