@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - NOTICE file for proper attribution
 - Validation script with AJV v8+ support
 - CI/CD pipeline with schema and example validation
+- **Chiplet Integration Support**: Comprehensive chiplet metadata fields for multi-die system design
+  - `chiplet_ready` flag and integration level specification
+  - Die-to-die interface protocols (UCIe, BoW, AIB, EMIB)
+  - Interposer constraints (technology, routing layers, pitch, spacing)
+  - Bump constraints (pitch, size, array configuration, power/signal counts)
+  - Thermal constraints (power limits, temperature, cooling requirements)
+  - Multi-die testing (test access methods, coverage requirements, test vectors)
+  - Signal conformance validation (protocol compliance, verification tools)
+  - Power domain configuration (voltage, isolation, retention, current limits)
+  - Lifecycle and supply chain metadata (origin, trusted fabricator, certifications)
+- **Chiplet Interface Type**: New interface type for chiplet-to-chiplet communication
+- **CHIPLET_INTEGRATION.md**: Comprehensive documentation for chiplet metadata usage
 
 ### Changed
 - Updated contact information to point to GitHub issues
@@ -31,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Required field validation in CI pipeline
 - Documentation links and project references
 
-## [1.0.0] - 2025-01-15
+## [1.0.0] - 2025-06-15
 
 ### Added
 - Initial public release of Vyges Metadata Specification
@@ -62,4 +74,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
-- **1.0.0** (2025-01-15): Initial public release with comprehensive schema definition 
+- **1.0.0** (2025-06-15): Initial public release with comprehensive schema definition 

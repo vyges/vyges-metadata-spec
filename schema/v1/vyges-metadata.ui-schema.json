@@ -443,6 +443,21 @@
         "advanced": true,
         "fields": ["localization"],
         "expanded": false
+      },
+      {
+        "id": "chiplet",
+        "title": "Chiplet Integration",
+        "description": "Chiplet integration and multi-die system support",
+        "icon": "chiplet",
+        "order": 22,
+        "advanced": true,
+        "fields": ["chiplet"],
+        "expanded": false,
+        "conditional": {
+          "field": "chiplet.chiplet_ready",
+          "value": true,
+          "operator": "equals"
+        }
       }
     ],
     "field_configs": {
@@ -897,6 +912,428 @@
         "width": "full",
         "advanced": true
       },
+      "chiplet": {
+        "widget": "object",
+        "help": "Chiplet integration and multi-die system configuration",
+        "order": 1,
+        "width": "full",
+        "advanced": true,
+        "properties": {
+          "chiplet_ready": {
+            "widget": "checkbox",
+            "help": "Whether this IP is designed for chiplet integration",
+            "default": false,
+            "order": 1,
+            "width": "full"
+          },
+          "integration_level": {
+            "widget": "select",
+            "help": "Integration abstraction level for chiplet design",
+            "options": [
+              {"label": "RTL", "value": "rtl", "description": "RTL-level integration"},
+              {"label": "Netlist", "value": "netlist", "description": "Netlist-level integration"},
+              {"label": "Hard IP", "value": "hard_ip", "description": "Hard IP integration"}
+            ],
+            "order": 2,
+            "width": "third",
+            "dependencies": [
+              {
+                "field": "chiplet.chiplet_ready",
+                "value": true,
+                "operator": "equals"
+              }
+            ]
+          },
+          "die_to_die_interfaces": {
+            "widget": "multiselect",
+            "help": "Supported die-to-die interface protocols",
+            "options": [
+              {"label": "UCIe", "value": "ucie", "description": "Universal Chiplet Interconnect Express"},
+              {"label": "BoW", "value": "bow", "description": "Bunch of Wires (Open Compute Project)"},
+              {"label": "AIB", "value": "aib", "description": "Advanced Interface Bus (Intel)"},
+              {"label": "EMIB", "value": "emib", "description": "Embedded Multi-die Interconnect Bridge (Intel)"},
+              {"label": "Custom", "value": "custom", "description": "Custom interface protocol"}
+            ],
+            "order": 3,
+            "width": "full",
+            "dependencies": [
+              {
+                "field": "chiplet.chiplet_ready",
+                "value": true,
+                "operator": "equals"
+              }
+            ]
+          },
+          "packaging_considerations": {
+            "widget": "textarea",
+            "placeholder": "e.g., Requires 2.5D interposer with 0.8mm bump pitch",
+            "help": "Notes about physical packaging requirements",
+            "order": 4,
+            "width": "full",
+            "dependencies": [
+              {
+                "field": "chiplet.chiplet_ready",
+                "value": true,
+                "operator": "equals"
+              }
+            ]
+          },
+          "interposer_constraints": {
+            "widget": "object",
+            "help": "Interposer design constraints",
+            "order": 5,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "chiplet.chiplet_ready",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "technology": {
+                "widget": "select",
+                "help": "Interposer technology type",
+                "options": [
+                  {"label": "Silicon", "value": "silicon", "description": "Highest density"},
+                  {"label": "Organic", "value": "organic", "description": "Lower cost"},
+                  {"label": "Glass", "value": "glass", "description": "Emerging technology"}
+                ]
+              },
+              "routing_layers": {
+                "widget": "number",
+                "help": "Number of routing layers required",
+                "validation": {"min": 1}
+              },
+              "minimum_pitch": {
+                "widget": "number",
+                "help": "Minimum routing pitch in micrometers",
+                "validation": {"min": 0.1}
+              },
+              "die_spacing": {
+                "widget": "number",
+                "help": "Minimum spacing between dies in millimeters",
+                "validation": {"min": 0.01}
+              }
+            }
+          },
+          "bump_constraints": {
+            "widget": "object",
+            "help": "Bump map and connectivity constraints",
+            "order": 6,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "chiplet.chiplet_ready",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "pitch": {
+                "widget": "number",
+                "help": "Bump pitch in micrometers",
+                "validation": {"min": 0.1}
+              },
+              "size": {
+                "widget": "number",
+                "help": "Bump size in micrometers",
+                "validation": {"min": 0.01}
+              },
+              "array": {
+                "widget": "select",
+                "help": "Bump array configuration",
+                "options": [
+                  {"label": "Full Area", "value": "full", "description": "Full area array"},
+                  {"label": "Peripheral", "value": "peripheral", "description": "Peripheral array only"},
+                  {"label": "Area", "value": "area", "description": "Area array (partial coverage)"}
+                ]
+              },
+              "power_bumps": {
+                "widget": "number",
+                "help": "Number of power/ground bumps required",
+                "validation": {"min": 1}
+              },
+              "signal_bumps": {
+                "widget": "number",
+                "help": "Number of signal bumps required",
+                "validation": {"min": 1}
+              }
+            }
+          },
+          "thermal_constraints": {
+            "widget": "object",
+            "help": "Thermal analysis constraints",
+            "order": 7,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "chiplet.chiplet_ready",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "max_power_per_die": {
+                "widget": "number",
+                "help": "Maximum power per die in watts",
+                "validation": {"min": 0.1}
+              },
+              "junction_temperature": {
+                "widget": "number",
+                "help": "Maximum junction temperature in Celsius",
+                "validation": {"min": 25, "max": 200}
+              },
+              "thermal_resistance": {
+                "widget": "number",
+                "help": "Thermal resistance in degrees C per watt",
+                "validation": {"min": 1}
+              },
+              "cooling_requirements": {
+                "widget": "select",
+                "help": "Cooling requirements description",
+                "options": [
+                  {"label": "Passive cooling sufficient", "value": "Passive cooling sufficient"},
+                  {"label": "Active cooling required", "value": "Active cooling required"},
+                  {"label": "Liquid cooling recommended", "value": "Liquid cooling recommended"}
+                ]
+              }
+            }
+          },
+          "multi_die_testing": {
+            "widget": "object",
+            "help": "Multi-die testing and validation requirements",
+            "order": 8,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "chiplet.chiplet_ready",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "test_access": {
+                "widget": "select",
+                "help": "Test access method",
+                "options": [
+                  {"label": "Boundary Scan", "value": "boundary_scan", "description": "IEEE 1149.1 boundary scan"},
+                  {"label": "Internal Access", "value": "internal_access", "description": "Internal test access"},
+                  {"label": "Functional", "value": "functional", "description": "Functional testing only"}
+                ]
+              },
+              "test_coverage": {
+                "widget": "object",
+                "help": "Test coverage requirements",
+                "properties": {
+                  "interconnect": {
+                    "widget": "number",
+                    "help": "Interconnect test coverage percentage",
+                    "validation": {"min": 0, "max": 100}
+                  },
+                  "functionality": {
+                    "widget": "number",
+                    "help": "Functional test coverage percentage",
+                    "validation": {"min": 0, "max": 100}
+                  }
+                }
+              },
+              "test_vectors": {
+                "widget": "array",
+                "help": "List of test vector files or formats",
+                "placeholder": "Add test vector file..."
+              }
+            }
+          },
+          "signal_conformance": {
+            "widget": "object",
+            "help": "Signal and protocol conformance validation",
+            "order": 9,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "chiplet.chiplet_ready",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "protocol_reference": {
+                "widget": "text",
+                "placeholder": "e.g., UCIe 1.1, BoW 1.0",
+                "help": "Protocol specification version and reference"
+              },
+              "verified_against": {
+                "widget": "checkbox",
+                "help": "Whether interface was verified against protocol test suite"
+              },
+              "test_suite": {
+                "widget": "text",
+                "placeholder": "e.g., UCIe Compliance Test Suite v1.1",
+                "help": "Name and version of test suite used for verification"
+              },
+              "verification_date": {
+                "widget": "date",
+                "help": "Date when protocol verification was completed"
+              },
+              "verification_tool": {
+                "widget": "text",
+                "placeholder": "e.g., UCIe Compliance Checker",
+                "help": "Tool used for protocol verification"
+              },
+              "compliance_level": {
+                "widget": "select",
+                "help": "Level of protocol compliance achieved",
+                "options": [
+                  {"label": "Basic", "value": "basic", "description": "Basic compliance"},
+                  {"label": "Full", "value": "full", "description": "Full compliance"},
+                  {"label": "Extended", "value": "extended", "description": "Extended compliance features"}
+                ]
+              }
+            }
+          },
+          "power_domains": {
+            "widget": "array",
+            "help": "Power domain configuration for SoC/Chiplet partitioning",
+            "order": 10,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "chiplet.chiplet_ready",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "itemConfig": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "widget": "text",
+                  "placeholder": "e.g., core_pd, io_pd",
+                  "help": "Power domain name"
+                },
+                "voltage": {
+                  "widget": "number",
+                  "help": "Operating voltage in volts",
+                  "validation": {"min": 0.5, "max": 5.0}
+                },
+                "type": {
+                  "widget": "select",
+                  "help": "Type of circuitry in this power domain",
+                  "options": [
+                    {"label": "Logic", "value": "logic", "description": "Digital logic"},
+                    {"label": "Memory", "value": "memory", "description": "Memory circuits"},
+                    {"label": "Analog", "value": "analog", "description": "Analog circuits"},
+                    {"label": "I/O", "value": "io", "description": "I/O circuits"},
+                    {"label": "Mixed", "value": "mixed", "description": "Mixed-signal circuits"}
+                  ]
+                },
+                "isolation_required": {
+                  "widget": "checkbox",
+                  "help": "Whether power isolation is required"
+                },
+                "retention_required": {
+                  "widget": "checkbox",
+                  "help": "Whether state retention is required during power down"
+                },
+                "max_current_ma": {
+                  "widget": "number",
+                  "help": "Maximum current draw in milliamps",
+                  "validation": {"min": 1}
+                },
+                "description": {
+                  "widget": "textarea",
+                  "placeholder": "e.g., Core logic domain",
+                  "help": "Description of power domain purpose"
+                }
+              }
+            }
+          },
+          "lifecycle": {
+            "widget": "object",
+            "help": "Lifecycle and supply chain metadata for chiplet integration",
+            "order": 11,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "chiplet.chiplet_ready",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "origin": {
+                "widget": "text",
+                "placeholder": "e.g., vyges/partner-x, internal",
+                "help": "Origin of the chiplet"
+              },
+              "trusted_fabricator": {
+                "widget": "checkbox",
+                "help": "Whether this chiplet comes from a trusted fabricator"
+              },
+              "version_control": {
+                "widget": "select",
+                "help": "Version control system used",
+                "options": [
+                  {"label": "Git", "value": "git"},
+                  {"label": "Subversion", "value": "svn"},
+                  {"label": "Perforce", "value": "perforce"},
+                  {"label": "None", "value": "none"}
+                ]
+              },
+              "release_status": {
+                "widget": "select",
+                "help": "Release status in the supply chain",
+                "options": [
+                  {"label": "Development", "value": "development"},
+                  {"label": "Alpha", "value": "alpha"},
+                  {"label": "Beta", "value": "beta"},
+                  {"label": "Qualified", "value": "qualified"},
+                  {"label": "Production", "value": "production"},
+                  {"label": "Deprecated", "value": "deprecated"}
+                ]
+              },
+              "fabrication_node": {
+                "widget": "text",
+                "placeholder": "e.g., tsmc7nm, sky130nm",
+                "help": "Fabrication process node"
+              },
+              "package_type": {
+                "widget": "select",
+                "help": "Package type for chiplet integration",
+                "options": [
+                  {"label": "2.5D Interposer", "value": "2.5d_interposer"},
+                  {"label": "3D Stacked", "value": "3d_stacked"},
+                  {"label": "Organic Substrate", "value": "organic_substrate"},
+                  {"label": "Fan-out", "value": "fan_out"}
+                ]
+              },
+              "supply_chain_tracking": {
+                "widget": "checkbox",
+                "help": "Whether supply chain is tracked and verified"
+              },
+              "certification": {
+                "widget": "array",
+                "help": "List of certifications (e.g., ISO 9001, automotive)",
+                "placeholder": "Add certification...",
+                "options": [
+                  {"label": "ISO 9001", "value": "ISO 9001"},
+                  {"label": "IATF 16949", "value": "IATF 16949"},
+                  {"label": "AS9100", "value": "AS9100"},
+                  {"label": "DO-254", "value": "DO-254"}
+                ]
+              }
+            }
+          }
+        }
+      },
       "verification": {
         "widget": "object",
         "help": "Legacy verification metadata",
@@ -978,6 +1415,20 @@
         },
         "required_sections": ["basic_info", "target_platforms", "interfaces"],
         "optional_sections": ["asic_config", "fpga_config", "parameters", "testing"]
+      },
+      "chiplet_ip": {
+        "name": "Chiplet-Ready IP",
+        "description": "IP block designed for chiplet integration and multi-die systems",
+        "icon": "chiplet",
+        "defaults": {
+          "chiplet": {"chiplet_ready": true},
+          "maturity": "production",
+          "automation": {"automation_level": "enhanced"},
+          "defaultCategory": "interface",
+          "suggestedTags": ["chiplet", "multi-die", "ucie", "integration"]
+        },
+        "required_sections": ["basic_info", "target_platforms", "interfaces", "chiplet"],
+        "optional_sections": ["asic_config", "fpga_config", "parameters", "testing", "performance", "compliance"]
       }
     }
   }

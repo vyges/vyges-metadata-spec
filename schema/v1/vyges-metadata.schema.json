@@ -397,9 +397,9 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["bus", "io", "interrupt", "clock", "reset"],
+            "enum": ["bus", "io", "interrupt", "clock", "reset", "chiplet"],
             "description": "Interface type category",
-            "examples": ["bus", "io", "interrupt"]
+            "examples": ["bus", "io", "interrupt", "chiplet"]
           },
           "direction": {
             "type": "string",
@@ -498,6 +498,43 @@
                 "type": "reset",
                 "active_level": "low",
                 "description": "APB reset signal"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "type": "chiplet",
+            "direction": "inout",
+            "protocol": "UCIe",
+            "width": 64,
+            "signals": [
+              {
+                "name": "ucie_clk",
+                "direction": "input",
+                "type": "clock",
+                "description": "UCIe clock signal"
+              },
+              {
+                "name": "ucie_rst_n",
+                "direction": "input",
+                "type": "reset",
+                "active_level": "low",
+                "description": "UCIe reset signal"
+              },
+              {
+                "name": "ucie_tx_data",
+                "direction": "output",
+                "type": "data",
+                "width": 64,
+                "description": "UCIe transmit data"
+              },
+              {
+                "name": "ucie_rx_data",
+                "direction": "input",
+                "type": "data",
+                "width": 64,
+                "description": "UCIe receive data"
               }
             ]
           }
@@ -2255,6 +2292,525 @@
           }
         }
       ]
+    },
+    "chiplet": {
+      "type": "object",
+      "description": "Chiplet integration and packaging metadata",
+      "properties": {
+        "chiplet_ready": {
+          "type": "boolean",
+          "description": "Whether this IP is designed for chiplet integration",
+          "default": false,
+          "examples": [true, false]
+        },
+        "integration_level": {
+          "type": "string",
+          "enum": ["rtl", "netlist", "hard_ip"],
+          "description": "Integration abstraction level for chiplet design",
+          "examples": ["rtl", "netlist", "hard_ip"]
+        },
+        "die_to_die_interfaces": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["ucie", "bow", "aib", "emib", "custom"]
+          },
+          "description": "Supported die-to-die interface protocols",
+          "examples": [["ucie", "bow"], ["aib"], ["custom"]]
+        },
+        "packaging_considerations": {
+          "type": "string",
+          "description": "Notes about physical packaging requirements",
+          "examples": [
+            "Requires 2.5D interposer with 0.8mm bump pitch",
+            "Compatible with organic substrate packaging",
+            "Thermal considerations for high-power operation"
+          ]
+        },
+        "interposer_constraints": {
+          "type": "object",
+          "description": "Interposer design constraints",
+          "properties": {
+            "technology": {
+              "type": "string",
+              "enum": ["silicon", "organic", "glass"],
+              "description": "Interposer technology type",
+              "examples": ["silicon", "organic", "glass"]
+            },
+            "routing_layers": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Number of routing layers required",
+              "examples": [2, 4, 6, 8]
+            },
+            "minimum_pitch": {
+              "type": "number",
+              "description": "Minimum routing pitch in micrometers",
+              "examples": [0.8, 1.0, 1.2, 2.0]
+            },
+            "die_spacing": {
+              "type": "number",
+              "description": "Minimum spacing between dies in millimeters",
+              "examples": [0.1, 0.2, 0.5, 1.0]
+            }
+          },
+          "examples": [
+            {
+              "technology": "silicon",
+              "routing_layers": 4,
+              "minimum_pitch": 0.8,
+              "die_spacing": 0.1
+            },
+            {
+              "technology": "organic",
+              "routing_layers": 2,
+              "minimum_pitch": 2.0,
+              "die_spacing": 0.5
+            }
+          ]
+        },
+        "bump_constraints": {
+          "type": "object",
+          "description": "Bump map and connectivity constraints",
+          "properties": {
+            "pitch": {
+              "type": "number",
+              "description": "Bump pitch in micrometers",
+              "examples": [0.8, 1.0, 1.2, 2.0]
+            },
+            "size": {
+              "type": "number",
+              "description": "Bump size in micrometers",
+              "examples": [0.4, 0.5, 0.6, 1.0]
+            },
+            "array": {
+              "type": "string",
+              "enum": ["full", "peripheral", "area"],
+              "description": "Bump array configuration",
+              "examples": ["full", "peripheral", "area"]
+            },
+            "power_bumps": {
+              "type": "integer",
+              "description": "Number of power/ground bumps required",
+              "examples": [4, 8, 16, 32]
+            },
+            "signal_bumps": {
+              "type": "integer",
+              "description": "Number of signal bumps required",
+              "examples": [16, 32, 64, 128]
+            }
+          },
+          "examples": [
+            {
+              "pitch": 0.8,
+              "size": 0.4,
+              "array": "full",
+              "power_bumps": 8,
+              "signal_bumps": 32
+            },
+            {
+              "pitch": 1.0,
+              "size": 0.5,
+              "array": "peripheral",
+              "power_bumps": 4,
+              "signal_bumps": 16
+            }
+          ]
+        },
+        "thermal_constraints": {
+          "type": "object",
+          "description": "Thermal analysis constraints",
+          "properties": {
+            "max_power_per_die": {
+              "type": "number",
+              "description": "Maximum power per die in watts",
+              "examples": [1.0, 2.5, 5.0, 10.0]
+            },
+            "junction_temperature": {
+              "type": "number",
+              "description": "Maximum junction temperature in Celsius",
+              "examples": [85, 100, 125, 150]
+            },
+            "thermal_resistance": {
+              "type": "number",
+              "description": "Thermal resistance in degrees C per watt",
+              "examples": [10, 20, 50, 100]
+            },
+            "cooling_requirements": {
+              "type": "string",
+              "description": "Cooling requirements description",
+              "examples": [
+                "Passive cooling sufficient",
+                "Active cooling required",
+                "Liquid cooling recommended"
+              ]
+            }
+          },
+          "examples": [
+            {
+              "max_power_per_die": 5.0,
+              "junction_temperature": 125,
+              "thermal_resistance": 20,
+              "cooling_requirements": "Active cooling required"
+            },
+            {
+              "max_power_per_die": 1.0,
+              "junction_temperature": 85,
+              "thermal_resistance": 50,
+              "cooling_requirements": "Passive cooling sufficient"
+            }
+          ]
+        },
+        "multi_die_testing": {
+          "type": "object",
+          "description": "Multi-die testing and validation requirements",
+          "properties": {
+            "test_access": {
+              "type": "string",
+              "enum": ["boundary_scan", "internal_access", "functional"],
+              "description": "Test access method",
+              "examples": ["boundary_scan", "internal_access", "functional"]
+            },
+            "test_coverage": {
+              "type": "object",
+              "properties": {
+                "interconnect": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "Interconnect test coverage percentage",
+                  "examples": [90, 95, 98, 100]
+                },
+                "functionality": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "Functional test coverage percentage",
+                  "examples": [85, 90, 95, 100]
+                }
+              },
+              "examples": [
+                {
+                  "interconnect": 95,
+                  "functionality": 90
+                },
+                {
+                  "interconnect": 100,
+                  "functionality": 95
+                }
+              ]
+            },
+            "test_vectors": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of test vector files or formats",
+              "examples": [["interconnect_test.v", "functional_test.v"], ["boundary_scan.pat"]]
+            }
+          },
+          "examples": [
+            {
+              "test_access": "boundary_scan",
+              "test_coverage": {
+                "interconnect": 95,
+                "functionality": 90
+              },
+              "test_vectors": ["interconnect_test.v", "functional_test.v"]
+            },
+            {
+              "test_access": "functional",
+              "test_coverage": {
+                "interconnect": 100,
+                "functionality": 95
+              },
+              "test_vectors": ["boundary_scan.pat"]
+            }
+          ]
+        },
+        "signal_conformance": {
+          "type": "object",
+          "description": "Signal and protocol conformance validation",
+          "properties": {
+            "protocol_reference": {
+              "type": "string",
+              "description": "Protocol specification version and reference",
+              "examples": ["UCIe 1.1", "BoW 1.0", "AIB 1.0", "EMIB 2.0"]
+            },
+            "verified_against": {
+              "type": "boolean",
+              "description": "Whether interface was verified against protocol test suite",
+              "examples": [true, false]
+            },
+            "test_suite": {
+              "type": "string",
+              "description": "Name and version of test suite used for verification",
+              "examples": ["UCIe Compliance Test Suite v1.1", "BoW Validation Suite v1.0"]
+            },
+            "verification_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Date when protocol verification was completed",
+              "examples": ["2024-01-15", "2024-03-20"]
+            },
+            "verification_tool": {
+              "type": "string",
+              "description": "Tool used for protocol verification",
+              "examples": ["UCIe Compliance Checker", "Custom BoW Validator", "AIB Test Suite"]
+            },
+            "compliance_level": {
+              "type": "string",
+              "enum": ["basic", "full", "extended"],
+              "description": "Level of protocol compliance achieved",
+              "examples": ["basic", "full", "extended"]
+            }
+          },
+          "examples": [
+            {
+              "protocol_reference": "UCIe 1.1",
+              "verified_against": true,
+              "test_suite": "UCIe Compliance Test Suite v1.1",
+              "verification_date": "2024-01-15",
+              "verification_tool": "UCIe Compliance Checker",
+              "compliance_level": "full"
+            },
+            {
+              "protocol_reference": "BoW 1.0",
+              "verified_against": false,
+              "compliance_level": "basic"
+            }
+          ]
+        },
+        "power_domains": {
+          "type": "array",
+          "description": "Power domain configuration for SoC/Chiplet partitioning",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Power domain name",
+                "examples": ["core_pd", "io_pd", "analog_pd", "always_on"]
+              },
+              "voltage": {
+                "type": "number",
+                "description": "Operating voltage in volts",
+                "examples": [0.8, 1.0, 1.2, 1.8, 3.3]
+              },
+              "type": {
+                "type": "string",
+                "enum": ["logic", "memory", "analog", "io", "mixed"],
+                "description": "Type of circuitry in this power domain",
+                "examples": ["logic", "memory", "analog", "io"]
+              },
+              "isolation_required": {
+                "type": "boolean",
+                "description": "Whether power isolation is required",
+                "examples": [true, false]
+              },
+              "retention_required": {
+                "type": "boolean",
+                "description": "Whether state retention is required during power down",
+                "examples": [true, false]
+              },
+              "max_current_ma": {
+                "type": "number",
+                "description": "Maximum current draw in milliamps",
+                "examples": [10, 50, 100, 500, 1000]
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of power domain purpose",
+                "examples": ["Core logic domain", "I/O interface domain", "Always-on domain for critical functions"]
+              }
+            },
+            "required": ["name", "voltage", "type"],
+            "examples": [
+              {
+                "name": "core_pd",
+                "voltage": 0.8,
+                "type": "logic",
+                "isolation_required": true,
+                "max_current_ma": 100,
+                "description": "Core logic domain"
+              },
+              {
+                "name": "io_pd",
+                "voltage": 1.8,
+                "type": "io",
+                "isolation_required": false,
+                "max_current_ma": 50,
+                "description": "I/O interface domain"
+              }
+            ]
+          },
+          "examples": [
+            [
+              {
+                "name": "core_pd",
+                "voltage": 0.8,
+                "type": "logic",
+                "isolation_required": true,
+                "max_current_ma": 100,
+                "description": "Core logic domain"
+              },
+              {
+                "name": "io_pd",
+                "voltage": 1.8,
+                "type": "io",
+                "isolation_required": false,
+                "max_current_ma": 50,
+                "description": "I/O interface domain"
+              }
+            ]
+          ]
+        },
+        "lifecycle": {
+          "type": "object",
+          "description": "Lifecycle and supply chain metadata for chiplet integration",
+          "properties": {
+            "origin": {
+              "type": "string",
+              "description": "Origin of the chiplet (e.g., vyges/partner-x, internal)",
+              "examples": ["vyges/partner-x", "internal", "external-vendor", "university-research"]
+            },
+            "trusted_fabricator": {
+              "type": "boolean",
+              "description": "Whether this chiplet comes from a trusted fabricator",
+              "examples": [true, false]
+            },
+            "version_control": {
+              "type": "string",
+              "enum": ["git", "svn", "perforce", "none"],
+              "description": "Version control system used",
+              "examples": ["git", "svn", "perforce"]
+            },
+            "release_status": {
+              "type": "string",
+              "enum": ["development", "alpha", "beta", "qualified", "production", "deprecated"],
+              "description": "Release status in the supply chain",
+              "examples": ["qualified", "production", "beta"]
+            },
+            "fabrication_node": {
+              "type": "string",
+              "description": "Fabrication process node",
+              "examples": ["tsmc7nm", "intel10nm", "samsung5nm", "sky130nm"]
+            },
+            "package_type": {
+              "type": "string",
+              "enum": ["2.5d_interposer", "3d_stacked", "organic_substrate", "fan_out"],
+              "description": "Package type for chiplet integration",
+              "examples": ["2.5d_interposer", "3d_stacked", "organic_substrate"]
+            },
+            "supply_chain_tracking": {
+              "type": "boolean",
+              "description": "Whether supply chain is tracked and verified",
+              "examples": [true, false]
+            },
+            "certification": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of certifications (e.g., ISO 9001, automotive)",
+              "examples": [["ISO 9001"], ["ISO 9001", "IATF 16949"], ["ISO 9001", "AS9100"]]
+            }
+          },
+          "examples": [
+            {
+              "origin": "vyges/partner-x",
+              "trusted_fabricator": true,
+              "version_control": "git",
+              "release_status": "qualified",
+              "fabrication_node": "tsmc7nm",
+              "package_type": "2.5d_interposer",
+              "supply_chain_tracking": true,
+              "certification": ["ISO 9001", "IATF 16949"]
+            },
+            {
+              "origin": "internal",
+              "trusted_fabricator": true,
+              "version_control": "git",
+              "release_status": "production",
+              "fabrication_node": "sky130nm",
+              "package_type": "organic_substrate",
+              "supply_chain_tracking": false
+            }
+          ]
+        }
+      },
+      "examples": [
+        {
+          "chiplet_ready": true,
+          "integration_level": "rtl",
+          "die_to_die_interfaces": ["ucie", "bow"],
+          "packaging_considerations": "Requires 2.5D interposer with 0.8mm bump pitch",
+          "interposer_constraints": {
+            "technology": "silicon",
+            "routing_layers": 4,
+            "minimum_pitch": 0.8,
+            "die_spacing": 0.1
+          },
+          "bump_constraints": {
+            "pitch": 0.8,
+            "size": 0.4,
+            "array": "full",
+            "power_bumps": 8,
+            "signal_bumps": 32
+          },
+          "thermal_constraints": {
+            "max_power_per_die": 5.0,
+            "junction_temperature": 125,
+            "thermal_resistance": 20,
+            "cooling_requirements": "Active cooling required"
+          },
+          "multi_die_testing": {
+            "test_access": "boundary_scan",
+            "test_coverage": {
+              "interconnect": 95,
+              "functionality": 90
+            },
+            "test_vectors": ["interconnect_test.v", "functional_test.v"]
+          },
+          "signal_conformance": {
+            "protocol_reference": "UCIe 1.1",
+            "verified_against": true,
+            "test_suite": "UCIe Compliance Test Suite v1.1",
+            "verification_date": "2024-01-15",
+            "verification_tool": "UCIe Compliance Checker",
+            "compliance_level": "full"
+          },
+          "power_domains": [
+            {
+              "name": "core_pd",
+              "voltage": 0.8,
+              "type": "logic",
+              "isolation_required": true,
+              "max_current_ma": 100,
+              "description": "Core logic domain"
+            },
+            {
+              "name": "io_pd",
+              "voltage": 1.8,
+              "type": "io",
+              "isolation_required": false,
+              "max_current_ma": 50,
+              "description": "I/O interface domain"
+            }
+          ],
+          "lifecycle": {
+            "origin": "vyges/partner-x",
+            "trusted_fabricator": true,
+            "version_control": "git",
+            "release_status": "qualified",
+            "fabrication_node": "tsmc7nm",
+            "package_type": "2.5d_interposer",
+            "supply_chain_tracking": true,
+            "certification": ["ISO 9001", "IATF 16949"]
+          }
+        },
+        {
+          "chiplet_ready": false,
+          "integration_level": "rtl",
+          "packaging_considerations": "Standard single-die packaging"
+        }
+      ]
     }
   },
   "allOf": [
@@ -2409,6 +2965,39 @@
       "maturity": "production",
       "target": ["asic", "fpga"],
       "design_type": ["digital"],
+      "chiplet": {
+        "chiplet_ready": true,
+        "integration_level": "rtl",
+        "die_to_die_interfaces": ["ucie", "bow"],
+        "packaging_considerations": "Requires 2.5D interposer with 0.8mm bump pitch",
+        "interposer_constraints": {
+          "technology": "silicon",
+          "routing_layers": 4,
+          "minimum_pitch": 0.8,
+          "die_spacing": 0.1
+        },
+        "bump_constraints": {
+          "pitch": 0.8,
+          "size": 0.4,
+          "array": "full",
+          "power_bumps": 8,
+          "signal_bumps": 32
+        },
+        "thermal_constraints": {
+          "max_power_per_die": 2.0,
+          "junction_temperature": 125,
+          "thermal_resistance": 30,
+          "cooling_requirements": "Passive cooling sufficient"
+        },
+        "multi_die_testing": {
+          "test_access": "boundary_scan",
+          "test_coverage": {
+            "interconnect": 95,
+            "functionality": 90
+          },
+          "test_vectors": ["interconnect_test.v", "functional_test.v"]
+        }
+      },
       "automation": {
         "automation_level": "enhanced",
         "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "fpga", "test", "flows"],
@@ -2443,6 +3032,41 @@
               "type": "reset",
               "active_level": "low",
               "description": "APB reset signal"
+            }
+          ]
+        },
+        {
+          "type": "chiplet",
+          "direction": "inout",
+          "protocol": "UCIe",
+          "width": 64,
+          "signals": [
+            {
+              "name": "ucie_clk",
+              "direction": "input",
+              "type": "clock",
+              "description": "UCIe clock signal"
+            },
+            {
+              "name": "ucie_rst_n",
+              "direction": "input",
+              "type": "reset",
+              "active_level": "low",
+              "description": "UCIe reset signal"
+            },
+            {
+              "name": "ucie_tx_data",
+              "direction": "output",
+              "type": "data",
+              "width": 64,
+              "description": "UCIe transmit data"
+            },
+            {
+              "name": "ucie_rx_data",
+              "direction": "input",
+              "type": "data",
+              "width": 64,
+              "description": "UCIe receive data"
             }
           ]
         }
