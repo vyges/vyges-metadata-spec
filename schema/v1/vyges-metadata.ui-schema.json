@@ -654,6 +654,464 @@
           }
         }
       },
+      "tools": {
+        "widget": "object",
+        "help": "Comprehensive tool categorization for different design flows and security testing",
+        "order": 1,
+        "width": "full",
+        "advanced": true,
+        "properties": {
+          "asic": {
+            "widget": "object",
+            "help": "ASIC design and verification tools",
+            "properties": {
+              "open_source": {
+                "widget": "object",
+                "help": "Open-source ASIC tools",
+                "properties": {
+                  "synthesis": {
+                    "widget": "multiselect",
+                    "help": "Open-source synthesis tools",
+                    "options": [
+                      {"label": "Yosys", "value": "yosys", "description": "Open-source synthesis"},
+                      {"label": "ABC", "value": "abc", "description": "Logic optimization"}
+                    ]
+                  },
+                  "place_route": {
+                    "widget": "multiselect",
+                    "help": "Open-source place and route tools",
+                    "options": [
+                      {"label": "OpenROAD", "value": "openroad", "description": "Open-source P&R"},
+                      {"label": "TritonRoute", "value": "tritonroute", "description": "Global routing"}
+                    ]
+                  },
+                  "verification": {
+                    "widget": "multiselect",
+                    "help": "Open-source verification tools",
+                    "options": [
+                      {"label": "Verilator", "value": "verilator", "description": "Fast simulation"},
+                      {"label": "Icarus Verilog", "value": "iverilog", "description": "Verilog simulator"}
+                    ]
+                  },
+                  "formal": {
+                    "widget": "multiselect",
+                    "help": "Open-source formal verification tools",
+                    "options": [
+                      {"label": "Yosys SMTBMC", "value": "yosys-smtbmc", "description": "BMC formal verification"},
+                      {"label": "SBY", "value": "sby", "description": "SymbiYosys"},
+                      {"label": "SymbiYosys", "value": "symbiyosys", "description": "Formal verification framework"}
+                    ]
+                  },
+                  "security": {
+                    "widget": "multiselect",
+                    "help": "Open-source security testing tools",
+                    "options": [
+                      {"label": "Custom Python", "value": "custom_python", "description": "Custom security scripts"},
+                      {"label": "NumPy", "value": "numpy", "description": "Statistical analysis"},
+                      {"label": "SciPy", "value": "scipy", "description": "Signal processing"},
+                      {"label": "ChipWhisperer", "value": "chipwhisperer", "description": "Side-channel analysis"}
+                    ]
+                  },
+                  "layout": {
+                    "widget": "multiselect",
+                    "help": "Open-source layout tools",
+                    "options": [
+                      {"label": "Magic", "value": "magic", "description": "Layout editor"},
+                      {"label": "KLayout", "value": "klayout", "description": "Layout viewer"}
+                    ]
+                  },
+                  "drc_lvs": {
+                    "widget": "multiselect",
+                    "help": "Open-source DRC/LVS tools",
+                    "options": [
+                      {"label": "Magic", "value": "magic", "description": "DRC/LVS checking"},
+                      {"label": "Netgen", "value": "netgen", "description": "LVS comparison"}
+                    ]
+                  }
+                }
+              },
+              "commercial": {
+                "widget": "object",
+                "help": "Commercial ASIC tools",
+                "properties": {
+                  "synthesis": {
+                    "widget": "multiselect",
+                    "help": "Commercial synthesis tools",
+                    "options": [
+                      {"label": "Design Compiler", "value": "design_compiler", "description": "Synopsys synthesis"},
+                      {"label": "Synplify", "value": "synplify", "description": "FPGA synthesis"}
+                    ]
+                  },
+                  "place_route": {
+                    "widget": "multiselect",
+                    "help": "Commercial place and route tools",
+                    "options": [
+                      {"label": "IC Compiler", "value": "ic_compiler", "description": "Synopsys P&R"},
+                      {"label": "Innovus", "value": "innovus", "description": "Cadence P&R"}
+                    ]
+                  },
+                  "verification": {
+                    "widget": "multiselect",
+                    "help": "Commercial verification tools",
+                    "options": [
+                      {"label": "VCS", "value": "vcs", "description": "Synopsys simulator"},
+                      {"label": "Xcelium", "value": "xcelium", "description": "Cadence simulator"},
+                      {"label": "Questa", "value": "questa", "description": "Siemens simulator"}
+                    ]
+                  },
+                  "formal": {
+                    "widget": "multiselect",
+                    "help": "Commercial formal verification tools",
+                    "options": [
+                      {"label": "OneSpin", "value": "onespin", "description": "Formal verification"},
+                      {"label": "Jasper", "value": "jasper", "description": "Cadence formal"},
+                      {"label": "VC Formal", "value": "vc_formal", "description": "Synopsys formal"}
+                    ]
+                  },
+                  "security": {
+                    "widget": "multiselect",
+                    "help": "Commercial security testing tools",
+                    "options": [
+                      {"label": "Secure-IC", "value": "secure_ic", "description": "Security analysis"},
+                      {"label": "Rambus DPA", "value": "rambus_dpa", "description": "Power analysis"}
+                    ]
+                  },
+                  "layout": {
+                    "widget": "multiselect",
+                    "help": "Commercial layout tools",
+                    "options": [
+                      {"label": "Virtuoso", "value": "virtuoso", "description": "Cadence layout"},
+                      {"label": "Laker", "value": "laker", "description": "Synopsys layout"}
+                    ]
+                  },
+                  "drc_lvs": {
+                    "widget": "multiselect",
+                    "help": "Commercial DRC/LVS tools",
+                    "options": [
+                      {"label": "Calibre", "value": "calibre", "description": "Mentor DRC/LVS"},
+                      {"label": "Hercules", "value": "hercules", "description": "Synopsys DRC/LVS"}
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "fpga": {
+            "widget": "object",
+            "help": "FPGA design and verification tools",
+            "properties": {
+              "open_source": {
+                "widget": "object",
+                "help": "Open-source FPGA tools",
+                "properties": {
+                  "synthesis": {
+                    "widget": "multiselect",
+                    "help": "Open-source FPGA synthesis tools",
+                    "options": [
+                      {"label": "Yosys", "value": "yosys", "description": "Open-source synthesis"},
+                      {"label": "NextPNR", "value": "nextpnr", "description": "Place and route"}
+                    ]
+                  },
+                  "place_route": {
+                    "widget": "multiselect",
+                    "help": "Open-source FPGA place and route tools",
+                    "options": [
+                      {"label": "NextPNR", "value": "nextpnr", "description": "Place and route"},
+                      {"label": "VPR", "value": "vpr", "description": "Versatile place and route"}
+                    ]
+                  },
+                  "verification": {
+                    "widget": "multiselect",
+                    "help": "Open-source FPGA verification tools",
+                    "options": [
+                      {"label": "Verilator", "value": "verilator", "description": "Fast simulation"},
+                      {"label": "Icarus Verilog", "value": "iverilog", "description": "Verilog simulator"}
+                    ]
+                  },
+                  "formal": {
+                    "widget": "multiselect",
+                    "help": "Open-source FPGA formal verification tools",
+                    "options": [
+                      {"label": "Yosys SMTBMC", "value": "yosys-smtbmc", "description": "BMC formal verification"},
+                      {"label": "SBY", "value": "sby", "description": "SymbiYosys"}
+                    ]
+                  },
+                  "security": {
+                    "widget": "multiselect",
+                    "help": "Open-source FPGA security testing tools",
+                    "options": [
+                      {"label": "Custom Python", "value": "custom_python", "description": "Custom security scripts"},
+                      {"label": "NumPy", "value": "numpy", "description": "Statistical analysis"},
+                      {"label": "ChipWhisperer", "value": "chipwhisperer", "description": "Side-channel analysis"}
+                    ]
+                  },
+                  "programming": {
+                    "widget": "multiselect",
+                    "help": "Open-source FPGA programming tools",
+                    "options": [
+                      {"label": "OpenFPGALoader", "value": "openfpgaloader", "description": "FPGA programming"},
+                      {"label": "FujProg", "value": "fujprog", "description": "Fujitsu FPGA programming"}
+                    ]
+                  }
+                }
+              },
+              "commercial": {
+                "widget": "object",
+                "help": "Commercial FPGA tools",
+                "properties": {
+                  "synthesis": {
+                    "widget": "multiselect",
+                    "help": "Commercial FPGA synthesis tools",
+                    "options": [
+                      {"label": "Vivado", "value": "vivado", "description": "Xilinx synthesis"},
+                      {"label": "Quartus", "value": "quartus", "description": "Intel synthesis"}
+                    ]
+                  },
+                  "place_route": {
+                    "widget": "multiselect",
+                    "help": "Commercial FPGA place and route tools",
+                    "options": [
+                      {"label": "Vivado", "value": "vivado", "description": "Xilinx P&R"},
+                      {"label": "Quartus", "value": "quartus", "description": "Intel P&R"}
+                    ]
+                  },
+                  "verification": {
+                    "widget": "multiselect",
+                    "help": "Commercial FPGA verification tools",
+                    "options": [
+                      {"label": "ModelSim", "value": "modelsim", "description": "Simulation"},
+                      {"label": "Questa", "value": "questa", "description": "Siemens simulation"}
+                    ]
+                  },
+                  "formal": {
+                    "widget": "multiselect",
+                    "help": "Commercial FPGA formal verification tools",
+                    "options": [
+                      {"label": "Questa Formal", "value": "questa_formal", "description": "Siemens formal"},
+                      {"label": "Jasper", "value": "jasper", "description": "Cadence formal"}
+                    ]
+                  },
+                  "security": {
+                    "widget": "multiselect",
+                    "help": "Commercial FPGA security testing tools",
+                    "options": [
+                      {"label": "Secure-IC", "value": "secure_ic", "description": "Security analysis"},
+                      {"label": "Rohde & Schwarz", "value": "rohde_schwarz", "description": "EM analysis"}
+                    ]
+                  },
+                  "programming": {
+                    "widget": "multiselect",
+                    "help": "Commercial FPGA programming tools",
+                    "options": [
+                      {"label": "Vivado", "value": "vivado", "description": "Xilinx programming"},
+                      {"label": "Quartus", "value": "quartus", "description": "Intel programming"}
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "chiplet": {
+            "widget": "object",
+            "help": "Chiplet design and verification tools",
+            "properties": {
+              "open_source": {
+                "widget": "object",
+                "help": "Open-source chiplet tools",
+                "properties": {
+                  "design": {
+                    "widget": "multiselect",
+                    "help": "Open-source chiplet design tools",
+                    "options": [
+                      {"label": "Yosys", "value": "yosys", "description": "Synthesis"},
+                      {"label": "OpenROAD", "value": "openroad", "description": "P&R"}
+                    ]
+                  },
+                  "verification": {
+                    "widget": "multiselect",
+                    "help": "Open-source chiplet verification tools",
+                    "options": [
+                      {"label": "Verilator", "value": "verilator", "description": "Simulation"},
+                      {"label": "Cocotb", "value": "cocotb", "description": "Python testbench"}
+                    ]
+                  },
+                  "formal": {
+                    "widget": "multiselect",
+                    "help": "Open-source chiplet formal verification tools",
+                    "options": [
+                      {"label": "Yosys SMTBMC", "value": "yosys-smtbmc", "description": "BMC formal verification"},
+                      {"label": "SBY", "value": "sby", "description": "SymbiYosys"}
+                    ]
+                  },
+                  "security": {
+                    "widget": "multiselect",
+                    "help": "Open-source chiplet security testing tools",
+                    "options": [
+                      {"label": "Custom Python", "value": "custom_python", "description": "Custom security scripts"},
+                      {"label": "NumPy", "value": "numpy", "description": "Statistical analysis"},
+                      {"label": "ChipWhisperer", "value": "chipwhisperer", "description": "Side-channel analysis"}
+                    ]
+                  },
+                  "integration": {
+                    "widget": "multiselect",
+                    "help": "Open-source chiplet integration tools",
+                    "options": [
+                      {"label": "OpenROAD", "value": "openroad", "description": "P&R"},
+                      {"label": "Magic", "value": "magic", "description": "Layout"}
+                    ]
+                  }
+                }
+              },
+              "commercial": {
+                "widget": "object",
+                "help": "Commercial chiplet tools",
+                "properties": {
+                  "design": {
+                    "widget": "multiselect",
+                    "help": "Commercial chiplet design tools",
+                    "options": [
+                      {"label": "Innovus", "value": "innovus", "description": "Cadence P&R"},
+                      {"label": "Virtuoso", "value": "virtuoso", "description": "Cadence layout"}
+                    ]
+                  },
+                  "verification": {
+                    "widget": "multiselect",
+                    "help": "Commercial chiplet verification tools",
+                    "options": [
+                      {"label": "VCS", "value": "vcs", "description": "Synopsys simulation"},
+                      {"label": "Questa", "value": "questa", "description": "Siemens simulation"}
+                    ]
+                  },
+                  "formal": {
+                    "widget": "multiselect",
+                    "help": "Commercial chiplet formal verification tools",
+                    "options": [
+                      {"label": "OneSpin", "value": "onespin", "description": "Formal verification"},
+                      {"label": "Jasper", "value": "jasper", "description": "Cadence formal"}
+                    ]
+                  },
+                  "security": {
+                    "widget": "multiselect",
+                    "help": "Commercial chiplet security testing tools",
+                    "options": [
+                      {"label": "Secure-IC", "value": "secure_ic", "description": "Security analysis"},
+                      {"label": "Rambus DPA", "value": "rambus_dpa", "description": "Power analysis"}
+                    ]
+                  },
+                  "integration": {
+                    "widget": "multiselect",
+                    "help": "Commercial chiplet integration tools",
+                    "options": [
+                      {"label": "Innovus", "value": "innovus", "description": "Cadence P&R"},
+                      {"label": "Virtuoso", "value": "virtuoso", "description": "Cadence layout"}
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "analog": {
+            "widget": "object",
+            "help": "Analog design and verification tools",
+            "properties": {
+              "open_source": {
+                "widget": "object",
+                "help": "Open-source analog tools",
+                "properties": {
+                  "schematic": {
+                    "widget": "multiselect",
+                    "help": "Open-source schematic capture tools",
+                    "options": [
+                      {"label": "XSchem", "value": "xschem", "description": "Schematic capture"},
+                      {"label": "KiCad", "value": "kicad", "description": "PCB design"}
+                    ]
+                  },
+                  "simulation": {
+                    "widget": "multiselect",
+                    "help": "Open-source analog simulation tools",
+                    "options": [
+                      {"label": "ngspice", "value": "ngspice", "description": "Circuit simulation"},
+                      {"label": "Xyce", "value": "xyce", "description": "Parallel simulation"}
+                    ]
+                  },
+                  "layout": {
+                    "widget": "multiselect",
+                    "help": "Open-source analog layout tools",
+                    "options": [
+                      {"label": "Magic", "value": "magic", "description": "Layout editor"},
+                      {"label": "KLayout", "value": "klayout", "description": "Layout viewer"}
+                    ]
+                  },
+                  "verification": {
+                    "widget": "multiselect",
+                    "help": "Open-source analog verification tools",
+                    "options": [
+                      {"label": "ngspice", "value": "ngspice", "description": "Circuit simulation"},
+                      {"label": "Custom Python", "value": "custom_python", "description": "Custom verification"}
+                    ]
+                  },
+                  "security": {
+                    "widget": "multiselect",
+                    "help": "Open-source analog security testing tools",
+                    "options": [
+                      {"label": "Custom Python", "value": "custom_python", "description": "Custom security scripts"},
+                      {"label": "NumPy", "value": "numpy", "description": "Statistical analysis"},
+                      {"label": "ChipWhisperer", "value": "chipwhisperer", "description": "Side-channel analysis"}
+                    ]
+                  }
+                }
+              },
+              "commercial": {
+                "widget": "object",
+                "help": "Commercial analog tools",
+                "properties": {
+                  "schematic": {
+                    "widget": "multiselect",
+                    "help": "Commercial schematic capture tools",
+                    "options": [
+                      {"label": "Virtuoso", "value": "virtuoso", "description": "Cadence schematic"},
+                      {"label": "Composer", "value": "composer", "description": "Synopsys schematic"}
+                    ]
+                  },
+                  "simulation": {
+                    "widget": "multiselect",
+                    "help": "Commercial analog simulation tools",
+                    "options": [
+                      {"label": "Spectre", "value": "spectre", "description": "Cadence simulation"},
+                      {"label": "HSPICE", "value": "hspice", "description": "Synopsys simulation"},
+                      {"label": "AMS Designer", "value": "ams_designer", "description": "Mixed-signal simulation"}
+                    ]
+                  },
+                  "layout": {
+                    "widget": "multiselect",
+                    "help": "Commercial analog layout tools",
+                    "options": [
+                      {"label": "Virtuoso", "value": "virtuoso", "description": "Cadence layout"},
+                      {"label": "Laker", "value": "laker", "description": "Synopsys layout"}
+                    ]
+                  },
+                  "verification": {
+                    "widget": "multiselect",
+                    "help": "Commercial analog verification tools",
+                    "options": [
+                      {"label": "Spectre", "value": "spectre", "description": "Cadence simulation"},
+                      {"label": "AMS Designer", "value": "ams_designer", "description": "Mixed-signal simulation"}
+                    ]
+                  },
+                  "security": {
+                    "widget": "multiselect",
+                    "help": "Commercial analog security testing tools",
+                    "options": [
+                      {"label": "Secure-IC", "value": "secure_ic", "description": "Security analysis"},
+                      {"label": "Rohde & Schwarz", "value": "rohde_schwarz", "description": "EM analysis"}
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "test": {
         "widget": "object",
         "help": "Testing and verification status",
@@ -789,10 +1247,49 @@
         "properties": {
           "enabled": {
             "widget": "checkbox",
-            "help": "Enable security validation for this IP",
+            "help": "Enable security validation for this IP (disabled by default to lower barrier to entry for students and newcomers)",
             "default": false,
             "order": 1,
             "width": "third"
+          },
+          "tool_availability": {
+            "widget": "select",
+            "help": "Preferred tool availability for security testing (open-source by default for accessibility)",
+            "options": [
+              {"label": "Open Source", "value": "open_source", "description": "Use open-source tools only (recommended for students)"},
+              {"label": "Commercial", "value": "commercial", "description": "Use commercial tools only"},
+              {"label": "Hybrid", "value": "hybrid", "description": "Use both open-source and commercial tools"}
+            ],
+            "default": "open_source",
+            "order": 2,
+            "width": "third",
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ]
+          },
+          "target_flow": {
+            "widget": "select",
+            "help": "Target design flow for security tool selection (FPGA by default for student accessibility)",
+            "options": [
+              {"label": "FPGA", "value": "fpga", "description": "FPGA design flow (recommended for students)"},
+              {"label": "ASIC", "value": "asic", "description": "ASIC design flow"},
+              {"label": "Chiplet", "value": "chiplet", "description": "Chiplet design flow"},
+              {"label": "Analog", "value": "analog", "description": "Analog design flow"}
+            ],
+            "default": "fpga",
+            "order": 3,
+            "width": "third",
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ]
           },
           "security_level": {
             "widget": "select",
@@ -803,7 +1300,7 @@
               {"label": "High", "value": "high", "description": "Elevated security requirements"},
               {"label": "Critical", "value": "critical", "description": "Maximum security requirements"}
             ],
-            "order": 2,
+            "order": 4,
             "width": "third",
             "dependencies": [
               {
@@ -833,7 +1330,7 @@
               {"label": "Timing Attacks", "value": "timing_attacks", "description": "Timing attack resistance"},
               {"label": "Fault Injection", "value": "fault_injection", "description": "Fault injection resistance"}
             ],
-            "order": 3,
+            "order": 5,
             "width": "full",
             "dependencies": [
               {
@@ -847,7 +1344,7 @@
             "widget": "array",
             "help": "Security-related design features implemented in the IP",
             "placeholder": "Add protection feature...",
-            "order": 4,
+            "order": 6,
             "width": "full",
             "dependencies": [
               {
@@ -861,7 +1358,7 @@
             "widget": "array",
             "help": "Suggested tests/assertions to validate security for this IP",
             "placeholder": "Add recommended test...",
-            "order": 5,
+            "order": 7,
             "width": "full",
             "dependencies": [
               {
@@ -875,7 +1372,7 @@
             "widget": "checkbox",
             "help": "Whether this IP requires security-focused testbench generation",
             "default": false,
-            "order": 6,
+            "order": 8,
             "width": "third",
             "dependencies": [
               {
@@ -888,7 +1385,7 @@
           "assertion_coverage": {
             "widget": "object",
             "help": "Security assertion coverage requirements",
-            "order": 7,
+            "order": 9,
             "width": "full",
             "advanced": true,
             "dependencies": [
@@ -925,7 +1422,7 @@
           "fuzzing_config": {
             "widget": "object",
             "help": "Configuration for security-focused fuzzing tests",
-            "order": 8,
+            "order": 10,
             "width": "full",
             "advanced": true,
             "dependencies": [
@@ -995,7 +1492,7 @@
           "formal_verification": {
             "widget": "object",
             "help": "Formal verification requirements for security properties",
-            "order": 9,
+            "order": 11,
             "width": "full",
             "advanced": true,
             "dependencies": [
@@ -1021,17 +1518,32 @@
                 "width": "full"
               },
               "tools": {
-                "widget": "multiselect",
-                "help": "Formal verification tools to use",
-                "options": [
-                  {"label": "Yosys SMTBMC", "value": "yosys-smtbmc"},
-                  {"label": "SBY", "value": "sby"},
-                  {"label": "Symbiyosys", "value": "symbiyosys"},
-                  {"label": "JTAG", "value": "jtag"},
-                  {"label": "OneSpin", "value": "oneSpin"}
-                ],
+                "widget": "object",
+                "help": "Formal verification tools categorized by availability",
                 "order": 3,
-                "width": "full"
+                "width": "full",
+                "properties": {
+                  "open_source": {
+                    "widget": "multiselect",
+                    "help": "Open-source formal verification tools",
+                    "options": [
+                      {"label": "Yosys SMTBMC", "value": "yosys-smtbmc", "description": "Open-source formal verification"},
+                      {"label": "SBY", "value": "sby", "description": "Open-source formal verification"},
+                      {"label": "Symbiyosys", "value": "symbiyosys", "description": "Open-source formal verification"},
+                      {"label": "JTAG", "value": "jtag", "description": "Open-source formal verification"}
+                    ]
+                  },
+                  "commercial": {
+                    "widget": "multiselect",
+                    "help": "Commercial formal verification tools",
+                    "options": [
+                      {"label": "OneSpin", "value": "oneSpin", "description": "Commercial formal verification"},
+                      {"label": "Jasper", "value": "jasper", "description": "Cadence Jasper formal verification"},
+                      {"label": "VC Formal", "value": "vc_formal", "description": "Synopsys VC Formal verification"},
+                      {"label": "Questa Formal", "value": "questa_formal", "description": "Siemens Questa Formal verification"}
+                    ]
+                  }
+                }
               },
               "timeout": {
                 "widget": "number",
@@ -1045,7 +1557,7 @@
           "side_channel_analysis": {
             "widget": "object",
             "help": "Side-channel analysis requirements and protections",
-            "order": 10,
+            "order": 12,
             "width": "full",
             "advanced": true,
             "dependencies": [
@@ -1083,11 +1595,31 @@
                 "width": "full"
               },
               "analysis_tools": {
-                "widget": "array",
-                "help": "Tools for side-channel analysis",
-                "placeholder": "Add analysis tool...",
+                "widget": "object",
+                "help": "Side-channel analysis tools categorized by availability",
                 "order": 4,
-                "width": "full"
+                "width": "full",
+                "properties": {
+                  "open_source": {
+                    "widget": "multiselect",
+                    "help": "Open-source side-channel analysis tools",
+                    "options": [
+                      {"label": "Custom Python", "value": "custom_python", "description": "Custom Python scripts for analysis"},
+                      {"label": "NumPy", "value": "numpy", "description": "Statistical analysis of side-channel data"},
+                      {"label": "SciPy", "value": "scipy", "description": "Advanced signal processing for side-channel analysis"},
+                      {"label": "ChipWhisperer", "value": "chipwhisperer", "description": "Open-source side-channel analysis platform"}
+                    ]
+                  },
+                  "commercial": {
+                    "widget": "multiselect",
+                    "help": "Commercial side-channel analysis tools",
+                    "options": [
+                      {"label": "Secure-IC", "value": "secure_ic", "description": "Comprehensive side-channel analysis"},
+                      {"label": "Rambus DPA", "value": "rambus_dpa", "description": "Rambus DPA Workstation for power analysis"},
+                      {"label": "Rohde & Schwarz", "value": "rohde_schwarz", "description": "Electromagnetic analysis tools"}
+                    ]
+                  }
+                }
               }
             }
           },
@@ -1104,7 +1636,7 @@
               {"label": "ISO 21434", "value": "iso_21434", "description": "Road vehicle cybersecurity"},
               {"label": "Custom", "value": "custom", "description": "Custom security standard"}
             ],
-            "order": 11,
+            "order": 13,
             "width": "full",
             "dependencies": [
               {
@@ -1117,7 +1649,7 @@
           "security_documentation": {
             "widget": "object",
             "help": "Links to security-related documentation",
-            "order": 12,
+            "order": 14,
             "width": "full",
             "advanced": true,
             "dependencies": [

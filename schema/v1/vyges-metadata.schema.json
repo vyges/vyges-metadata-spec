@@ -925,10 +925,406 @@
         }
       ]
     },
+    "tools": {
+      "type": "object",
+      "description": "Comprehensive tool categorization for different design flows and security testing",
+      "properties": {
+        "asic": {
+          "type": "object",
+          "description": "ASIC design and verification tools",
+          "properties": {
+            "open_source": {
+              "type": "object",
+              "description": "Open-source ASIC tools",
+              "properties": {
+                "synthesis": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source synthesis tools",
+                  "examples": [["yosys", "abc"], ["yosys"]]
+                },
+                "place_route": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source place and route tools",
+                  "examples": [["openroad", "tritonroute"], ["openroad"]]
+                },
+                "verification": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source verification tools",
+                  "examples": [["verilator", "iverilog"], ["verilator"]]
+                },
+                "formal": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source formal verification tools",
+                  "examples": [["yosys-smtbmc", "sby", "symbiyosys"], ["yosys-smtbmc"]]
+                },
+                "security": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source security testing tools",
+                  "examples": [["custom_python", "numpy", "scipy"], ["chipwhisperer"]]
+                },
+                "layout": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source layout tools",
+                  "examples": [["magic", "klayout"], ["magic"]]
+                },
+                "drc_lvs": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source DRC/LVS tools",
+                  "examples": [["magic", "netgen"], ["magic"]]
+                }
+              }
+            },
+            "commercial": {
+              "type": "object",
+              "description": "Commercial ASIC tools",
+              "properties": {
+                "synthesis": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial synthesis tools",
+                  "examples": [["design_compiler", "synplify"], ["design_compiler"]]
+                },
+                "place_route": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial place and route tools",
+                  "examples": [["ic_compiler", "innovus"], ["ic_compiler"]]
+                },
+                "verification": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial verification tools",
+                  "examples": [["vcs", "xcelium", "questa"], ["vcs"]]
+                },
+                "formal": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial formal verification tools",
+                  "examples": [["onespin", "jasper", "vc_formal"], ["onespin"]]
+                },
+                "security": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial security testing tools",
+                  "examples": [["secure_ic", "rambus_dpa"], ["secure_ic"]]
+                },
+                "layout": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial layout tools",
+                  "examples": [["virtuoso", "laker"], ["virtuoso"]]
+                },
+                "drc_lvs": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial DRC/LVS tools",
+                  "examples": [["calibre", "hercules"], ["calibre"]]
+                }
+              }
+            }
+          }
+        },
+        "fpga": {
+          "type": "object",
+          "description": "FPGA design and verification tools",
+          "properties": {
+            "open_source": {
+              "type": "object",
+              "description": "Open-source FPGA tools",
+              "properties": {
+                "synthesis": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source FPGA synthesis tools",
+                  "examples": [["yosys", "nextpnr"], ["yosys"]]
+                },
+                "place_route": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source FPGA place and route tools",
+                  "examples": [["nextpnr", "vpr"], ["nextpnr"]]
+                },
+                "verification": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source FPGA verification tools",
+                  "examples": [["verilator", "iverilog"], ["verilator"]]
+                },
+                "formal": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source FPGA formal verification tools",
+                  "examples": [["yosys-smtbmc", "sby"], ["yosys-smtbmc"]]
+                },
+                "security": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source FPGA security testing tools",
+                  "examples": [["custom_python", "numpy"], ["chipwhisperer"]]
+                },
+                "programming": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source FPGA programming tools",
+                  "examples": [["openfpgaloader", "fujprog"], ["openfpgaloader"]]
+                }
+              }
+            },
+            "commercial": {
+              "type": "object",
+              "description": "Commercial FPGA tools",
+              "properties": {
+                "synthesis": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial FPGA synthesis tools",
+                  "examples": [["vivado", "quartus"], ["vivado"]]
+                },
+                "place_route": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial FPGA place and route tools",
+                  "examples": [["vivado", "quartus"], ["vivado"]]
+                },
+                "verification": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial FPGA verification tools",
+                  "examples": [["modelsim", "questa"], ["modelsim"]]
+                },
+                "formal": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial FPGA formal verification tools",
+                  "examples": [["questa_formal", "jasper"], ["questa_formal"]]
+                },
+                "security": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial FPGA security testing tools",
+                  "examples": [["secure_ic", "rohde_schwarz"], ["secure_ic"]]
+                },
+                "programming": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial FPGA programming tools",
+                  "examples": [["vivado", "quartus"], ["vivado"]]
+                }
+              }
+            }
+          }
+        },
+        "chiplet": {
+          "type": "object",
+          "description": "Chiplet design and verification tools",
+          "properties": {
+            "open_source": {
+              "type": "object",
+              "description": "Open-source chiplet tools",
+              "properties": {
+                "design": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source chiplet design tools",
+                  "examples": [["yosys", "openroad"], ["yosys"]]
+                },
+                "verification": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source chiplet verification tools",
+                  "examples": [["verilator", "cocotb"], ["verilator"]]
+                },
+                "formal": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source chiplet formal verification tools",
+                  "examples": [["yosys-smtbmc", "sby"], ["yosys-smtbmc"]]
+                },
+                "security": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source chiplet security testing tools",
+                  "examples": [["custom_python", "numpy"], ["chipwhisperer"]]
+                },
+                "integration": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source chiplet integration tools",
+                  "examples": [["openroad", "magic"], ["openroad"]]
+                }
+              }
+            },
+            "commercial": {
+              "type": "object",
+              "description": "Commercial chiplet tools",
+              "properties": {
+                "design": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial chiplet design tools",
+                  "examples": [["innovus", "virtuoso"], ["innovus"]]
+                },
+                "verification": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial chiplet verification tools",
+                  "examples": [["vcs", "questa"], ["vcs"]]
+                },
+                "formal": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial chiplet formal verification tools",
+                  "examples": [["onespin", "jasper"], ["onespin"]]
+                },
+                "security": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial chiplet security testing tools",
+                  "examples": [["secure_ic", "rambus_dpa"], ["secure_ic"]]
+                },
+                "integration": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial chiplet integration tools",
+                  "examples": [["innovus", "virtuoso"], ["innovus"]]
+                }
+              }
+            }
+          }
+        },
+        "analog": {
+          "type": "object",
+          "description": "Analog design and verification tools",
+          "properties": {
+            "open_source": {
+              "type": "object",
+              "description": "Open-source analog tools",
+              "properties": {
+                "schematic": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source schematic capture tools",
+                  "examples": [["xschem", "kicad"], ["xschem"]]
+                },
+                "simulation": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source analog simulation tools",
+                  "examples": [["ngspice", "xyce"], ["ngspice"]]
+                },
+                "layout": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source analog layout tools",
+                  "examples": [["magic", "klayout"], ["magic"]]
+                },
+                "verification": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source analog verification tools",
+                  "examples": [["ngspice", "custom_python"], ["ngspice"]]
+                },
+                "security": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source analog security testing tools",
+                  "examples": [["custom_python", "numpy"], ["chipwhisperer"]]
+                }
+              }
+            },
+            "commercial": {
+              "type": "object",
+              "description": "Commercial analog tools",
+              "properties": {
+                "schematic": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial schematic capture tools",
+                  "examples": [["virtuoso", "composer"], ["virtuoso"]]
+                },
+                "simulation": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial analog simulation tools",
+                  "examples": [["spectre", "hspice", "ams_designer"], ["spectre"]]
+                },
+                "layout": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial analog layout tools",
+                  "examples": [["virtuoso", "laker"], ["virtuoso"]]
+                },
+                "verification": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial analog verification tools",
+                  "examples": [["spectre", "ams_designer"], ["spectre"]]
+                },
+                "security": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial analog security testing tools",
+                  "examples": [["secure_ic", "rohde_schwarz"], ["secure_ic"]]
+                }
+              }
+            }
+          }
+        }
+      },
+      "examples": [
+        {
+          "asic": {
+            "open_source": {
+              "synthesis": ["yosys"],
+              "place_route": ["openroad"],
+              "verification": ["verilator"],
+              "formal": ["yosys-smtbmc"],
+              "security": ["custom_python", "numpy"],
+              "layout": ["magic"],
+              "drc_lvs": ["magic"]
+            },
+            "commercial": {
+              "synthesis": [],
+              "place_route": [],
+              "verification": [],
+              "formal": [],
+              "security": [],
+              "layout": [],
+              "drc_lvs": []
+            }
+          },
+          "fpga": {
+            "open_source": {
+              "synthesis": ["yosys"],
+              "place_route": ["nextpnr"],
+              "verification": ["verilator"],
+              "formal": ["yosys-smtbmc"],
+              "security": ["custom_python"],
+              "programming": ["openfpgaloader"]
+            },
+            "commercial": {
+              "synthesis": [],
+              "place_route": [],
+              "verification": [],
+              "formal": [],
+              "security": [],
+              "programming": []
+            }
+          }
+        }
+      ]
+    },
     "toolchain_support": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "List of EDA tools or simulators this IP has been tested with",
+      "description": "List of EDA tools or simulators this IP has been tested with (legacy field)",
       "examples": [["verilator", "yosys"], ["VCS", "Design Compiler"], ["iverilog", "ModelSim"]]
     },
     "target_pdks": {
@@ -1795,9 +2191,23 @@
       "properties": {
         "enabled": {
           "type": "boolean",
-          "description": "Whether security validation is enabled for this IP",
+          "description": "Whether security validation is enabled for this IP (disabled by default to lower barrier to entry)",
           "default": false,
-          "examples": [true, false]
+          "examples": [false, true]
+        },
+        "tool_availability": {
+          "type": "string",
+          "enum": ["open_source", "commercial", "hybrid"],
+          "description": "Preferred tool availability for security testing (open-source by default for accessibility)",
+          "default": "open_source",
+          "examples": ["open_source", "commercial", "hybrid"]
+        },
+        "target_flow": {
+          "type": "string",
+          "enum": ["asic", "fpga", "chiplet", "analog"],
+          "description": "Target design flow for security tool selection (references tools.{flow})",
+          "default": "fpga",
+          "examples": ["fpga", "asic", "chiplet", "analog"]
         },
         "security_level": {
           "type": "string",
@@ -1991,12 +2401,31 @@
               ]
             },
             "tools": {
-              "type": "array",
-              "items": { "type": "string" },
-              "description": "Formal verification tools to use",
+              "type": "object",
+              "description": "Formal verification tools categorized by availability",
+              "properties": {
+                "open_source": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source formal verification tools (references tools.{flow}.open_source.formal)",
+                  "examples": [
+                    ["yosys-smtbmc", "sby", "symbiyosys", "jtag"]
+                  ]
+                },
+                "commercial": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial formal verification tools (references tools.{flow}.commercial.formal)",
+                  "examples": [
+                    ["oneSpin", "jasper", "vc_formal", "questa_formal"]
+                  ]
+                }
+              },
               "examples": [
-                ["yosys-smtbmc", "sby", "symbiyosys"],
-                ["jtag", "symbiyosys", "oneSpin"]
+                {
+                  "open_source": ["yosys-smtbmc", "sby"],
+                  "commercial": ["oneSpin"]
+                }
               ]
             },
             "timeout": {
@@ -2009,7 +2438,10 @@
             {
               "enabled": true,
               "security_properties": ["no_illegal_memory_access", "fsm_reachability"],
-              "tools": ["yosys-smtbmc", "sby"],
+              "tools": {
+                "open_source": ["yosys-smtbmc", "sby"],
+                "commercial": []
+              },
               "timeout": 600
             }
           ]
@@ -2046,12 +2478,31 @@
               ]
             },
             "analysis_tools": {
-              "type": "array",
-              "items": { "type": "string" },
-              "description": "Tools for side-channel analysis",
+              "type": "object",
+              "description": "Side-channel analysis tools categorized by availability",
+              "properties": {
+                "open_source": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Open-source side-channel analysis tools (references tools.{flow}.open_source.security)",
+                  "examples": [
+                    ["custom_python", "numpy", "scipy", "chipwhisperer"]
+                  ]
+                },
+                "commercial": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Commercial side-channel analysis tools (references tools.{flow}.commercial.security)",
+                  "examples": [
+                    ["secure_ic", "rambus_dpa", "rohde_schwarz"]
+                  ]
+                }
+              },
               "examples": [
-                ["custom_power_analyzer", "timing_analyzer"],
-                ["chipwhisperer", "power_analyzer", "em_analyzer"]
+                {
+                  "open_source": ["custom_python", "numpy"],
+                  "commercial": ["secure_ic"]
+                }
               ]
             }
           },
@@ -2060,7 +2511,10 @@
               "enabled": true,
               "attack_vectors": ["timing", "power"],
               "protection_mechanisms": ["constant_time_operations", "power_balancing"],
-              "analysis_tools": ["custom_power_analyzer", "timing_analyzer"]
+              "analysis_tools": {
+                "open_source": ["custom_python", "numpy"],
+                "commercial": ["secure_ic"]
+              }
             }
           ]
         },
