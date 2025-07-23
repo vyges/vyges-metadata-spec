@@ -343,7 +343,7 @@
         "icon": "security",
         "order": 12,
         "advanced": true,
-        "fields": ["compliance", "trust_profile"],
+        "fields": ["compliance", "trust_profile", "security"],
         "expanded": false
       },
       {
@@ -780,6 +780,373 @@
         "width": "full",
         "advanced": true
       },
+      "security": {
+        "widget": "object",
+        "help": "Security and safety-related metadata for RTL design validation",
+        "order": 3,
+        "width": "full",
+        "advanced": true,
+        "properties": {
+          "enabled": {
+            "widget": "checkbox",
+            "help": "Enable security validation for this IP",
+            "default": false,
+            "order": 1,
+            "width": "third"
+          },
+          "security_level": {
+            "widget": "select",
+            "help": "Severity or criticality from a security standpoint",
+            "options": [
+              {"label": "Low", "value": "low", "description": "Minimal security requirements"},
+              {"label": "Medium", "value": "medium", "description": "Standard security requirements"},
+              {"label": "High", "value": "high", "description": "Elevated security requirements"},
+              {"label": "Critical", "value": "critical", "description": "Maximum security requirements"}
+            ],
+            "order": 2,
+            "width": "third",
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ]
+          },
+          "risk_areas": {
+            "widget": "multiselect",
+            "help": "Functional areas where security validation is critical",
+            "options": [
+              {"label": "Memory Access", "value": "memory_access", "description": "Memory access control and validation"},
+              {"label": "FSM State Control", "value": "fsm_state_control", "description": "Finite state machine state validation"},
+              {"label": "Bus Protocol", "value": "bus_protocol", "description": "Bus protocol compliance and timing"},
+              {"label": "Reset Glitch", "value": "reset_glitch", "description": "Reset signal integrity and glitch protection"},
+              {"label": "Clock Domain Crossing", "value": "clock_domain_crossing", "description": "CDC synchronization and safety"},
+              {"label": "Side Channel", "value": "side_channel", "description": "Side-channel attack protection"},
+              {"label": "Input Overdrive", "value": "input_overdrive", "description": "Input signal overdrive protection"},
+              {"label": "Address Decoding", "value": "address_decoding", "description": "Address decoding validation"},
+              {"label": "FIFO Boundary", "value": "fifo_boundary", "description": "FIFO boundary checking"},
+              {"label": "Signal Validation", "value": "signal_validation", "description": "Signal integrity validation"},
+              {"label": "Cryptographic Operations", "value": "cryptographic_operations", "description": "Cryptographic operation security"},
+              {"label": "Privilege Escalation", "value": "privilege_escalation", "description": "Privilege escalation protection"},
+              {"label": "Data Integrity", "value": "data_integrity", "description": "Data integrity protection"},
+              {"label": "Timing Attacks", "value": "timing_attacks", "description": "Timing attack resistance"},
+              {"label": "Fault Injection", "value": "fault_injection", "description": "Fault injection resistance"}
+            ],
+            "order": 3,
+            "width": "full",
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ]
+          },
+          "protection_features": {
+            "widget": "array",
+            "help": "Security-related design features implemented in the IP",
+            "placeholder": "Add protection feature...",
+            "order": 4,
+            "width": "full",
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ]
+          },
+          "recommended_tests": {
+            "widget": "array",
+            "help": "Suggested tests/assertions to validate security for this IP",
+            "placeholder": "Add recommended test...",
+            "order": 5,
+            "width": "full",
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ]
+          },
+          "requires_secure_testbench": {
+            "widget": "checkbox",
+            "help": "Whether this IP requires security-focused testbench generation",
+            "default": false,
+            "order": 6,
+            "width": "third",
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ]
+          },
+          "assertion_coverage": {
+            "widget": "object",
+            "help": "Security assertion coverage requirements",
+            "order": 7,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "required_assertions": {
+                "widget": "array",
+                "help": "List of required security assertions",
+                "placeholder": "Add required assertion...",
+                "order": 1,
+                "width": "full"
+              },
+              "coverage_target": {
+                "widget": "number",
+                "help": "Target assertion coverage percentage",
+                "validation": {"min": 0, "max": 100},
+                "order": 2,
+                "width": "third"
+              },
+              "critical_paths": {
+                "widget": "array",
+                "help": "Critical security paths that must be covered",
+                "placeholder": "Add critical path...",
+                "order": 3,
+                "width": "full"
+              }
+            }
+          },
+          "fuzzing_config": {
+            "widget": "object",
+            "help": "Configuration for security-focused fuzzing tests",
+            "order": 8,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "enabled": {
+                "widget": "checkbox",
+                "help": "Whether fuzzing tests should be generated",
+                "default": false,
+                "order": 1,
+                "width": "third"
+              },
+              "input_ranges": {
+                "widget": "array",
+                "help": "Input signal ranges for fuzzing",
+                "order": 2,
+                "width": "full",
+                "itemConfig": {
+                  "type": "object",
+                  "properties": {
+                    "signal": {
+                      "widget": "text",
+                      "placeholder": "e.g., addr, data",
+                      "help": "Signal name"
+                    },
+                    "min_value": {
+                      "widget": "number",
+                      "help": "Minimum value for fuzzing"
+                    },
+                    "max_value": {
+                      "widget": "number",
+                      "help": "Maximum value for fuzzing"
+                    },
+                    "include_invalid": {
+                      "widget": "checkbox",
+                      "help": "Include invalid values in fuzzing",
+                      "default": true
+                    }
+                  }
+                }
+              },
+              "test_duration": {
+                "widget": "number",
+                "help": "Duration of fuzzing tests in cycles",
+                "validation": {"min": 100},
+                "order": 3,
+                "width": "third"
+              },
+              "mutation_strategy": {
+                "widget": "select",
+                "help": "Fuzzing mutation strategy",
+                "options": [
+                  {"label": "Random", "value": "random", "description": "Random mutation"},
+                  {"label": "Directed", "value": "directed", "description": "Directed mutation"},
+                  {"label": "Coverage Guided", "value": "coverage_guided", "description": "Coverage-guided mutation"}
+                ],
+                "order": 4,
+                "width": "third"
+              }
+            }
+          },
+          "formal_verification": {
+            "widget": "object",
+            "help": "Formal verification requirements for security properties",
+            "order": 9,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "enabled": {
+                "widget": "checkbox",
+                "help": "Whether formal verification is required",
+                "default": false,
+                "order": 1,
+                "width": "third"
+              },
+              "security_properties": {
+                "widget": "array",
+                "help": "Security properties to be formally verified",
+                "placeholder": "Add security property...",
+                "order": 2,
+                "width": "full"
+              },
+              "tools": {
+                "widget": "multiselect",
+                "help": "Formal verification tools to use",
+                "options": [
+                  {"label": "Yosys SMTBMC", "value": "yosys-smtbmc"},
+                  {"label": "SBY", "value": "sby"},
+                  {"label": "Symbiyosys", "value": "symbiyosys"},
+                  {"label": "JTAG", "value": "jtag"},
+                  {"label": "OneSpin", "value": "oneSpin"}
+                ],
+                "order": 3,
+                "width": "full"
+              },
+              "timeout": {
+                "widget": "number",
+                "help": "Formal verification timeout in seconds",
+                "validation": {"min": 60},
+                "order": 4,
+                "width": "third"
+              }
+            }
+          },
+          "side_channel_analysis": {
+            "widget": "object",
+            "help": "Side-channel analysis requirements and protections",
+            "order": 10,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "enabled": {
+                "widget": "checkbox",
+                "help": "Whether side-channel analysis is required",
+                "default": false,
+                "order": 1,
+                "width": "third"
+              },
+              "attack_vectors": {
+                "widget": "multiselect",
+                "help": "Side-channel attack vectors to protect against",
+                "options": [
+                  {"label": "Timing", "value": "timing", "description": "Timing attacks"},
+                  {"label": "Power", "value": "power", "description": "Power analysis attacks"},
+                  {"label": "Electromagnetic", "value": "electromagnetic", "description": "EM attacks"},
+                  {"label": "Fault Injection", "value": "fault_injection", "description": "Fault injection attacks"}
+                ],
+                "order": 2,
+                "width": "full"
+              },
+              "protection_mechanisms": {
+                "widget": "array",
+                "help": "Implemented side-channel protection mechanisms",
+                "placeholder": "Add protection mechanism...",
+                "order": 3,
+                "width": "full"
+              },
+              "analysis_tools": {
+                "widget": "array",
+                "help": "Tools for side-channel analysis",
+                "placeholder": "Add analysis tool...",
+                "order": 4,
+                "width": "full"
+              }
+            }
+          },
+          "compliance_standards": {
+            "widget": "multiselect",
+            "help": "Security compliance standards this IP adheres to",
+            "options": [
+              {"label": "ISO 26262", "value": "iso_26262", "description": "Automotive functional safety"},
+              {"label": "IEC 61508", "value": "iec_61508", "description": "Functional safety of electrical systems"},
+              {"label": "DO-254", "value": "do_254", "description": "Avionics hardware design assurance"},
+              {"label": "Common Criteria", "value": "common_criteria", "description": "IT security evaluation"},
+              {"label": "FIPS 140", "value": "fips_140", "description": "Cryptographic module security"},
+              {"label": "NIST SP 800", "value": "nist_sp_800", "description": "NIST cybersecurity framework"},
+              {"label": "ISO 21434", "value": "iso_21434", "description": "Road vehicle cybersecurity"},
+              {"label": "Custom", "value": "custom", "description": "Custom security standard"}
+            ],
+            "order": 11,
+            "width": "full",
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ]
+          },
+          "security_documentation": {
+            "widget": "object",
+            "help": "Links to security-related documentation",
+            "order": 12,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "security.enabled",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "security_analysis": {
+                "widget": "url",
+                "placeholder": "https://...",
+                "help": "Link to security analysis report"
+              },
+              "threat_model": {
+                "widget": "url",
+                "placeholder": "https://...",
+                "help": "Link to detailed threat model"
+              },
+              "penetration_testing": {
+                "widget": "url",
+                "placeholder": "https://...",
+                "help": "Link to penetration testing results"
+              }
+            }
+          }
+        }
+      },
       "packaging": {
         "widget": "object",
         "help": "Packaging formats and standards",
@@ -799,7 +1166,126 @@
         "help": "Automation requirements and capabilities",
         "order": 2,
         "width": "full",
-        "advanced": true
+        "advanced": true,
+        "properties": {
+          "minimal_required": {
+            "widget": "multiselect",
+            "help": "Minimum fields required for basic automation",
+            "options": [
+              {"label": "Name", "value": "name"},
+              {"label": "Version", "value": "version"},
+              {"label": "License", "value": "license"},
+              {"label": "Interfaces", "value": "interfaces"},
+              {"label": "Template", "value": "template"},
+              {"label": "Target", "value": "target"},
+              {"label": "Design Type", "value": "design_type"},
+              {"label": "Maturity", "value": "maturity"},
+              {"label": "Description", "value": "description"},
+              {"label": "Source", "value": "source"},
+              {"label": "ASIC", "value": "asic"},
+              {"label": "FPGA", "value": "fpga"},
+              {"label": "Test", "value": "test"},
+              {"label": "Flows", "value": "flows"}
+            ]
+          },
+          "recommended_for_automation": {
+            "widget": "multiselect",
+            "help": "Recommended fields for enhanced automation",
+            "options": [
+              {"label": "Parameters", "value": "parameters"},
+              {"label": "Dependencies", "value": "dependencies"},
+              {"label": "Tool Requirements", "value": "toolRequirements"},
+              {"label": "Performance", "value": "performance"},
+              {"label": "Reliability", "value": "reliability"},
+              {"label": "Packaging", "value": "packaging"},
+              {"label": "Commercial", "value": "commercial"},
+              {"label": "Community", "value": "community"},
+              {"label": "Security", "value": "security"}
+            ]
+          },
+          "automation_level": {
+            "widget": "select",
+            "help": "Level of automation support this IP provides",
+            "options": [
+              {"label": "Basic", "value": "basic", "description": "Basic automation support"},
+              {"label": "Enhanced", "value": "enhanced", "description": "Enhanced automation with additional features"},
+              {"label": "Full", "value": "full", "description": "Full automation support"}
+            ],
+            "default": "basic"
+          },
+          "blocking_issues": {
+            "widget": "array",
+            "help": "Issues that prevent automation",
+            "placeholder": "Add blocking issue...",
+            "options": [
+              {"label": "Encrypted IP", "value": "encrypted_ip"},
+              {"label": "Requires NDA", "value": "requires_nda"},
+              {"label": "Missing Source", "value": "missing_source"}
+            ]
+          },
+          "security_policy": {
+            "widget": "object",
+            "help": "Project-wide security policy for automation",
+            "advanced": true,
+            "properties": {
+              "min_security_level": {
+                "widget": "select",
+                "help": "Minimum security level required for all IPs in this project",
+                "options": [
+                  {"label": "Low", "value": "low"},
+                  {"label": "Medium", "value": "medium"},
+                  {"label": "High", "value": "high"},
+                  {"label": "Critical", "value": "critical"}
+                ]
+              },
+              "require_assertions": {
+                "widget": "checkbox",
+                "help": "Whether security assertions are required for all IPs",
+                "default": false
+              },
+              "require_secure_testbench": {
+                "widget": "checkbox",
+                "help": "Whether secure testbench generation is required",
+                "default": false
+              },
+              "require_formal_verification": {
+                "widget": "checkbox",
+                "help": "Whether formal verification is required for security properties",
+                "default": false
+              },
+              "tag_high_risk_ips": {
+                "widget": "checkbox",
+                "help": "Whether to automatically tag high-risk IPs",
+                "default": true
+              },
+              "enforced_standards": {
+                "widget": "multiselect",
+                "help": "Security standards that must be enforced",
+                "options": [
+                  {"label": "ISO 26262", "value": "iso_26262"},
+                  {"label": "IEC 61508", "value": "iec_61508"},
+                  {"label": "DO-254", "value": "do_254"},
+                  {"label": "Common Criteria", "value": "common_criteria"},
+                  {"label": "FIPS 140", "value": "fips_140"},
+                  {"label": "NIST SP 800", "value": "nist_sp_800"},
+                  {"label": "ISO 21434", "value": "iso_21434"}
+                ]
+              },
+              "automated_checks": {
+                "widget": "multiselect",
+                "help": "Automated security checks to run",
+                "options": [
+                  {"label": "Assertion Coverage", "value": "assertion_coverage"},
+                  {"label": "Fuzzing Tests", "value": "fuzzing_tests"},
+                  {"label": "Formal Verification", "value": "formal_verification"},
+                  {"label": "Side Channel Analysis", "value": "side_channel_analysis"},
+                  {"label": "Threat Modeling", "value": "threat_modeling"},
+                  {"label": "Compliance Check", "value": "compliance_check"}
+                ]
+              }
+            }
+          }
+        }
       },
       "usage_analytics": {
         "widget": "object",
@@ -1429,6 +1915,67 @@
         },
         "required_sections": ["basic_info", "target_platforms", "interfaces", "chiplet"],
         "optional_sections": ["asic_config", "fpga_config", "parameters", "testing", "performance", "compliance"]
+      },
+      "security_ip": {
+        "name": "Security-Focused IP",
+        "description": "IP block with enhanced security requirements and validation",
+        "icon": "security",
+        "defaults": {
+          "security": {
+            "enabled": true,
+            "security_level": "high",
+            "requires_secure_testbench": true
+          },
+          "maturity": "production",
+          "automation": {
+            "automation_level": "enhanced",
+            "security_policy": {
+              "min_security_level": "high",
+              "require_assertions": true,
+              "require_secure_testbench": true,
+              "tag_high_risk_ips": true
+            }
+          },
+          "defaultCategory": "security",
+          "suggestedTags": ["security", "validation", "assertions", "formal"]
+        },
+        "required_sections": ["basic_info", "target_platforms", "interfaces", "compliance"],
+        "optional_sections": ["asic_config", "fpga_config", "parameters", "testing", "performance", "reliability"]
+      },
+      "cryptographic_ip": {
+        "name": "Cryptographic IP",
+        "description": "Cryptographic IP block with maximum security requirements",
+        "icon": "crypto",
+        "defaults": {
+          "security": {
+            "enabled": true,
+            "security_level": "critical",
+            "risk_areas": ["cryptographic_operations", "timing_attacks", "fault_injection", "side_channel"],
+            "requires_secure_testbench": true,
+            "side_channel_analysis": {
+              "enabled": true,
+              "attack_vectors": ["timing", "power", "electromagnetic", "fault_injection"]
+            },
+            "compliance_standards": ["fips_140", "nist_sp_800"]
+          },
+          "maturity": "production",
+          "automation": {
+            "automation_level": "full",
+            "security_policy": {
+              "min_security_level": "critical",
+              "require_assertions": true,
+              "require_secure_testbench": true,
+              "require_formal_verification": true,
+              "tag_high_risk_ips": true,
+              "enforced_standards": ["fips_140", "nist_sp_800"],
+              "automated_checks": ["assertion_coverage", "fuzzing_tests", "formal_verification", "side_channel_analysis"]
+            }
+          },
+          "defaultCategory": "security",
+          "suggestedTags": ["cryptographic", "security", "fips", "side-channel", "formal"]
+        },
+        "required_sections": ["basic_info", "target_platforms", "interfaces", "compliance"],
+        "optional_sections": ["asic_config", "fpga_config", "parameters", "testing", "performance", "reliability"]
       }
     }
   }

@@ -103,10 +103,10 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "commercial", "community"]
+            "enum": ["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "commercial", "community", "security"]
           },
           "description": "Recommended fields for enhanced automation",
-          "examples": [["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "community"]]
+          "examples": [["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "community", "security"]]
         },
         "automation_level": {
           "type": "string",
@@ -120,18 +120,99 @@
           "items": { "type": "string" },
           "description": "Issues that prevent automation (e.g., missing source, encrypted IP)",
           "examples": [["encrypted_ip", "requires_nda"], ["missing_source"], []]
+        },
+        "security_policy": {
+          "type": "object",
+          "description": "Project-wide security policy for automation",
+          "properties": {
+            "min_security_level": {
+              "type": "string",
+              "enum": ["low", "medium", "high", "critical"],
+              "description": "Minimum security level required for all IPs in this project",
+              "examples": ["medium", "high", "critical"]
+            },
+            "require_assertions": {
+              "type": "boolean",
+              "description": "Whether security assertions are required for all IPs",
+              "default": false,
+              "examples": [true, false]
+            },
+            "require_secure_testbench": {
+              "type": "boolean",
+              "description": "Whether secure testbench generation is required",
+              "default": false,
+              "examples": [true, false]
+            },
+            "require_formal_verification": {
+              "type": "boolean",
+              "description": "Whether formal verification is required for security properties",
+              "default": false,
+              "examples": [true, false]
+            },
+            "tag_high_risk_ips": {
+              "type": "boolean",
+              "description": "Whether to automatically tag high-risk IPs",
+              "default": true,
+              "examples": [true, false]
+            },
+            "enforced_standards": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Security standards that must be enforced",
+              "examples": [
+                ["iso_26262", "iec_61508"],
+                ["fips_140", "nist_sp_800"]
+              ]
+            },
+            "automated_checks": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Automated security checks to run",
+              "examples": [
+                ["assertion_coverage", "fuzzing_tests", "formal_verification"],
+                ["side_channel_analysis", "threat_modeling", "compliance_check"]
+              ]
+            }
+          },
+          "examples": [
+            {
+              "min_security_level": "medium",
+              "require_assertions": true,
+              "require_secure_testbench": true,
+              "tag_high_risk_ips": true,
+              "enforced_standards": ["iso_26262"],
+              "automated_checks": ["assertion_coverage", "fuzzing_tests"]
+            },
+            {
+              "min_security_level": "critical",
+              "require_assertions": true,
+              "require_secure_testbench": true,
+              "require_formal_verification": true,
+              "tag_high_risk_ips": true,
+              "enforced_standards": ["fips_140", "nist_sp_800"],
+              "automated_checks": ["assertion_coverage", "fuzzing_tests", "formal_verification", "side_channel_analysis"]
+            }
+          ]
         }
       },
       "examples": [
         {
           "automation_level": "enhanced",
           "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "fpga", "test", "flows"],
-          "recommended_for_automation": ["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "community"]
+          "recommended_for_automation": ["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "community", "security"],
+          "security_policy": {
+            "min_security_level": "medium",
+            "require_assertions": true,
+            "require_secure_testbench": true,
+            "tag_high_risk_ips": true,
+            "enforced_standards": ["iso_26262"],
+            "automated_checks": ["assertion_coverage", "fuzzing_tests"]
+          }
         },
         {
           "automation_level": "basic",
           "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "fpga", "test", "flows"],
-          "recommended_for_automation": ["commercial", "compliance"],
+          "recommended_for_automation": ["commercial", "compliance", "security"],
           "blocking_issues": ["encrypted_ip", "requires_nda"]
         }
       ]
@@ -1705,6 +1786,404 @@
           "sbom": "https://acme.com/ip/sbom.xml",
           "known_cves": ["CVE-2023-1234"],
           "threat_model": "Timing attacks on memory access patterns"
+        }
+      ]
+    },
+    "security": {
+      "type": "object",
+      "description": "Security and safety-related metadata for RTL design validation",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether security validation is enabled for this IP",
+          "default": false,
+          "examples": [true, false]
+        },
+        "security_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Severity or criticality of this IP from a security standpoint",
+          "examples": ["low", "medium", "high", "critical"]
+        },
+        "risk_areas": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "memory_access",
+              "fsm_state_control", 
+              "bus_protocol",
+              "reset_glitch",
+              "clock_domain_crossing",
+              "side_channel",
+              "input_overdrive",
+              "address_decoding",
+              "fifo_boundary",
+              "signal_validation",
+              "cryptographic_operations",
+              "privilege_escalation",
+              "data_integrity",
+              "timing_attacks",
+              "fault_injection"
+            ]
+          },
+          "description": "Functional areas where security validation is critical",
+          "examples": [
+            ["memory_access", "fsm_state_control", "reset_glitch"],
+            ["bus_protocol", "clock_domain_crossing", "side_channel"],
+            ["cryptographic_operations", "timing_attacks", "fault_injection"]
+          ]
+        },
+        "protection_features": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Security-related design features implemented in the IP",
+          "examples": [
+            ["address_range_check", "fsm_default_state", "reset_assertion"],
+            ["ecc_protection", "parity_checking", "crc_validation"],
+            ["side_channel_protection", "constant_time_operations", "power_analysis_resistance"]
+          ]
+        },
+        "recommended_tests": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Suggested tests/assertions to validate security for this IP",
+          "examples": [
+            ["assert_illegal_address_access", "assert_fsm_stable_transitions", "reset_glitch_simulation"],
+            ["assert_protocol_timing", "assert_cdc_synchronization", "assert_side_channel_protection"],
+            ["assert_cryptographic_operations", "assert_timing_attack_resistance", "assert_fault_injection_resistance"]
+          ]
+        },
+        "requires_secure_testbench": {
+          "type": "boolean",
+          "description": "Whether this IP requires security-focused testbench generation",
+          "default": false,
+          "examples": [true, false]
+        },
+        "assertion_coverage": {
+          "type": "object",
+          "description": "Security assertion coverage requirements",
+          "properties": {
+            "required_assertions": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of required security assertions",
+              "examples": [
+                ["address_bounds_check", "fsm_state_validity", "reset_synchronization"],
+                ["protocol_timing", "cdc_synchronization", "side_channel_protection"]
+              ]
+            },
+            "coverage_target": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Target assertion coverage percentage",
+              "examples": [90, 95, 98, 100]
+            },
+            "critical_paths": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Critical security paths that must be covered",
+              "examples": [
+                ["memory_access_control", "privilege_check", "cryptographic_key_path"],
+                ["reset_recovery", "error_handling", "state_transition_validation"]
+              ]
+            }
+          },
+          "examples": [
+            {
+              "required_assertions": ["address_bounds_check", "fsm_state_validity"],
+              "coverage_target": 95,
+              "critical_paths": ["memory_access_control", "reset_recovery"]
+            },
+            {
+              "required_assertions": ["protocol_timing", "cdc_synchronization"],
+              "coverage_target": 98,
+              "critical_paths": ["cryptographic_key_path", "privilege_check"]
+            }
+          ]
+        },
+        "fuzzing_config": {
+          "type": "object",
+          "description": "Configuration for security-focused fuzzing tests",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Whether fuzzing tests should be generated",
+              "default": false,
+              "examples": [true, false]
+            },
+            "input_ranges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "signal": { "type": "string" },
+                  "min_value": { "type": "integer" },
+                  "max_value": { "type": "integer" },
+                  "include_invalid": { "type": "boolean" }
+                },
+                "required": ["signal", "min_value", "max_value"]
+              },
+              "description": "Input signal ranges for fuzzing",
+              "examples": [
+                [
+                  {
+                    "signal": "addr",
+                    "min_value": 0,
+                    "max_value": 1023,
+                    "include_invalid": true
+                  },
+                  {
+                    "signal": "data",
+                    "min_value": 0,
+                    "max_value": 255,
+                    "include_invalid": false
+                  }
+                ]
+              ]
+            },
+            "test_duration": {
+              "type": "integer",
+              "description": "Duration of fuzzing tests in cycles",
+              "examples": [1000, 10000, 100000]
+            },
+            "mutation_strategy": {
+              "type": "string",
+              "enum": ["random", "directed", "coverage_guided"],
+              "description": "Fuzzing mutation strategy",
+              "examples": ["random", "directed", "coverage_guided"]
+            }
+          },
+          "examples": [
+            {
+              "enabled": true,
+              "input_ranges": [
+                {
+                  "signal": "addr",
+                  "min_value": 0,
+                  "max_value": 1023,
+                  "include_invalid": true
+                }
+              ],
+              "test_duration": 10000,
+              "mutation_strategy": "random"
+            }
+          ]
+        },
+        "formal_verification": {
+          "type": "object",
+          "description": "Formal verification requirements for security properties",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Whether formal verification is required",
+              "default": false,
+              "examples": [true, false]
+            },
+            "security_properties": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Security properties to be formally verified",
+              "examples": [
+                ["no_illegal_memory_access", "fsm_reachability", "reset_recovery"],
+                ["protocol_compliance", "cdc_safety", "side_channel_protection"]
+              ]
+            },
+            "tools": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Formal verification tools to use",
+              "examples": [
+                ["yosys-smtbmc", "sby", "symbiyosys"],
+                ["jtag", "symbiyosys", "oneSpin"]
+              ]
+            },
+            "timeout": {
+              "type": "integer",
+              "description": "Formal verification timeout in seconds",
+              "examples": [300, 600, 1800]
+            }
+          },
+          "examples": [
+            {
+              "enabled": true,
+              "security_properties": ["no_illegal_memory_access", "fsm_reachability"],
+              "tools": ["yosys-smtbmc", "sby"],
+              "timeout": 600
+            }
+          ]
+        },
+        "side_channel_analysis": {
+          "type": "object",
+          "description": "Side-channel analysis requirements and protections",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Whether side-channel analysis is required",
+              "default": false,
+              "examples": [true, false]
+            },
+            "attack_vectors": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["timing", "power", "electromagnetic", "fault_injection"]
+              },
+              "description": "Side-channel attack vectors to protect against",
+              "examples": [
+                ["timing", "power"],
+                ["timing", "power", "electromagnetic", "fault_injection"]
+              ]
+            },
+            "protection_mechanisms": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Implemented side-channel protection mechanisms",
+              "examples": [
+                ["constant_time_operations", "power_balancing"],
+                ["randomization", "shielding", "fault_detection"]
+              ]
+            },
+            "analysis_tools": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Tools for side-channel analysis",
+              "examples": [
+                ["custom_power_analyzer", "timing_analyzer"],
+                ["chipwhisperer", "power_analyzer", "em_analyzer"]
+              ]
+            }
+          },
+          "examples": [
+            {
+              "enabled": true,
+              "attack_vectors": ["timing", "power"],
+              "protection_mechanisms": ["constant_time_operations", "power_balancing"],
+              "analysis_tools": ["custom_power_analyzer", "timing_analyzer"]
+            }
+          ]
+        },
+        "compliance_standards": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "iso_26262",
+              "iec_61508", 
+              "do_254",
+              "common_criteria",
+              "fips_140",
+              "nist_sp_800",
+              "iso_21434",
+              "custom"
+            ]
+          },
+          "description": "Security compliance standards this IP adheres to",
+          "examples": [
+            ["iso_26262", "iec_61508"],
+            ["fips_140", "nist_sp_800"],
+            ["iso_21434", "custom"]
+          ]
+        },
+        "security_documentation": {
+          "type": "object",
+          "description": "Links to security-related documentation",
+          "properties": {
+            "security_analysis": {
+              "type": "string",
+              "format": "uri",
+              "description": "Link to security analysis report",
+              "examples": [
+                "https://github.com/vyges/spi-controller/blob/main/docs/security_analysis.md",
+                "https://acme.com/ip/security_analysis.pdf"
+              ]
+            },
+            "threat_model": {
+              "type": "string",
+              "format": "uri", 
+              "description": "Link to detailed threat model",
+              "examples": [
+                "https://github.com/vyges/spi-controller/blob/main/docs/threat_model.md",
+                "https://acme.com/ip/threat_model.pdf"
+              ]
+            },
+            "penetration_testing": {
+              "type": "string",
+              "format": "uri",
+              "description": "Link to penetration testing results",
+              "examples": [
+                "https://github.com/vyges/spi-controller/blob/main/docs/penetration_testing.md",
+                "https://acme.com/ip/penetration_testing.pdf"
+              ]
+            }
+          },
+          "examples": [
+            {
+              "security_analysis": "https://github.com/vyges/spi-controller/blob/main/docs/security_analysis.md",
+              "threat_model": "https://github.com/vyges/spi-controller/blob/main/docs/threat_model.md"
+            }
+          ]
+        }
+      },
+      "required": ["enabled"],
+      "examples": [
+        {
+          "enabled": true,
+          "security_level": "high",
+          "risk_areas": ["memory_access", "fsm_state_control", "reset_glitch"],
+          "protection_features": ["address_range_check", "fsm_default_state", "reset_assertion"],
+          "recommended_tests": ["assert_illegal_address_access", "assert_fsm_stable_transitions", "reset_glitch_simulation"],
+          "requires_secure_testbench": true,
+          "assertion_coverage": {
+            "required_assertions": ["address_bounds_check", "fsm_state_validity"],
+            "coverage_target": 95,
+            "critical_paths": ["memory_access_control", "reset_recovery"]
+          },
+          "fuzzing_config": {
+            "enabled": true,
+            "input_ranges": [
+              {
+                "signal": "addr",
+                "min_value": 0,
+                "max_value": 1023,
+                "include_invalid": true
+              }
+            ],
+            "test_duration": 10000,
+            "mutation_strategy": "random"
+          },
+          "formal_verification": {
+            "enabled": true,
+            "security_properties": ["no_illegal_memory_access", "fsm_reachability"],
+            "tools": ["yosys-smtbmc", "sby"],
+            "timeout": 600
+          },
+          "compliance_standards": ["iso_26262", "iec_61508"],
+          "security_documentation": {
+            "security_analysis": "https://github.com/vyges/spi-controller/blob/main/docs/security_analysis.md",
+            "threat_model": "https://github.com/vyges/spi-controller/blob/main/docs/threat_model.md"
+          }
+        },
+        {
+          "enabled": true,
+          "security_level": "critical",
+          "risk_areas": ["cryptographic_operations", "timing_attacks", "fault_injection"],
+          "protection_features": ["side_channel_protection", "constant_time_operations", "power_analysis_resistance"],
+          "recommended_tests": ["assert_cryptographic_operations", "assert_timing_attack_resistance", "assert_fault_injection_resistance"],
+          "requires_secure_testbench": true,
+          "side_channel_analysis": {
+            "enabled": true,
+            "attack_vectors": ["timing", "power", "electromagnetic", "fault_injection"],
+            "protection_mechanisms": ["randomization", "shielding", "fault_detection"],
+            "analysis_tools": ["chipwhisperer", "power_analyzer", "em_analyzer"]
+          },
+          "compliance_standards": ["fips_140", "nist_sp_800"],
+          "security_documentation": {
+            "security_analysis": "https://acme.com/ip/security_analysis.pdf",
+            "threat_model": "https://acme.com/ip/threat_model.pdf",
+            "penetration_testing": "https://acme.com/ip/penetration_testing.pdf"
+          }
         }
       ]
     },
