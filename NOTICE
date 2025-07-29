@@ -13,5 +13,24 @@ management of hardware IP across different design flows and platforms.
 For more information about this project, visit:
 https://github.com/vyges/vyges-metadata-spec
 
+PATENT NOTICE:
+Vyges Inc. has filed provisional patent applications covering the Vyges 
+ecosystem architecture - the specific methodology for IP discovery, 
+metadata management, template integration, and automated workflow 
+orchestration.
+
+This patent filing does NOT affect:
+- Use of Vyges IP templates (Apache 2.0 licensed)
+- Use of Vyges-generated IP blocks (Apache 2.0 licensed)
+- Creation of your own IP blocks and metadata formats
+- Use of standard EDA tools and workflows
+
+This patent filing DOES protect:
+- The specific Vyges architectural methodology
+- The integrated workflow from IP creation to deployment
+- The ecosystem design and integration approach
+
+For patent licensing inquiries: patents@vyges.com
+
 This NOTICE file is for informational purposes only and does not modify the 
 Apache License 2.0 under which this software is distributed. 

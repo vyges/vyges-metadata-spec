@@ -5,6 +5,9 @@
   "title": "Vyges IP Metadata UI Schema",
   "description": "UI layout, grouping, and ordering information for Vyges IP metadata forms",
   "version": "1.0.0",
+  "x-author": "Shivaram Mysore",
+  "x-company": "Vyges",
+  "x-copyright": "Copyright © 2025 Vyges. All rights reserved.",
   "type": "object",
   "properties": {
     "ui": {

@@ -1,3 +1,11 @@
+/**
+ * Vyges Metadata Specification - Example Validator
+ * Copyright © 2025 Vyges All rights reserved.
+ * 
+ * This script validates example metadata files against the Vyges metadata schema.
+ * Licensed under the Apache License, Version 2.0.
+ */
+
 const fs = require('fs');
 const path = require('path');
 const Ajv = require('ajv');
