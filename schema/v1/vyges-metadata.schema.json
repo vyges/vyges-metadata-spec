@@ -1545,12 +1545,485 @@
     },
     "categories": {
       "type": "array",
+      "description": "Catalog categories and subcategories for IP classification",
       "items": {
-        "type": "string",
-        "enum": ["communication", "memory", "processing", "interface", "security", "analog", "digital", "mixed-signal", "peripheral", "accelerator", "controller", "bridge", "converter", "clock", "power", "sensor", "actuator", "debug", "test"]
+        "type": "object",
+        "required": ["main_category"],
+        "properties": {
+          "main_category": {
+            "type": "string",
+            "enum": [
+              "Analog & Mixed-Signal",
+              "Arithmetic Units", 
+              "Base Libraries",
+              "Chiplet Integration",
+              "Control Logic",
+              "Converters",
+              "Interface Controllers",
+              "Memory Subsystems",
+              "Miscellaneous",
+              "Processing Cores",
+              "Security IP",
+              "Signal Processing",
+              "Timing & Clocking",
+              "Verification & Testing"
+            ],
+            "description": "Primary functional category for the IP block",
+            "oneOf": [
+              {
+                "const": "Analog & Mixed-Signal",
+                "title": "Analog & Mixed-Signal",
+                "description": "Analog circuits, mixed-signal designs, and analog-to-digital interfaces"
+              },
+              {
+                "const": "Arithmetic Units",
+                "title": "Arithmetic Units", 
+                "description": "Mathematical computation units and arithmetic logic blocks"
+              },
+              {
+                "const": "Base Libraries",
+                "title": "Base Libraries",
+                "description": "Standard cell libraries and fundamental building blocks"
+              },
+              {
+                "const": "Chiplet Integration",
+                "title": "Chiplet Integration",
+                "description": "Multi-die integration, chiplet interfaces, and die-to-die communication"
+              },
+              {
+                "const": "Control Logic",
+                "title": "Control Logic",
+                "description": "Control and management logic blocks for system operation"
+              },
+              {
+                "const": "Converters",
+                "title": "Converters",
+                "description": "Analog-to-digital and digital-to-analog converters"
+              },
+              {
+                "const": "Interface Controllers",
+                "title": "Interface Controllers",
+                "description": "Communication interface IP blocks for serial and parallel protocols"
+              },
+              {
+                "const": "Memory Subsystems",
+                "title": "Memory Subsystems",
+                "description": "Memory controllers, interfaces, and storage subsystems"
+              },
+              {
+                "const": "Miscellaneous",
+                "title": "Miscellaneous",
+                "description": "Utility and specialized IP blocks"
+              },
+              {
+                "const": "Processing Cores",
+                "title": "Processing Cores",
+                "description": "CPU cores, microcontrollers, and processing units"
+              },
+              {
+                "const": "Security IP",
+                "title": "Security IP",
+                "description": "Cryptographic engines, secure boot, and security primitives"
+              },
+              {
+                "const": "Signal Processing",
+                "title": "Signal Processing",
+                "description": "Digital signal processing blocks and algorithms"
+              },
+              {
+                "const": "Timing & Clocking",
+                "title": "Timing & Clocking",
+                "description": "Clock generation, distribution, and timing management"
+              },
+              {
+                "const": "Verification & Testing",
+                "title": "Verification & Testing",
+                "description": "Testbenches, verification IP, and testing infrastructure"
+              }
+            ]
+          },
+          "sub_category": {
+            "type": "string",
+            "description": "Secondary subcategory within the main category. Bandgap References: Voltage reference circuits. Comparators: Analog voltage comparators. Oscillators: Clock generation circuits. Temperature Sensors: Temperature sensing circuits. Voltage Regulators: Power management circuits. Basic: Basic arithmetic operations. Custom DSP Cores: Digital signal processing cores. Fixed-Point: Fixed-point arithmetic units. Floating-Point: Floating-point arithmetic units. Vector: Vector processing units. Arbiters: Bus arbitration logic. Counters & Timers: Counting and timing circuits. Crossbars: Crossbar switches. Decoders: Address and data decoders. Flip-Flops & Latches: Sequential logic elements. Muxes & Demuxes: Multiplexers and demultiplexers. Pipeline & Bypass Logic: Pipeline control logic. Priority Encoders: Priority encoding logic. Synchronizers: Clock domain crossing synchronizers. AIB Interfaces: Advanced Interface Bus. BoW Interfaces: Bunch of Wires interfaces. Die-to-Die Protocol IP: Die-to-die communication protocols. Interposer Models: Interposer design models. UCIe Interfaces: Universal Chiplet Interconnect Express. Chiplet Wrappers: Chiplet integration wrappers. Interrupt Controllers: Interrupt handling logic. Power Management Units: Power control and management. Reset & Clock Control: Reset and clock management. Sequencers: State sequencing logic. State Machines: Finite state machines. ADC: Analog-to-Digital Converters. Clock Domain Crossers: Clock domain crossing circuits. DAC: Digital-to-Analog Converters. Level Shifters: Voltage level conversion circuits. High-Speed Interfaces: High-speed communication interfaces. Parallel Interfaces: Parallel bus interfaces. Serial Interfaces: Serial communication interfaces. Cache Subsystems: Cache memory controllers. DRAM Controllers: DRAM memory controllers. FIFOs & Buffers: First-in-first-out buffers. Flash Interfaces: Flash memory interfaces. Register Files: Register file memories. SRAM Controllers: SRAM memory controllers. Custom Accelerators: Application-specific accelerators. IP Wrappers & Glue Logic: IP integration logic. LED Controllers: Light-emitting diode controllers. PWM Generators: Pulse-width modulation generators. Watchdog Timers: System watchdog timers. ARM-Compatible: ARM architecture compatible cores. Co-Processors: Co-processing units. Custom ISAs: Custom instruction set architectures. Microcontrollers: Microcontroller cores. RISC-V: RISC-V architecture cores. Vector Processors: Vector processing units. Crypto Engines: Cryptographic processing engines. Fuse Controllers: Fuse programming controllers. Secure Boot Blocks: Secure boot implementation. Tamper Detection: Tamper detection circuits. True Random Number Generators (TRNG): Random number generation. Codecs: Audio/video codecs. Filters: Digital filters. Transforms: Mathematical transforms. Clock Gating: Clock gating logic. Clock Tree Models: Clock distribution models. DLL: Delay-locked loops. Frequency Dividers: Clock frequency dividers. PLL: Phase-locked loops. Assertions: Verification assertions. Driver/Monitor Agents: Testbench agents. Formal Models: Formal verification models. Scoreboards: Verification scoreboards. Testbenches: Testbench infrastructure.",
+            "oneOf": [
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Analog & Mixed-Signal" } }
+                },
+                "then": {
+                  "enum": [
+                    "Bandgap References",
+                    "Comparators",
+                    "Oscillators", 
+                    "Temperature Sensors",
+                    "Voltage Regulators"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Arithmetic Units" } }
+                },
+                "then": {
+                  "enum": [
+                    "Basic",
+                    "Custom DSP Cores",
+                    "Fixed-Point",
+                    "Floating-Point",
+                    "Vector"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Base Libraries" } }
+                },
+                "then": {
+                  "enum": [
+                    "Arbiters",
+                    "Counters & Timers",
+                    "Crossbars",
+                    "Decoders",
+                    "Flip-Flops & Latches",
+                    "Muxes & Demuxes",
+                    "Pipeline & Bypass Logic",
+                    "Priority Encoders",
+                    "Synchronizers"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Chiplet Integration" } }
+                },
+                "then": {
+                  "enum": [
+                    "AIB Interfaces",
+                    "BoW Interfaces",
+                    "Die-to-Die Protocol IP",
+                    "Interposer Models",
+                    "UCIe Interfaces",
+                    "Chiplet Wrappers"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Control Logic" } }
+                },
+                "then": {
+                  "enum": [
+                    "Interrupt Controllers",
+                    "Power Management Units",
+                    "Reset & Clock Control",
+                    "Sequencers",
+                    "State Machines"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Converters" } }
+                },
+                "then": {
+                  "enum": [
+                    "ADC",
+                    "Clock Domain Crossers",
+                    "DAC",
+                    "Level Shifters"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Interface Controllers" } }
+                },
+                "then": {
+                  "enum": [
+                    "High-Speed Interfaces",
+                    "Parallel Interfaces",
+                    "Serial Interfaces"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Memory Subsystems" } }
+                },
+                "then": {
+                  "enum": [
+                    "Cache Subsystems",
+                    "DRAM Controllers",
+                    "FIFOs & Buffers",
+                    "Flash Interfaces",
+                    "Register Files",
+                    "SRAM Controllers"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Miscellaneous" } }
+                },
+                "then": {
+                  "enum": [
+                    "Custom Accelerators",
+                    "IP Wrappers & Glue Logic",
+                    "LED Controllers",
+                    "PWM Generators",
+                    "Watchdog Timers"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Processing Cores" } }
+                },
+                "then": {
+                  "enum": [
+                    "ARM-Compatible",
+                    "Co-Processors",
+                    "Custom ISAs",
+                    "Microcontrollers",
+                    "RISC-V",
+                    "Vector Processors"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Security IP" } }
+                },
+                "then": {
+                  "enum": [
+                    "Crypto Engines",
+                    "Fuse Controllers",
+                    "Secure Boot Blocks",
+                    "Tamper Detection",
+                    "True Random Number Generators (TRNG)"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Signal Processing" } }
+                },
+                "then": {
+                  "enum": [
+                    "Codecs",
+                    "Filters",
+                    "Transforms"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Timing & Clocking" } }
+                },
+                "then": {
+                  "enum": [
+                    "Clock Gating",
+                    "Clock Tree Models",
+                    "DLL",
+                    "Frequency Dividers",
+                    "PLL"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { "main_category": { "const": "Verification & Testing" } }
+                },
+                "then": {
+                  "enum": [
+                    "Assertions",
+                    "Driver/Monitor Agents",
+                    "Formal Models",
+                    "Scoreboards",
+                    "Testbenches"
+                  ]
+                }
+              }
+            ]
+          },
+          "sub_sub_category": {
+            "type": "string",
+            "description": "Tertiary subcategory for deeper classification",
+            "oneOf": [
+              {
+                "if": {
+                  "properties": { 
+                    "main_category": { "const": "Interface Controllers" },
+                    "sub_category": { "const": "High-Speed Interfaces" }
+                  }
+                },
+                "then": {
+                  "enum": [
+                    "Ethernet",
+                    "MIPI",
+                    "PCIe",
+                    "SDIO/eMMC",
+                    "USB"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { 
+                    "main_category": { "const": "Interface Controllers" },
+                    "sub_category": { "const": "Parallel Interfaces" }
+                  }
+                },
+                "then": {
+                  "enum": [
+                    "AHB/APB",
+                    "AXI",
+                    "GPIO",
+                    "Wishbone"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { 
+                    "main_category": { "const": "Interface Controllers" },
+                    "sub_category": { "const": "Serial Interfaces" }
+                  }
+                },
+                "then": {
+                  "enum": [
+                    "I2C",
+                    "LIN",
+                    "SPI",
+                    "UART"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { 
+                    "main_category": { "const": "Security IP" },
+                    "sub_category": { "const": "Crypto Engines" }
+                  }
+                },
+                "then": {
+                  "enum": [
+                    "AES",
+                    "RSA/ECC",
+                    "SHA"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { 
+                    "main_category": { "const": "Signal Processing" },
+                    "sub_category": { "const": "Codecs" }
+                  }
+                },
+                "then": {
+                  "enum": [
+                    "Audio",
+                    "Compression",
+                    "Encryption",
+                    "Video"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { 
+                    "main_category": { "const": "Signal Processing" },
+                    "sub_category": { "const": "Filters" }
+                  }
+                },
+                "then": {
+                  "enum": [
+                    "CIC",
+                    "Decimators/Interpolators",
+                    "FIR",
+                    "IIR"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": { 
+                    "main_category": { "const": "Signal Processing" },
+                    "sub_category": { "const": "Transforms" }
+                  }
+                },
+                "then": {
+                  "enum": [
+                    "DCT",
+                    "FFT",
+                    "Hilbert",
+                    "Wavelet"
+                  ]
+                }
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of why this category applies to the IP"
+          }
+        }
       },
-      "description": "High-level functional categories",
-      "examples": [["interface", "controller", "communication"], ["mixed-signal", "interface"], ["memory", "digital"], ["analog", "power"]]
+      "examples": [
+        [
+          {
+            "main_category": "Interface Controllers",
+            "sub_category": "Serial Interfaces",
+            "sub_sub_category": "SPI",
+            "description": "SPI master controller for serial communication"
+          }
+        ],
+        [
+          {
+            "main_category": "Signal Processing",
+            "sub_category": "Transforms",
+            "sub_sub_category": "FFT",
+            "description": "Fast Fourier Transform implementation"
+          }
+        ],
+        [
+          {
+            "main_category": "Converters",
+            "sub_category": "ADC",
+            "description": "Analog-to-Digital Converter"
+          }
+        ],
+        [
+          {
+            "main_category": "Arithmetic Units",
+            "sub_category": "Basic",
+            "description": "Basic arithmetic operations"
+          }
+        ],
+        [
+          {
+            "main_category": "Memory Subsystems",
+            "sub_category": "SRAM Controllers",
+            "description": "SRAM memory controller"
+          }
+        ],
+        [
+          {
+            "main_category": "Security IP",
+            "sub_category": "Crypto Engines",
+            "sub_sub_category": "AES",
+            "description": "Advanced Encryption Standard implementation"
+          }
+        ],
+        [
+          {
+            "main_category": "Analog & Mixed-Signal",
+            "sub_category": "Voltage Regulators",
+            "description": "Voltage regulation and power management"
+          }
+        ]
+      ]
     },
     "dependencies": {
       "type": "array",
