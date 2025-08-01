@@ -1846,124 +1846,7 @@
               }
             ]
           },
-          "sub_sub_category": {
-            "type": "string",
-            "description": "Tertiary subcategory for deeper classification",
-            "oneOf": [
-              {
-                "if": {
-                  "properties": { 
-                    "main_category": { "const": "Interface Controllers" },
-                    "sub_category": { "const": "High-Speed Interfaces" }
-                  }
-                },
-                "then": {
-                  "enum": [
-                    "Ethernet",
-                    "MIPI",
-                    "PCIe",
-                    "SDIO/eMMC",
-                    "USB"
-                  ]
-                }
-              },
-              {
-                "if": {
-                  "properties": { 
-                    "main_category": { "const": "Interface Controllers" },
-                    "sub_category": { "const": "Parallel Interfaces" }
-                  }
-                },
-                "then": {
-                  "enum": [
-                    "AHB/APB",
-                    "AXI",
-                    "GPIO",
-                    "Wishbone"
-                  ]
-                }
-              },
-              {
-                "if": {
-                  "properties": { 
-                    "main_category": { "const": "Interface Controllers" },
-                    "sub_category": { "const": "Serial Interfaces" }
-                  }
-                },
-                "then": {
-                  "enum": [
-                    "I2C",
-                    "LIN",
-                    "SPI",
-                    "UART"
-                  ]
-                }
-              },
-              {
-                "if": {
-                  "properties": { 
-                    "main_category": { "const": "Security IP" },
-                    "sub_category": { "const": "Crypto Engines" }
-                  }
-                },
-                "then": {
-                  "enum": [
-                    "AES",
-                    "RSA/ECC",
-                    "SHA"
-                  ]
-                }
-              },
-              {
-                "if": {
-                  "properties": { 
-                    "main_category": { "const": "Signal Processing" },
-                    "sub_category": { "const": "Codecs" }
-                  }
-                },
-                "then": {
-                  "enum": [
-                    "Audio",
-                    "Compression",
-                    "Encryption",
-                    "Video"
-                  ]
-                }
-              },
-              {
-                "if": {
-                  "properties": { 
-                    "main_category": { "const": "Signal Processing" },
-                    "sub_category": { "const": "Filters" }
-                  }
-                },
-                "then": {
-                  "enum": [
-                    "CIC",
-                    "Decimators/Interpolators",
-                    "FIR",
-                    "IIR"
-                  ]
-                }
-              },
-              {
-                "if": {
-                  "properties": { 
-                    "main_category": { "const": "Signal Processing" },
-                    "sub_category": { "const": "Transforms" }
-                  }
-                },
-                "then": {
-                  "enum": [
-                    "DCT",
-                    "FFT",
-                    "Hilbert",
-                    "Wavelet"
-                  ]
-                }
-              }
-            ]
-          },
+
           "description": {
             "type": "string",
             "description": "Optional description of why this category applies to the IP"
@@ -1975,7 +1858,6 @@
           {
             "main_category": "Interface Controllers",
             "sub_category": "Serial Interfaces",
-            "sub_sub_category": "SPI",
             "description": "SPI master controller for serial communication"
           }
         ],
@@ -1983,7 +1865,6 @@
           {
             "main_category": "Signal Processing",
             "sub_category": "Transforms",
-            "sub_sub_category": "FFT",
             "description": "Fast Fourier Transform implementation"
           }
         ],
@@ -2012,7 +1893,6 @@
           {
             "main_category": "Security IP",
             "sub_category": "Crypto Engines",
-            "sub_sub_category": "AES",
             "description": "Advanced Encryption Standard implementation"
           }
         ],

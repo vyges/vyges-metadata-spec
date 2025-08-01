@@ -1987,46 +1987,11 @@
               "order": 2,
               "width": "third"
             },
-            "sub_sub_category": {
-              "widget": "select",
-              "help": "Tertiary subcategory for deeper classification",
-              "options": [
-                {"label": "Ethernet", "value": "Ethernet", "dependencies": {"main_category": "Interface Controllers", "sub_category": "High-Speed Interfaces"}},
-                {"label": "MIPI", "value": "MIPI", "dependencies": {"main_category": "Interface Controllers", "sub_category": "High-Speed Interfaces"}},
-                {"label": "PCIe", "value": "PCIe", "dependencies": {"main_category": "Interface Controllers", "sub_category": "High-Speed Interfaces"}},
-                {"label": "SDIO/eMMC", "value": "SDIO/eMMC", "dependencies": {"main_category": "Interface Controllers", "sub_category": "High-Speed Interfaces"}},
-                {"label": "USB", "value": "USB", "dependencies": {"main_category": "Interface Controllers", "sub_category": "High-Speed Interfaces"}},
-                {"label": "AHB/APB", "value": "AHB/APB", "dependencies": {"main_category": "Interface Controllers", "sub_category": "Parallel Interfaces"}},
-                {"label": "AXI", "value": "AXI", "dependencies": {"main_category": "Interface Controllers", "sub_category": "Parallel Interfaces"}},
-                {"label": "GPIO", "value": "GPIO", "dependencies": {"main_category": "Interface Controllers", "sub_category": "Parallel Interfaces"}},
-                {"label": "Wishbone", "value": "Wishbone", "dependencies": {"main_category": "Interface Controllers", "sub_category": "Parallel Interfaces"}},
-                {"label": "I2C", "value": "I2C", "dependencies": {"main_category": "Interface Controllers", "sub_category": "Serial Interfaces"}},
-                {"label": "LIN", "value": "LIN", "dependencies": {"main_category": "Interface Controllers", "sub_category": "Serial Interfaces"}},
-                {"label": "SPI", "value": "SPI", "dependencies": {"main_category": "Interface Controllers", "sub_category": "Serial Interfaces"}},
-                {"label": "UART", "value": "UART", "dependencies": {"main_category": "Interface Controllers", "sub_category": "Serial Interfaces"}},
-                {"label": "AES", "value": "AES", "dependencies": {"main_category": "Security IP", "sub_category": "Crypto Engines"}},
-                {"label": "RSA/ECC", "value": "RSA/ECC", "dependencies": {"main_category": "Security IP", "sub_category": "Crypto Engines"}},
-                {"label": "SHA", "value": "SHA", "dependencies": {"main_category": "Security IP", "sub_category": "Crypto Engines"}},
-                {"label": "Audio", "value": "Audio", "dependencies": {"main_category": "Signal Processing", "sub_category": "Codecs"}},
-                {"label": "Compression", "value": "Compression", "dependencies": {"main_category": "Signal Processing", "sub_category": "Codecs"}},
-                {"label": "Encryption", "value": "Encryption", "dependencies": {"main_category": "Signal Processing", "sub_category": "Codecs"}},
-                {"label": "Video", "value": "Video", "dependencies": {"main_category": "Signal Processing", "sub_category": "Codecs"}},
-                {"label": "CIC", "value": "CIC", "dependencies": {"main_category": "Signal Processing", "sub_category": "Filters"}},
-                {"label": "Decimators/Interpolators", "value": "Decimators/Interpolators", "dependencies": {"main_category": "Signal Processing", "sub_category": "Filters"}},
-                {"label": "FIR", "value": "FIR", "dependencies": {"main_category": "Signal Processing", "sub_category": "Filters"}},
-                {"label": "IIR", "value": "IIR", "dependencies": {"main_category": "Signal Processing", "sub_category": "Filters"}},
-                {"label": "DCT", "value": "DCT", "dependencies": {"main_category": "Signal Processing", "sub_category": "Transforms"}},
-                {"label": "FFT", "value": "FFT", "dependencies": {"main_category": "Signal Processing", "sub_category": "Transforms"}},
-                {"label": "Hilbert", "value": "Hilbert", "dependencies": {"main_category": "Signal Processing", "sub_category": "Transforms"}},
-                {"label": "Wavelet", "value": "Wavelet", "dependencies": {"main_category": "Signal Processing", "sub_category": "Transforms"}}
-              ],
-              "order": 3,
-              "width": "third"
-            },
+
             "description": {
               "widget": "text",
               "help": "Optional description of why this category applies to the IP",
-              "order": 4,
+              "order": 3,
               "width": "full"
             }
           }
