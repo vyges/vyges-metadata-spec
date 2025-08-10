@@ -469,6 +469,147 @@
         }
       ]
     },
+    "sourceFiles": {
+      "type": "array",
+      "description": "List of source RTL files constituting the IP block.",
+      "items": {
+        "type": "object",
+        "required": ["path", "type", "owner", "version", "license"],
+        "properties": {
+          "path": { "type": "string", "description": "Relative path to the file." },
+          "type": { "type": "string", "enum": ["rtl", "testbench", "constraint", "doc", "header"], "description": "File category." },
+          "owner": { "type": "string", "description": "Maintainer or owner of this file." },
+          "version": { "type": "string", "description": "Version or commit identifier of the file." },
+          "license": { "type": "string", "description": "SPDX license identifier for this file." },
+          "vendor": {
+            "type": "object",
+            "description": "Vendor information for the IP",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the vendor or organization"
+              },
+              "docs": {
+                "type": "array",
+                "description": "Documentation links from vendor.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": { "type": "string" },
+                    "url": { "type": "string", "format": "uri" },
+                    "type": { "type": "string", "enum": ["datasheet","user_guide","api_ref","app_note","reference_manual","integration_guide","other"] }
+                  },
+                  "required": ["title", "url"]
+                }
+              },
+              "contact": {
+                "type": "object",
+                "description": "Contact information for vendor support",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Primary support email address"
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Support page or contact form URL"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "description": "Support phone number (optional)"
+                  }
+                },
+                "anyOf": [
+                  {"required": ["email"]},
+                  {"required": ["url"]}
+                ]
+              }
+            },
+            "required": ["name"]
+          },
+          "block": { 
+            "type": "string", 
+            "description": "Logical block name or namespace this file belongs to. Used for organization and to avoid naming conflicts between different functional blocks within the same IP.",
+            "examples": ["spi_core", "uart_interface", "memory_controller", "clock_gen", "reset_logic"]
+          }
+        }
+      },
+      "examples": [
+        {
+          "path": "rtl/spi_controller.sv",
+          "type": "rtl",
+          "owner": "vyges-team",
+          "version": "1.0.0",
+          "license": "Apache-2.0",
+          "block": "spi_core"
+        },
+        {
+          "path": "rtl/third_party/uart_core.v",
+          "type": "rtl",
+          "owner": "acme-corp",
+          "version": "2.1.0",
+          "license": "MIT",
+          "vendor": {
+            "name": "ACME Corporation",
+            "docs": [
+              {
+                "title": "UART Core Datasheet",
+                "url": "https://acme.com/docs/uart-core-datasheet.pdf",
+                "type": "datasheet"
+              },
+              {
+                "title": "UART Core User Guide",
+                "url": "https://acme.com/docs/uart-core-user-guide.pdf",
+                "type": "user_guide"
+              }
+            ],
+            "contact": {
+              "email": "support@acme.com",
+              "url": "https://acme.com/support"
+            }
+          },
+          "block": "uart_interface"
+        },
+        {
+          "path": "tb/spi_controller_tb.sv",
+          "type": "testbench",
+          "owner": "vyges-team",
+          "version": "1.0.0",
+          "license": "Apache-2.0",
+          "block": "spi_test"
+        },
+        {
+          "path": "rtl/third_party/memory_controller.v",
+          "type": "rtl",
+          "owner": "memory-tech-inc",
+          "version": "3.2.1",
+          "license": "Proprietary",
+          "vendor": {
+            "name": "Example Memory Technology Inc.",
+            "docs": [
+              {
+                "title": "Memory Controller Reference Manual",
+                "url": "https://example.com/docs/mc-ref-manual.pdf",
+                "type": "reference_manual"
+              },
+              {
+                "title": "Integration Guide for SoC Design",
+                "url": "https://example.com/docs/mc-integration-guide.pdf",
+                "type": "integration_guide"
+              }
+            ],
+            "contact": {
+              "email": "tech-support@example.com",
+              "url": "https://example.com/support",
+              "phone": "+1-555-0123"
+            }
+          },
+          "block": "memory_interface"
+        }
+      ]
+    },
     "interfaces": {
       "type": "array",
       "description": "One or more external interfaces this IP exposes",
@@ -1551,7 +1692,7 @@
         "required": ["main_category"],
         "properties": {
           "main_category": {
-            "type": "string",
+        "type": "string",
             "enum": [
               "Analog & Mixed-Signal",
               "Arithmetic Units", 

@@ -386,7 +386,7 @@
         "icon": "template",
         "order": 16,
         "advanced": true,
-        "fields": ["template", "meta", "source"],
+        "fields": ["template", "meta", "source", "sourceFiles"],
         "expanded": false
       },
       {
@@ -1865,6 +1865,118 @@
         "width": "full",
         "advanced": true
       },
+      "sourceFiles": {
+        "widget": "array",
+        "help": "Detailed metadata for individual source files including vendor information, ownership, and licensing",
+        "order": 4,
+        "width": "full",
+        "advanced": true,
+        "items": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "widget": "text",
+              "placeholder": "rtl/module.sv",
+              "help": "Relative path to the file"
+            },
+            "type": {
+              "widget": "select",
+              "help": "File category",
+              "options": [
+                {"label": "RTL", "value": "rtl", "description": "Register Transfer Level design files"},
+                {"label": "Testbench", "value": "testbench", "description": "Verification and test files"},
+                {"label": "Constraint", "value": "constraint", "description": "Timing and physical constraints"},
+                {"label": "Documentation", "value": "doc", "description": "Documentation files"},
+                {"label": "Header", "value": "header", "description": "Header and include files"}
+              ]
+            },
+            "owner": {
+              "widget": "text",
+              "placeholder": "team-name or individual",
+              "help": "Maintainer or owner of this file"
+            },
+            "version": {
+              "widget": "text",
+              "placeholder": "1.0.0 or commit-hash",
+              "help": "Version or commit identifier of the file"
+            },
+            "license": {
+              "widget": "text",
+              "placeholder": "Apache-2.0",
+              "help": "SPDX license identifier for this file"
+            },
+            "vendor": {
+              "widget": "object",
+              "help": "Vendor information for third-party IP",
+              "properties": {
+                "name": {
+                  "widget": "text",
+                  "placeholder": "Vendor Name",
+                  "help": "Name of the vendor or organization"
+                },
+                "docs": {
+                  "widget": "array",
+                  "help": "Documentation links from vendor",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "widget": "text",
+                        "placeholder": "Document Title",
+                        "help": "Title of the documentation"
+                      },
+                      "url": {
+                        "widget": "url",
+                        "placeholder": "https://...",
+                        "help": "URL to the documentation"
+                      },
+                      "type": {
+                        "widget": "select",
+                        "help": "Documentation type",
+                        "options": [
+                          {"label": "Datasheet", "value": "datasheet"},
+                          {"label": "User Guide", "value": "user_guide"},
+                          {"label": "API Reference", "value": "api_ref"},
+                          {"label": "Application Note", "value": "app_note"},
+                          {"label": "Reference Manual", "value": "reference_manual"},
+                          {"label": "Integration Guide", "value": "integration_guide"},
+                          {"label": "Other", "value": "other"}
+                        ]
+                      }
+                    }
+                  }
+                },
+                "contact": {
+                  "widget": "object",
+                  "help": "Contact information for vendor support",
+                  "properties": {
+                    "email": {
+                      "widget": "email",
+                      "placeholder": "support@vendor.com",
+                      "help": "Primary support email address"
+                    },
+                    "url": {
+                      "widget": "url",
+                      "placeholder": "https://vendor.com/support",
+                      "help": "Support page or contact form URL"
+                    },
+                    "phone": {
+                      "widget": "text",
+                      "placeholder": "+1-555-0123",
+                      "help": "Support phone number (optional)"
+                    }
+                  }
+                }
+              }
+            },
+            "block": {
+              "widget": "text",
+              "placeholder": "logical_block_name",
+              "help": "Logical block name or namespace this file belongs to"
+            }
+          }
+        }
+      },
       "tags": {
         "widget": "array",
         "help": "Searchable tags for discovery",
@@ -1888,7 +2000,7 @@
                          "main_category": {
                "widget": "select",
                "help": "Primary functional category for the IP block",
-               "options": [
+        "options": [
                  {"label": "Analog & Mixed-Signal", "value": "Analog & Mixed-Signal", "description": "Analog circuits, mixed-signal designs, and analog-to-digital interfaces"},
                  {"label": "Arithmetic Units", "value": "Arithmetic Units", "description": "Mathematical computation units and arithmetic logic blocks"},
                  {"label": "Base Libraries", "value": "Base Libraries", "description": "Standard cell libraries and fundamental building blocks"},
