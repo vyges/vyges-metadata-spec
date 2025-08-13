@@ -2190,11 +2190,192 @@
               }
             ]
           },
+          "cdxml_compliance": {
+            "widget": "object",
+            "help": "CDXML compliance metadata for OCP chiplet integration",
+            "order": 4,
+            "width": "full",
+            "advanced": true,
+            "dependencies": [
+              {
+                "field": "chiplet.chiplet_ready",
+                "value": true,
+                "operator": "equals"
+              }
+            ],
+            "properties": {
+              "cdxml_version": {
+                "widget": "text",
+                "placeholder": "cdxml-v1.0",
+                "help": "CDXML specification version this chiplet complies with"
+              },
+              "interface": {
+                "widget": "object",
+                "help": "Die-to-die interface characteristics per CDXML specification",
+                "properties": {
+                  "type": {
+                    "widget": "select",
+                    "help": "Interface protocol type",
+                    "options": [
+                      {"label": "BoW", "value": "bow", "description": "Bunch of Wires (OCP)"},
+                      {"label": "UCIe", "value": "ucie", "description": "Universal Chiplet Interconnect Express"},
+                      {"label": "AIB", "value": "aib", "description": "Advanced Interface Bus (Intel)"},
+                      {"label": "EMIB", "value": "emib", "description": "Embedded Multi-die Interconnect Bridge"},
+                      {"label": "Custom", "value": "custom", "description": "Custom interface protocol"}
+                    ]
+                  },
+                  "lanes": {
+                    "widget": "number",
+                    "help": "Number of interface lanes",
+                    "validation": {"min": 1}
+                  },
+                  "tx_pads": {
+                    "widget": "number",
+                    "help": "Number of transmit pads",
+                    "validation": {"min": 1}
+                  },
+                  "rx_pads": {
+                    "widget": "number",
+                    "help": "Number of receive pads",
+                    "validation": {"min": 1}
+                  },
+                  "data_rate_gbps": {
+                    "widget": "number",
+                    "help": "Data rate per lane in Gbps"
+                  },
+                  "bow_specification": {
+                    "widget": "object",
+                    "help": "BoW-specific interface parameters (when type is 'BoW')",
+                    "dependencies": [
+                      {
+                        "field": "chiplet.cdxml_compliance.interface.type",
+                        "value": "bow",
+                        "operator": "equals"
+                      }
+                    ],
+                    "properties": {
+                      "spec_version": {
+                        "widget": "text",
+                        "placeholder": "2.0d.1",
+                        "help": "BoW specification version"
+                      },
+                      "signaling_class": {
+                        "widget": "select",
+                        "help": "BoW signaling class defining voltage and timing characteristics",
+                        "options": [
+                          {"label": "Class A", "value": "A", "description": "Low voltage, high speed"},
+                          {"label": "Class B", "value": "B", "description": "Medium voltage, medium speed"},
+                          {"label": "Class C", "value": "C", "description": "High voltage, low speed"},
+                          {"label": "Class D", "value": "D", "description": "Custom voltage/speed"}
+                        ]
+                      },
+                      "tx_voltage": {
+                        "widget": "number",
+                        "help": "Transmit voltage in volts"
+                      },
+                      "rx_voltage": {
+                        "widget": "number",
+                        "help": "Receive voltage in volts"
+                      },
+                      "clocking_scheme": {
+                        "widget": "select",
+                        "help": "Clock distribution scheme",
+                        "options": [
+                          {"label": "Forwarded", "value": "forwarded", "description": "Clock forwarded with data"},
+                          {"label": "Embedded", "value": "embedded", "description": "Clock embedded in data"},
+                          {"label": "Recovered", "value": "recovered", "description": "Clock recovered from data"}
+                        ]
+                      },
+                      "link_training": {
+                        "widget": "checkbox",
+                        "help": "Whether link training is supported"
+                      },
+                      "protocol_layer": {
+                        "widget": "select",
+                        "help": "Protocol layer type",
+                        "options": [
+                          {"label": "Raw", "value": "raw", "description": "Raw data transmission"},
+                          {"label": "Packetized", "value": "packetized", "description": "Packet-based transmission"},
+                          {"label": "Streaming", "value": "streaming", "description": "Stream-based transmission"}
+                        ]
+                      },
+                      "serialization_factor": {
+                        "widget": "number",
+                        "help": "Serialization factor for data transmission",
+                        "validation": {"min": 1}
+                      }
+                    }
+                  }
+                }
+              },
+              "electrical_characteristics": {
+                "widget": "object",
+                "help": "Electrical characteristics per CDXML specification",
+                "properties": {
+                  "core_voltage": {
+                    "widget": "number",
+                    "help": "Core operating voltage in volts"
+                  },
+                  "io_voltage": {
+                    "widget": "number",
+                    "help": "I/O operating voltage in volts"
+                  },
+                  "max_current_ma": {
+                    "widget": "number",
+                    "help": "Maximum current draw in milliamps"
+                  },
+                  "leakage_ma": {
+                    "widget": "number",
+                    "help": "Typical leakage current in milliamps"
+                  }
+                }
+              },
+              "mechanical_characteristics": {
+                "widget": "object",
+                "help": "Mechanical characteristics per CDXML specification",
+                "properties": {
+                  "die_width_um": {
+                    "widget": "number",
+                    "help": "Die width in micrometers"
+                  },
+                  "die_height_um": {
+                    "widget": "number",
+                    "help": "Die height in micrometers"
+                  }
+                }
+              },
+              "checklist_items": {
+                "widget": "array",
+                "help": "CDXML compliance checklist items",
+                "placeholder": "Add checklist item..."
+              },
+              "validation_status": {
+                "widget": "select",
+                "help": "CDXML validation status",
+                "options": [
+                  {"label": "Not Started", "value": "not_started"},
+                  {"label": "In Progress", "value": "in_progress"},
+                  {"label": "Passed", "value": "passed"},
+                  {"label": "Failed", "value": "failed"},
+                  {"label": "Waived", "value": "waived"}
+                ]
+              },
+              "validation_date": {
+                "widget": "date",
+                "help": "Date when CDXML validation was completed"
+              },
+              "validation_tool": {
+                "widget": "text",
+                "placeholder": "e.g., CDXML Validator v1.0",
+                "help": "Tool used for CDXML validation"
+              }
+            }
+          },
           "packaging_considerations": {
             "widget": "textarea",
             "placeholder": "e.g., Requires 2.5D interposer with 0.8mm bump pitch",
             "help": "Notes about physical packaging requirements",
-            "order": 4,
+            "order": 5,
             "width": "full",
             "dependencies": [
               {
@@ -2207,7 +2388,7 @@
           "interposer_constraints": {
             "widget": "object",
             "help": "Interposer design constraints",
-            "order": 5,
+            "order": 6,
             "width": "full",
             "advanced": true,
             "dependencies": [
@@ -2247,7 +2428,7 @@
           "bump_constraints": {
             "widget": "object",
             "help": "Bump map and connectivity constraints",
-            "order": 6,
+            "order": 7,
             "width": "full",
             "advanced": true,
             "dependencies": [
@@ -2292,7 +2473,7 @@
           "thermal_constraints": {
             "widget": "object",
             "help": "Thermal analysis constraints",
-            "order": 7,
+            "order": 8,
             "width": "full",
             "advanced": true,
             "dependencies": [
@@ -2332,7 +2513,7 @@
           "multi_die_testing": {
             "widget": "object",
             "help": "Multi-die testing and validation requirements",
-            "order": 8,
+            "order": 9,
             "width": "full",
             "advanced": true,
             "dependencies": [
@@ -2378,7 +2559,7 @@
           "signal_conformance": {
             "widget": "object",
             "help": "Signal and protocol conformance validation",
-            "order": 9,
+            "order": 10,
             "width": "full",
             "advanced": true,
             "dependencies": [
@@ -2426,7 +2607,7 @@
           "power_domains": {
             "widget": "array",
             "help": "Power domain configuration for SoC/Chiplet partitioning",
-            "order": 10,
+            "order": 11,
             "width": "full",
             "advanced": true,
             "dependencies": [
@@ -2484,7 +2665,7 @@
           "lifecycle": {
             "widget": "object",
             "help": "Lifecycle and supply chain metadata for chiplet integration",
-            "order": 11,
+            "order": 12,
             "width": "full",
             "advanced": true,
             "dependencies": [

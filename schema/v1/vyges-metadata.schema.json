@@ -4160,6 +4160,514 @@
               "supply_chain_tracking": false
             }
           ]
+        },
+        "cdxml_compliance": {
+          "type": "object",
+          "description": "CDXML compliance metadata for OCP (Open Compute Project) chiplet integration",
+          "properties": {
+            "cdxml_version": {
+              "type": "string",
+              "description": "CDXML specification version this chiplet complies with",
+              "examples": ["cdxml-v0.1", "cdxml-v0.2", "cdxml-v1.0"]
+            },
+            "interface": {
+              "type": "object",
+              "description": "Die-to-die interface characteristics per CDXML specification",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["BoW", "UCIe", "AIB", "EMIB", "custom"],
+                  "description": "Interface protocol type",
+                  "examples": ["BoW", "UCIe", "AIB"]
+                },
+                "lanes": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Number of interface lanes",
+                  "examples": [4, 8, 16, 32]
+                },
+                "tx_pads": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Number of transmit pads",
+                  "examples": [16, 32, 64, 128]
+                },
+                "rx_pads": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Number of receive pads",
+                  "examples": [16, 32, 64, 128]
+                },
+                "data_rate_gbps": {
+                  "type": "number",
+                  "description": "Data rate per lane in Gbps",
+                  "examples": [2.5, 5.0, 8.0, 16.0, 32.0]
+                },
+                "bow_specification": {
+                  "type": "object",
+                  "description": "BoW-specific interface parameters (when type is 'BoW')",
+                  "properties": {
+                    "spec_version": {
+                      "type": "string",
+                      "description": "BoW specification version",
+                      "examples": ["2.0d.1", "2.0", "1.0"]
+                    },
+                    "signaling_class": {
+                      "type": "string",
+                      "enum": ["A", "B", "C", "D"],
+                      "description": "BoW signaling class defining voltage and timing characteristics",
+                      "examples": ["A", "B", "C"]
+                    },
+                    "tx_voltage": {
+                      "type": "number",
+                      "description": "Transmit voltage in volts",
+                      "examples": [0.4, 0.8, 1.2, 1.8]
+                    },
+                    "rx_voltage": {
+                      "type": "number",
+                      "description": "Receive voltage in volts",
+                      "examples": [0.4, 0.8, 1.2, 1.8]
+                    },
+                    "clocking_scheme": {
+                      "type": "string",
+                      "enum": ["forwarded", "embedded", "recovered"],
+                      "description": "Clock distribution scheme",
+                      "examples": ["forwarded", "embedded"]
+                    },
+                    "link_training": {
+                      "type": "boolean",
+                      "description": "Whether link training is supported",
+                      "examples": [true, false]
+                    },
+                    "protocol_layer": {
+                      "type": "string",
+                      "enum": ["raw", "packetized", "streaming"],
+                      "description": "Protocol layer type",
+                      "examples": ["raw", "packetized"]
+                    },
+                    "serialization_factor": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "Serialization factor for data transmission",
+                      "examples": [8, 16, 32]
+                    },
+                    "bump_group": {
+                      "type": "object",
+                      "description": "Bump group configuration for BoW interface",
+                      "properties": {
+                        "pitch_um": {
+                          "type": "number",
+                          "description": "Bump pitch in micrometers",
+                          "examples": [55, 100, 150, 200]
+                        },
+                        "location": {
+                          "type": "string",
+                          "enum": ["north", "south", "east", "west", "center", "distributed"],
+                          "description": "Bump group location on die",
+                          "examples": ["south", "distributed"]
+                        },
+                        "arrangement": {
+                          "type": "string",
+                          "enum": ["linear", "grid", "staggered", "custom"],
+                          "description": "Bump arrangement pattern",
+                          "examples": ["linear", "staggered"]
+                        }
+                      },
+                      "examples": [
+                        {
+                          "pitch_um": 55,
+                          "location": "south",
+                          "arrangement": "linear"
+                        }
+                      ]
+                    },
+                    "compliance": {
+                      "type": "object",
+                      "description": "BoW compliance and testing features",
+                      "properties": {
+                        "has_loopback": {
+                          "type": "boolean",
+                          "description": "Whether loopback testing is supported",
+                          "examples": [true, false]
+                        },
+                        "supports_prbs": {
+                          "type": "boolean",
+                          "description": "Whether PRBS (Pseudo-Random Bit Sequence) testing is supported",
+                          "examples": [true, false]
+                        },
+                        "supports_inband_error_detect": {
+                          "type": "boolean",
+                          "description": "Whether in-band error detection is supported",
+                          "examples": [true, false]
+                        },
+                        "supports_eye_monitoring": {
+                          "type": "boolean",
+                          "description": "Whether eye diagram monitoring is supported",
+                          "examples": [true, false]
+                        },
+                        "supports_jitter_tolerance": {
+                          "type": "boolean",
+                          "description": "Whether jitter tolerance testing is supported",
+                          "examples": [true, false]
+                        }
+                      },
+                      "examples": [
+                        {
+                          "has_loopback": true,
+                          "supports_prbs": true,
+                          "supports_inband_error_detect": false,
+                          "supports_eye_monitoring": true,
+                          "supports_jitter_tolerance": true
+                        }
+                      ]
+                    },
+                    "timing_constraints": {
+                      "type": "object",
+                      "description": "BoW timing and signal integrity constraints",
+                      "properties": {
+                        "setup_time_ps": {
+                          "type": "number",
+                          "description": "Setup time requirement in picoseconds",
+                          "examples": [50, 100, 200, 500]
+                        },
+                        "hold_time_ps": {
+                          "type": "number",
+                          "description": "Hold time requirement in picoseconds",
+                          "examples": [50, 100, 200, 500]
+                        },
+                        "max_jitter_ps": {
+                          "type": "number",
+                          "description": "Maximum allowed jitter in picoseconds",
+                          "examples": [10, 20, 50, 100]
+                        },
+                        "skew_tolerance_ps": {
+                          "type": "number",
+                          "description": "Skew tolerance between lanes in picoseconds",
+                          "examples": [10, 20, 50, 100]
+                        }
+                      },
+                      "examples": [
+                        {
+                          "setup_time_ps": 100,
+                          "hold_time_ps": 100,
+                          "max_jitter_ps": 20,
+                          "skew_tolerance_ps": 50
+                        }
+                      ]
+                    }
+                  },
+                  "examples": [
+                    {
+                      "spec_version": "2.0d.1",
+                      "signaling_class": "B",
+                      "tx_voltage": 0.4,
+                      "rx_voltage": 0.4,
+                      "clocking_scheme": "forwarded",
+                      "link_training": true,
+                      "protocol_layer": "raw",
+                      "serialization_factor": 8,
+                      "bump_group": {
+                        "pitch_um": 55,
+                        "location": "south",
+                        "arrangement": "linear"
+                      },
+                      "compliance": {
+                        "has_loopback": true,
+                        "supports_prbs": true,
+                        "supports_inband_error_detect": false
+                      },
+                      "timing_constraints": {
+                        "setup_time_ps": 100,
+                        "hold_time_ps": 100,
+                        "max_jitter_ps": 20,
+                        "skew_tolerance_ps": 50
+                      }
+                    }
+                  ]
+                }
+              },
+              "required": ["type"],
+              "examples": [
+                {
+                  "type": "BoW",
+                  "lanes": 8,
+                  "tx_pads": 32,
+                  "rx_pads": 32,
+                  "data_rate_gbps": 8.0,
+                  "bow_specification": {
+                    "spec_version": "2.0d.1",
+                    "signaling_class": "B",
+                    "tx_voltage": 0.4,
+                    "rx_voltage": 0.4,
+                    "clocking_scheme": "forwarded",
+                    "link_training": true,
+                    "protocol_layer": "raw",
+                    "serialization_factor": 8
+                  }
+                },
+                {
+                  "type": "UCIe",
+                  "lanes": 16,
+                  "tx_pads": 64,
+                  "rx_pads": 64,
+                  "data_rate_gbps": 16.0
+                }
+              ]
+            },
+            "electrical_characteristics": {
+              "type": "object",
+              "description": "Electrical characteristics per CDXML specification",
+              "properties": {
+                "core_voltage": {
+                  "type": "number",
+                  "description": "Core operating voltage in volts",
+                  "examples": [0.8, 1.0, 1.2]
+                },
+                "io_voltage": {
+                  "type": "number",
+                  "description": "I/O operating voltage in volts",
+                  "examples": [1.2, 1.8, 2.5, 3.3]
+                },
+                "max_current_ma": {
+                  "type": "number",
+                  "description": "Maximum current draw in milliamps",
+                  "examples": [50, 100, 200, 500]
+                },
+                "leakage_ma": {
+                  "type": "number",
+                  "description": "Typical leakage current in milliamps",
+                  "examples": [1.0, 2.5, 5.0, 10.0]
+                },
+                "power_domains": {
+                  "type": "array",
+                  "description": "Power domain specifications",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Power domain name",
+                        "examples": ["core_vdd", "io_vdd", "analog_vdd", "always_on"]
+                      },
+                      "voltage": {
+                        "type": "number",
+                        "description": "Operating voltage in volts",
+                        "examples": [0.8, 1.0, 1.2, 1.8, 3.3]
+                      },
+                      "max_current_ma": {
+                        "type": "number",
+                        "description": "Maximum current in milliamps",
+                        "examples": [25, 50, 100, 200]
+                      }
+                    },
+                    "required": ["name", "voltage"],
+                    "examples": [
+                      {
+                        "name": "core_vdd",
+                        "voltage": 0.8,
+                        "max_current_ma": 100
+                      },
+                      {
+                        "name": "io_vdd",
+                        "voltage": 1.2,
+                        "max_current_ma": 50
+                      }
+                    ]
+                  }
+                }
+              },
+              "examples": [
+                {
+                  "core_voltage": 0.8,
+                  "io_voltage": 1.2,
+                  "max_current_ma": 120,
+                  "leakage_ma": 4.5,
+                  "power_domains": [
+                    {
+                      "name": "core_vdd",
+                      "voltage": 0.8,
+                      "max_current_ma": 100
+                    },
+                    {
+                      "name": "io_vdd",
+                      "voltage": 1.2,
+                      "max_current_ma": 50
+                    }
+                  ]
+                }
+              ]
+            },
+            "mechanical_characteristics": {
+              "type": "object",
+              "description": "Mechanical characteristics per CDXML specification",
+              "properties": {
+                "die_width_um": {
+                  "type": "number",
+                  "description": "Die width in micrometers",
+                  "examples": [2000, 4000, 6000, 8000]
+                },
+                "die_height_um": {
+                  "type": "number",
+                  "description": "Die height in micrometers",
+                  "examples": [2000, 3000, 4000, 6000]
+                },
+                "bump_pitch_um": {
+                  "type": "number",
+                  "description": "Bump pitch in micrometers",
+                  "examples": [50, 100, 150, 200]
+                },
+                "substrate_type": {
+                  "type": "string",
+                  "enum": ["organic", "silicon", "glass", "ceramic"],
+                  "description": "Substrate material type",
+                  "examples": ["organic", "silicon", "glass"]
+                },
+                "package_dimensions": {
+                  "type": "object",
+                  "description": "Package physical dimensions",
+                  "properties": {
+                    "width_mm": {
+                      "type": "number",
+                      "description": "Package width in millimeters",
+                      "examples": [10, 15, 20, 25]
+                    },
+                    "height_mm": {
+                      "type": "number",
+                      "description": "Package height in millimeters",
+                      "examples": [10, 15, 20, 25]
+                    },
+                    "thickness_mm": {
+                      "type": "number",
+                      "description": "Package thickness in millimeters",
+                      "examples": [1.0, 1.5, 2.0, 2.5]
+                    }
+                  },
+                  "examples": [
+                    {
+                      "width_mm": 15,
+                      "height_mm": 15,
+                      "thickness_mm": 1.5
+                    }
+                  ]
+                }
+              },
+              "examples": [
+                {
+                  "die_width_um": 4000,
+                  "die_height_um": 3000,
+                  "bump_pitch_um": 100,
+                  "substrate_type": "organic",
+                  "package_dimensions": {
+                    "width_mm": 15,
+                    "height_mm": 15,
+                    "thickness_mm": 1.5
+                  }
+                }
+              ]
+            },
+            "checklist_items": {
+              "type": "object",
+              "description": "CDXML compliance checklist items",
+              "properties": {
+                "known_good_die": {
+                  "type": "boolean",
+                  "description": "Whether die has been tested and verified as known-good",
+                  "examples": [true, false]
+                },
+                "reticle_compatible": {
+                  "type": "boolean",
+                  "description": "Whether die is compatible with standard reticle formats",
+                  "examples": [true, false]
+                },
+                "has_dft_hooks": {
+                  "type": "boolean",
+                  "description": "Whether die includes design-for-test hooks",
+                  "examples": [true, false]
+                },
+                "test_vector_included": {
+                  "type": "boolean",
+                  "description": "Whether test vectors are included with the die",
+                  "examples": [true, false]
+                },
+                "thermal_model_available": {
+                  "type": "boolean",
+                  "description": "Whether thermal model is available for analysis",
+                  "examples": [true, false]
+                },
+                "power_model_available": {
+                  "type": "boolean",
+                  "description": "Whether power model is available for analysis",
+                  "examples": [true, false]
+                },
+                "d2d_loopback_coverage": {
+                  "type": "boolean",
+                  "description": "Whether die-to-die loopback testing is covered",
+                  "examples": [true, false]
+                }
+              },
+              "examples": [
+                {
+                  "known_good_die": true,
+                  "reticle_compatible": true,
+                  "has_dft_hooks": true,
+                  "test_vector_included": true,
+                  "thermal_model_available": true,
+                  "power_model_available": true,
+                  "d2d_loopback_coverage": true
+                }
+              ]
+            },
+            "validation_status": {
+              "type": "string",
+              "enum": ["not_validated", "in_progress", "validated", "failed"],
+              "description": "CDXML validation status",
+              "examples": ["not_validated", "in_progress", "validated", "failed"]
+            },
+            "validation_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Date when CDXML validation was completed",
+              "examples": ["2024-01-15", "2024-03-20"]
+            },
+            "validation_tool": {
+              "type": "string",
+              "description": "Tool used for CDXML validation",
+              "examples": ["CDXML Validator v0.2", "Custom CDXML Checker", "OCP Compliance Tool"]
+            }
+          },
+          "examples": [
+            {
+              "cdxml_version": "cdxml-v0.2",
+              "interface": {
+                "type": "BoW",
+                "lanes": 8,
+                "tx_pads": 32,
+                "rx_pads": 32,
+                "data_rate_gbps": 8.0
+              },
+              "electrical_characteristics": {
+                "core_voltage": 0.8,
+                "io_voltage": 1.2,
+                "max_current_ma": 120,
+                "leakage_ma": 4.5
+              },
+              "mechanical_characteristics": {
+                "die_width_um": 4000,
+                "die_height_um": 3000,
+                "bump_pitch_um": 100,
+                "substrate_type": "organic"
+              },
+              "checklist_items": {
+                "known_good_die": true,
+                "reticle_compatible": true,
+                "has_dft_hooks": true,
+                "test_vector_included": true
+              },
+              "validation_status": "validated",
+              "validation_date": "2024-01-15",
+              "validation_tool": "CDXML Validator v0.2"
+            }
+          ]
         }
       },
       "examples": [
@@ -4230,12 +4738,259 @@
             "package_type": "2.5d_interposer",
             "supply_chain_tracking": true,
             "certification": ["ISO 9001", "IATF 16949"]
+          },
+          "cdxml_compliance": {
+            "cdxml_version": "cdxml-v0.2",
+            "interface": {
+              "type": "BoW",
+              "lanes": 8,
+              "tx_pads": 32,
+              "rx_pads": 32,
+              "data_rate_gbps": 8.0
+            },
+            "electrical_characteristics": {
+              "core_voltage": 0.8,
+              "io_voltage": 1.2,
+              "max_current_ma": 120,
+              "leakage_ma": 4.5
+            },
+            "mechanical_characteristics": {
+              "die_width_um": 4000,
+              "die_height_um": 3000,
+              "bump_pitch_um": 100,
+              "substrate_type": "organic"
+            },
+            "checklist_items": {
+              "known_good_die": true,
+              "reticle_compatible": true,
+              "has_dft_hooks": true,
+              "test_vector_included": true
+            },
+            "validation_status": "validated",
+            "validation_date": "2024-01-15",
+            "validation_tool": "CDXML Validator v0.2"
           }
         },
         {
           "chiplet_ready": false,
           "integration_level": "rtl",
           "packaging_considerations": "Standard single-die packaging"
+        },
+        {
+          "chiplet_ready": true,
+          "integration_level": "hard_ip",
+          "die_to_die_interfaces": ["ucie", "bow"],
+          "packaging_considerations": "Advanced chiplet with CDXML compliance",
+          "cdxml_compliance": {
+            "cdxml_version": "cdxml-v0.2",
+            "interface": {
+              "type": "UCIe",
+              "lanes": 16,
+              "tx_pads": 64,
+              "rx_pads": 64,
+              "data_rate_gbps": 16.0
+            },
+            "electrical_characteristics": {
+              "core_voltage": 1.0,
+              "io_voltage": 1.8,
+              "max_current_ma": 200,
+              "leakage_ma": 8.0,
+              "power_domains": [
+                {
+                  "name": "core_vdd",
+                  "voltage": 1.0,
+                  "max_current_ma": 150
+                },
+                {
+                  "name": "io_vdd",
+                  "voltage": 1.8,
+                  "max_current_ma": 50
+                }
+              ]
+            },
+            "mechanical_characteristics": {
+              "die_width_um": 6000,
+              "die_height_um": 5000,
+              "bump_pitch_um": 150,
+              "substrate_type": "silicon",
+              "package_dimensions": {
+                "width_mm": 20,
+                "height_mm": 20,
+                "thickness_mm": 2.0
+              }
+            },
+            "checklist_items": {
+              "known_good_die": true,
+              "reticle_compatible": true,
+              "has_dft_hooks": true,
+              "test_vector_included": true,
+              "thermal_model_available": true,
+              "power_model_available": true,
+              "d2d_loopback_coverage": true
+            },
+            "validation_status": "validated",
+            "validation_date": "2024-03-20",
+            "validation_tool": "OCP Compliance Tool v1.0"
+          }
+        },
+        {
+          "chiplet_ready": true,
+          "integration_level": "hard_ip",
+          "die_to_die_interfaces": ["bow"],
+          "packaging_considerations": "High-performance BoW chiplet with comprehensive specification compliance",
+          "interposer_constraints": {
+            "technology": "silicon",
+            "routing_layers": 8,
+            "minimum_pitch": 0.5,
+            "die_spacing": 0.05
+          },
+          "bump_constraints": {
+            "pitch": 0.5,
+            "size": 0.25,
+            "array": "full",
+            "power_bumps": 32,
+            "signal_bumps": 128
+          },
+          "thermal_constraints": {
+            "max_power_per_die": 12.0,
+            "junction_temperature": 125,
+            "thermal_resistance": 12,
+            "cooling_requirements": "Advanced liquid cooling required"
+          },
+          "multi_die_testing": {
+            "test_access": "internal_access",
+            "test_coverage": {
+              "interconnect": 99,
+              "functionality": 98
+            },
+            "test_vectors": ["bow_interconnect_test.v", "prbs_test.v", "eye_monitoring_test.v", "jitter_test.v"]
+          },
+          "signal_conformance": {
+            "protocol_reference": "BoW 2.0d.1",
+            "verified_against": true,
+            "test_suite": "BoW Compliance Test Suite v2.0d.1",
+            "verification_date": "2024-04-15",
+            "verification_tool": "BoW Compliance Checker v2.0",
+            "compliance_level": "extended"
+          },
+          "power_domains": [
+            {
+              "name": "core_pd",
+              "voltage": 0.8,
+              "type": "logic",
+              "isolation_required": true,
+              "retention_required": true,
+              "max_current_ma": 300,
+              "description": "High-performance core logic domain"
+            },
+            {
+              "name": "bow_io_pd",
+              "voltage": 0.4,
+              "type": "io",
+              "isolation_required": false,
+              "retention_required": false,
+              "max_current_ma": 200,
+              "description": "BoW interface domain with low-voltage signaling"
+            },
+            {
+              "name": "analog_pd",
+              "voltage": 1.2,
+              "type": "analog",
+              "isolation_required": true,
+              "retention_required": false,
+              "max_current_ma": 100,
+              "description": "Analog circuitry and PLL domain"
+            }
+          ],
+          "lifecycle": {
+            "origin": "vyges/partner-x",
+            "trusted_fabricator": true,
+            "version_control": "git",
+            "release_status": "production",
+            "fabrication_node": "tsmc3nm",
+            "package_type": "2.5d_interposer",
+            "supply_chain_tracking": true,
+            "certification": ["ISO 9001", "IATF 16949", "AS9100", "AEC-Q100"]
+          },
+          "cdxml_compliance": {
+            "cdxml_version": "cdxml-v0.2",
+            "interface": {
+              "type": "BoW",
+              "lanes": 32,
+              "tx_pads": 128,
+              "rx_pads": 128,
+              "data_rate_gbps": 32.0,
+              "bow_specification": {
+                "spec_version": "2.0d.1",
+                "signaling_class": "B",
+                "tx_voltage": 0.4,
+                "rx_voltage": 0.4,
+                "clocking_scheme": "forwarded",
+                "link_training": true,
+                "protocol_layer": "raw",
+                "serialization_factor": 16,
+                "bump_group": {
+                  "pitch_um": 55,
+                  "location": "distributed",
+                  "arrangement": "staggered"
+                },
+                "compliance": {
+                  "has_loopback": true,
+                  "supports_prbs": true,
+                  "supports_inband_error_detect": true,
+                  "supports_eye_monitoring": true,
+                  "supports_jitter_tolerance": true
+                },
+                "timing_constraints": {
+                  "setup_time_ps": 50,
+                  "hold_time_ps": 50,
+                  "max_jitter_ps": 10,
+                  "skew_tolerance_ps": 25
+                }
+              }
+            },
+            "electrical_characteristics": {
+              "core_voltage": 0.8,
+              "io_voltage": 0.4,
+              "max_current_ma": 300,
+              "leakage_ma": 12.0,
+              "power_domains": [
+                {
+                  "name": "core_vdd",
+                  "voltage": 0.8,
+                  "max_current_ma": 200
+                },
+                {
+                  "name": "bow_io_vdd",
+                  "voltage": 0.4,
+                  "max_current_ma": 100
+                }
+              ]
+            },
+            "mechanical_characteristics": {
+              "die_width_um": 8000,
+              "die_height_um": 6000,
+              "bump_pitch_um": 55,
+              "substrate_type": "silicon",
+              "package_dimensions": {
+                "width_mm": 25,
+                "height_mm": 25,
+                "thickness_mm": 2.5
+              }
+            },
+            "checklist_items": {
+              "known_good_die": true,
+              "reticle_compatible": true,
+              "has_dft_hooks": true,
+              "test_vector_included": true,
+              "thermal_model_available": true,
+              "power_model_available": true,
+              "d2d_loopback_coverage": true
+            },
+            "validation_status": "validated",
+            "validation_date": "2024-04-15",
+            "validation_tool": "BoW Compliance Tool v2.0"
+          }
         }
       ]
     }

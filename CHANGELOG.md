@@ -27,6 +27,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Lifecycle and supply chain metadata (origin, trusted fabricator, certifications)
 - **Chiplet Interface Type**: New interface type for chiplet-to-chiplet communication
 - **CHIPLET_INTEGRATION.md**: Comprehensive documentation for chiplet metadata usage
+- **CDXML Compliance Support**: OCP (Open Compute Project) CDXML specification integration
+  - `cdxml_compliance` section with version tracking and validation status
+  - Interface specifications (protocol type, lanes, pad counts, data rates)
+  - Electrical characteristics (voltage domains, current requirements, power specifications)
+  - Mechanical characteristics (die dimensions, bump pitch, package specifications)
+  - Compliance checklist (known-good-die, DFT hooks, test vectors, thermal/power models)
+  - Validation metadata (status, date, tooling information)
+  - Enhanced BoW support with comprehensive 2.0d.1 specification compliance
+- **UI Schema CDXML Support**: Enhanced UI schema with comprehensive form generation for CDXML compliance fields
+  - Conditional display of CDXML fields based on chiplet readiness
+  - BoW-specific interface configuration with signaling classes and timing constraints
+  - Electrical and mechanical characteristics form fields
+  - Validation status tracking and compliance checklist management
+  - Proper field ordering and grouping for optimal user experience
 
 ### Changed
 - Updated contact information to point to GitHub issues
