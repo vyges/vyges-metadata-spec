@@ -18,6 +18,12 @@ The Vyges Metadata Specification defines a standardized JSON Schema format for d
 - **Latest Version**: `schema/v1/vyges-metadata.schema.json`
 - **UI Schema**: `schema/v1/vyges-metadata.ui-schema.json`
 
+### Interactive Schema Viewer
+- **Location**: `schemaview/schema-tree.html`
+- **Features**: Interactive D3.js tree visualization of the 497-node schema
+- **Usage**: Open in browser to explore the schema structure with zoom, pan, and node expansion
+- **Download**: Export watermarked SVG with "© 2025 Vyges. All Rights Reserved"
+
 ### Basic Example
 
 ```json
@@ -148,6 +154,21 @@ node validate-examples.js --schema-only
 # Using ajv-cli (legacy, limited draft 2020-12 support)
 npm install -g ajv-cli
 ajv validate -s schema/v1/vyges-metadata.schema.json -d your-metadata.json
+```
+
+### Schema Visualization
+```bash
+# Navigate to schemaview directory
+cd schemaview
+
+# Install dependencies
+npm install
+
+# Convert schema to tree format
+npm run convert
+
+# Open interactive viewer
+open schema-tree.html
 ```
 
 ### Integration

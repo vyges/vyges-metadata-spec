@@ -1,0 +1,24 @@
+{
+  "name": "vyges-schema-viewer",
+  "version": "1.0.0",
+  "description": "Convert Vyges metadata schema to tree structure for D3 visualization",
+  "type": "module",
+  "main": "convert-vyges-schema.js",
+  "scripts": {
+    "convert": "node convert-vyges-schema.js",
+    "install-deps": "npm install"
+  },
+  "dependencies": {
+    "json-schema-ref-parser": "^9.0.9"
+  },
+  "keywords": [
+    "vyges",
+    "schema",
+    "json-schema",
+    "d3",
+    "tree",
+    "visualization"
+  ],
+  "author": "Vyges Team",
+  "license": "Apache-2.0"
+}
