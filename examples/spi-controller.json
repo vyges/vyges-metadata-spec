@@ -1,6 +1,7 @@
 {
   "name": "vyges/spi-controller",
   "x-version": "1.0.0",
+  "version": "1.0.0",
   "description": "SPI master controller with configurable clock divider and multiple chip select support",
   "license": "Apache-2.0",
   "maturity": "production",

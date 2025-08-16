@@ -1,6 +1,7 @@
 {
   "name": "example/led-controller",
   "x-version": "1.0.0",
+  "version": "1.0.0",
   "description": "Simple LED controller with PWM dimming",
   "license": "MIT",
   "maturity": "beta",
