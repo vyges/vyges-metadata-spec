@@ -20,7 +20,7 @@ The Vyges Metadata Specification defines a standardized JSON Schema format for d
 
 ### Interactive Schema Viewer
 - **Location**: `schemaview/schema-tree.html`
-- **Features**: Interactive D3.js tree visualization of the 497-node schema
+- **Features**: Interactive D3.js tree visualization of the 814-node schema with depth 6
 - **Usage**: Open in browser to explore the schema structure with zoom, pan, and node expansion
 - **Download**: Export watermarked SVG with "© 2025 Vyges. All Rights Reserved"
 
@@ -110,32 +110,19 @@ The Vyges Metadata Specification defines a standardized JSON Schema format for d
 - `reliability`: Quality and compliance information
 - `commercial`: Licensing and support details
 
-### Chiplet and CDXML Support
-- **Chiplet Integration**: Comprehensive metadata for multi-die systems
-- **CDXML Compliance**: OCP (Open Compute Project) [CDXML specification](https://github.com/opencomputeproject/ODSA-CDXML) support
-- **Die-to-Die Interfaces**: UCIe, BoW, AIB, EMIB protocol support
+### Chiplet Integration Support
+- **Chiplet Integration**: Comprehensive metadata for multi-die systems via `chipletIntegration` property
+- **Die-to-Die Interfaces**: UCIe, AIB, BoW, EMIB protocol support
 - **Packaging Constraints**: Interposer, bump map, and thermal requirements
 - **Multi-Die Testing**: Test coverage and validation requirements
 - **Power Domains**: SoC/Chiplet partitioning and power management
 - **Lifecycle Tracking**: Supply chain and certification metadata
 
-#### CDXML Compliance Features
-The schema includes a `cdxml_compliance` section that provides:
-
-- **Interface Specifications**: Protocol type, lanes, pad counts, data rates
-- **Electrical Characteristics**: Voltage domains, current requirements, power specifications
-- **Mechanical Characteristics**: Die dimensions, bump pitch, package specifications
-- **Compliance Checklist**: Known-good-die, DFT hooks, test vectors, thermal/power models
-- **Validation Status**: CDXML compliance verification and tooling information
-- **Enhanced BoW Support**: Comprehensive BoW 2.0d.1 specification compliance including signaling classes, timing constraints, compliance features, and bump group configurations
-
-This enables Vyges to fully support OCP's CDXML schema while extending it with Vyges-native automation layers like versioned validation results, CLI-based reuse, and CI-ready integration manifests.
-
-**Note**: Both the main schema (`vyges-metadata.schema.json`) and UI schema (`vyges-metadata.ui-schema.json`) support these CDXML and BoW features, providing comprehensive form generation capabilities for chiplet integration metadata.
-
 ### Protocol Specifications
-- **CDXML**: [Open Compute Project ODSA-CDXML](https://github.com/opencomputeproject/ODSA-CDXML)
-- **BoW (Bunch of Wires)**: [OCP BoW Specification v2.0d.1](https://www.opencompute.org/documents/bow-specification-v2-0d-1-pdf)
+- **UCIe**: Universal Chiplet Interconnect Express
+- **AIB**: Advanced Interface Bus
+- **BoW**: Bunch of Wires
+- **EMIB**: Embedded Multi-die Interconnect Bridge
 
 ## Usage
 
@@ -198,7 +185,8 @@ This specification follows [Semantic Versioning](https://semver.org/). The curre
 
 ### Version History
 - **1.0.0** (2025-01): Initial public release with draft 2020-12 JSON Schema support
-- **1.1.0** (2025-08): Added CDXML compliance support for OCP chiplet integration
+- **1.0.0** (2025-08): Added chiplet integration support with comprehensive metadata structure
+- **1.0.0** (2025-08): Enhanced schema with 814 nodes, improved validation, and rich examples
 
 ## License
 
@@ -218,4 +206,4 @@ This specification is licensed under the Apache License 2.0. See [LICENSE](LICEN
 
 **Maintained by**: [Vyges Inc.](https://vyges.com)  
 **Specification Version**: 1.0.0  
-**Last Updated**: July 2025
+**Last Updated**: August 2025
