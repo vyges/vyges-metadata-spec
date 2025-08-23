@@ -1237,355 +1237,759 @@
           }
         }
       },
-      "chiplet": {
+      "chipletIntegration": {
         "widget": "object",
-        "help": "Chiplet integration and multi-die system support with CDXML/BoW compliance foundation",
+        "help": "Metadata for chiplet-based IP and interoperability. This section provides comprehensive chiplet metadata including physical interfaces, packaging, compliance, and migration paths. Only required for IP that implements chiplet functionality.",
         "order": 1,
         "width": "full",
         "advanced": true,
+        "required": false,
         "properties": {
-          "chiplet_descriptor": {
+          "phy": {
             "widget": "object",
-            "help": "Basic chiplet identification and process information",
-            "order": 0,
+            "help": "Physical layer interface specifications for die-to-die communication",
+            "order": 1,
             "width": "full",
-            "required": true,
             "properties": {
-              "name": {
-                "widget": "text",
-                "help": "Unique chiplet identifier",
+              "standard": {
+                "widget": "select",
+                "help": "Interface standard for die-to-die communication",
+                "options": [
+                  {
+                    "label": "AIB",
+                    "value": "AIB"
+                  },
+                  {
+                    "label": "BoW",
+                    "value": "BoW"
+                  },
+                  {
+                    "label": "UCIe",
+                    "value": "UCIe"
+                  },
+                  {
+                    "label": "EMIB",
+                    "value": "EMIB"
+                  }
+                ],
                 "required": true,
                 "order": 1,
                 "width": "third"
               },
               "version": {
                 "widget": "text",
-                "help": "Chiplet version string",
+                "help": "Standard version number",
+                "placeholder": "e.g., 2.0, 1.1, 3.0",
                 "required": true,
                 "order": 2,
                 "width": "third"
               },
-              "foundry": {
+              "mode": {
                 "widget": "select",
-                "help": "Manufacturing foundry",
+                "help": "Signaling mode for the interface",
                 "options": [
                   {
-                    "label": "GlobalFoundries",
-                    "value": "GF"
+                    "label": "Parallel Source Sync",
+                    "value": "parallel_source_sync"
                   },
                   {
-                    "label": "TSMC",
-                    "value": "TSMC"
+                    "label": "Serial",
+                    "value": "serial"
                   },
                   {
-                    "label": "Samsung",
-                    "value": "Samsung"
-                  },
-                  {
-                    "label": "Intel",
-                    "value": "Intel"
-                  },
-                  {
-                    "label": "SMIC",
-                    "value": "SMIC"
+                    "label": "Differential",
+                    "value": "differential"
                   }
                 ],
+                "default": "parallel_source_sync",
                 "order": 3,
                 "width": "third"
               },
-              "process_node_nm": {
+              "lanes": {
                 "widget": "number",
-                "help": "Process node in nanometers",
-                "min": 7,
-                "max": 180,
+                "help": "Number of interface lanes (transmit and receive)",
+                "min": 1,
+                "max": 1024,
                 "step": 1,
-                "default": 65,
+                "default": 64,
+                "required": true,
                 "order": 4,
                 "width": "third"
               },
-              "pdk_id": {
-                "widget": "text",
-                "help": "Process Design Kit identifier with version",
-                "placeholder": "e.g., GF65LP-2025Q1",
+              "lanes_tx": {
+                "widget": "number",
+                "help": "Number of transmit lanes",
+                "min": 1,
+                "max": 1024,
+                "step": 1,
+                "default": 64,
                 "order": 5,
                 "width": "third"
               },
-              "die_size_mm": {
-                "widget": "array",
-                "help": "Die dimensions [width, height] in millimeters",
-                "items": {
-                  "widget": "number",
-                  "min": 0.1,
-                  "max": 100.0,
-                  "step": 0.1
-                },
-                "minItems": 2,
-                "maxItems": 2,
-                "default": [
-                  3.0,
-                  3.0
-                ],
-                "order": 6,
-                "width": "full"
-              },
-              "bump_pitch_um": {
+              "lanes_rx": {
                 "widget": "number",
-                "help": "Microbump pitch in micrometers",
-                "min": 10,
-                "max": 200,
+                "help": "Number of receive lanes",
+                "min": 1,
+                "max": 1024,
                 "step": 1,
-                "default": 100,
+                "default": 64,
+                "order": 6,
+                "width": "third"
+              },
+              "data_rate_gbps_per_lane": {
+                "widget": "number",
+                "help": "Data rate per lane in Gbps",
+                "min": 0.1,
+                "max": 100.0,
+                "step": 0.1,
+                "default": 1.0,
+                "required": true,
                 "order": 7,
                 "width": "third"
               },
-              "voltage_domains": {
+              "io_voltage": {
+                "widget": "select",
+                "help": "I/O voltage level for the interface",
+                "options": [
+                  {
+                    "label": "0.8V",
+                    "value": "0.8V"
+                  },
+                  {
+                    "label": "1.1V",
+                    "value": "1.1V"
+                  },
+                  {
+                    "label": "1.2V",
+                    "value": "1.2V"
+                  },
+                  {
+                    "label": "1.8V",
+                    "value": "1.8V"
+                  }
+                ],
+                "required": true,
+                "order": 8,
+                "width": "third"
+              },
+              "termination": {
+                "widget": "select",
+                "help": "Termination scheme for the interface",
+                "options": [
+                  {
+                    "label": "On Die",
+                    "value": "on_die"
+                  },
+                  {
+                    "label": "External",
+                    "value": "external"
+                  }
+                ],
+                "default": "on_die",
+                "order": 9,
+                "width": "third"
+              },
+              "training": {
                 "widget": "array",
-                "help": "List of voltage domains for power management",
+                "help": "Training sequence requirements for the interface",
                 "items": {
-                  "widget": "text"
+                  "widget": "select",
+                  "options": [
+                    {
+                      "label": "Deskew",
+                      "value": "deskew"
+                    },
+                    {
+                      "label": "PRBS",
+                      "value": "prbs"
+                    },
+                    {
+                      "label": "Eye Optimization",
+                      "value": "eye_optimization"
+                    }
+                  ]
                 },
                 "default": [
-                  "1.2V_CORE",
-                  "1.8V_IO"
+                  "deskew",
+                  "prbs"
                 ],
-                "order": 8,
+                "order": 10,
+                "width": "full"
+              },
+              "loopback": {
+                "widget": "checkbox",
+                "help": "Whether loopback capability is available",
+                "default": true,
+                "order": 11,
+                "width": "third"
+              },
+              "error_detection": {
+                "widget": "array",
+                "help": "Error detection mechanisms supported",
+                "items": {
+                  "widget": "select",
+                  "options": [
+                    {
+                      "label": "CRC",
+                      "value": "crc"
+                    },
+                    {
+                      "label": "Parity",
+                      "value": "parity"
+                    },
+                    {
+                      "label": "ECC",
+                      "value": "ecc"
+                    }
+                  ]
+                },
+                "default": [
+                  "crc"
+                ],
+                "order": 12,
+                "width": "full"
+              },
+              "power_pJ_per_bit": {
+                "widget": "number",
+                "help": "Power per bit in picojoules",
+                "min": 0.1,
+                "max": 10.0,
+                "step": 0.1,
+                "default": 0.8,
+                "order": 13,
+                "width": "third"
+              },
+              "reach_mm": {
+                "widget": "number",
+                "help": "Maximum reach in millimeters",
+                "min": 1,
+                "max": 100,
+                "step": 1,
+                "default": 8,
+                "order": 14,
+                "width": "third"
+              },
+              "bump_map_ref": {
+                "widget": "text",
+                "help": "Reference to bump map artifact (should point to an entry in the artifacts section)",
+                "placeholder": "e.g., path://bump_map.csv, artifacts://bump_map_v1",
+                "order": 15,
                 "width": "full"
               }
             }
           },
-          "interfaces": {
-            "widget": "array",
-            "help": "Die-to-die interface specifications",
-            "order": 1,
+          "link": {
+            "widget": "object",
+            "help": "Link layer protocol specifications for data transfer",
+            "order": 2,
             "width": "full",
-            "items": {
-              "widget": "object",
-              "properties": {
-                "role": {
-                  "widget": "text",
-                  "help": "Interface role identifier",
-                  "placeholder": "e.g., die_to_die_0, memory_interface",
-                  "order": 1,
-                  "width": "third"
+            "properties": {
+              "protocol": {
+                "widget": "select",
+                "help": "Link protocol for data transfer",
+                "options": [
+                  {
+                    "label": "PCIe",
+                    "value": "PCIe"
+                  },
+                  {
+                    "label": "CXL",
+                    "value": "CXL"
+                  },
+                  {
+                    "label": "STREAMING",
+                    "value": "STREAMING"
+                  },
+                  {
+                    "label": "CUSTOM",
+                    "value": "CUSTOM"
+                  }
+                ],
+                "required": true,
+                "order": 1,
+                "width": "third"
+              },
+              "width_bits": {
+                "widget": "number",
+                "help": "Total link width in bits",
+                "min": 8,
+                "max": 4096,
+                "step": 8,
+                "default": 256,
+                "required": true,
+                "order": 2,
+                "width": "third"
+              },
+              "flow_control": {
+                "widget": "select",
+                "help": "Flow control mechanism",
+                "options": [
+                  {
+                    "label": "Credit",
+                    "value": "credit"
+                  },
+                  {
+                    "label": "ACK/NACK",
+                    "value": "ack_nack"
+                  },
+                  {
+                    "label": "None",
+                    "value": "none"
+                  }
+                ],
+                "default": "credit",
+                "order": 3,
+                "width": "third"
+              },
+              "replay": {
+                "widget": "checkbox",
+                "help": "Whether replay capability is supported",
+                "default": false,
+                "order": 4,
+                "width": "third"
+              },
+              "fec": {
+                "widget": "select",
+                "help": "Forward error correction method",
+                "options": [
+                  {
+                    "label": "None",
+                    "value": "none"
+                  },
+                  {
+                    "label": "Reed-Solomon",
+                    "value": "reed_solomon"
+                  },
+                  {
+                    "label": "LDPC",
+                    "value": "ldpc"
+                  }
+                ],
+                "default": "none",
+                "order": 5,
+                "width": "third"
+              },
+              "max_payload_bytes": {
+                "widget": "number",
+                "help": "Maximum payload size in bytes",
+                "min": 64,
+                "max": 65536,
+                "step": 64,
+                "default": 256,
+                "order": 6,
+                "width": "third"
+              }
+            }
+          },
+          "management": {
+            "widget": "object",
+            "help": "System management and discovery specifications",
+            "order": 3,
+            "width": "full",
+            "properties": {
+              "discovery": {
+                "widget": "select",
+                "help": "Discovery protocol for chiplet integration",
+                "options": [
+                  {
+                    "label": "CDXML",
+                    "value": "CDXML"
+                  },
+                  {
+                    "label": "Custom",
+                    "value": "custom"
+                  }
+                ],
+                "default": "CDXML",
+                "required": true,
+                "order": 1,
+                "width": "third"
+              },
+              "endpoint_id": {
+                "widget": "text",
+                "help": "Unique endpoint identifier",
+                "placeholder": "e.g., 0x1A2B, chiplet_0, memory_interface",
+                "order": 2,
+                "width": "third"
+              },
+              "config_bus": {
+                "widget": "text",
+                "help": "Configuration bus specification",
+                "placeholder": "e.g., I2C@0x54, SPI@0x100, APB@0x200",
+                "order": 3,
+                "width": "third"
+              },
+              "firmware_update": {
+                "widget": "object",
+                "help": "Firmware update mechanism",
+                "order": 4,
+                "width": "full",
+                "properties": {
+                  "method": {
+                    "widget": "select",
+                    "help": "Firmware update method",
+                    "options": [
+                      {
+                        "label": "In Band",
+                        "value": "in_band"
+                      },
+                      {
+                        "label": "Out of Band",
+                        "value": "out_of_band"
+                      }
+                    ],
+                    "default": "in_band",
+                    "order": 1,
+                    "width": "third"
+                  },
+                  "format": {
+                    "widget": "text",
+                    "help": "Firmware format specification",
+                    "placeholder": "e.g., CSIP-v1, custom, standard",
+                    "order": 2,
+                    "width": "third"
+                  },
+                  "secure_boot": {
+                    "widget": "checkbox",
+                    "help": "Whether secure boot is required for firmware updates",
+                    "default": false,
+                    "order": 3,
+                    "width": "third"
+                  },
+                  "rot_block": {
+                    "widget": "text",
+                    "help": "Root of trust block type",
+                    "placeholder": "e.g., caliptra_v0.7, dice, custom",
+                    "order": 4,
+                    "width": "third"
+                  }
+                }
+              },
+              "telemetry": {
+                "widget": "array",
+                "help": "Available telemetry data",
+                "items": {
+                  "widget": "select",
+                  "options": [
+                    {
+                      "label": "Temperature",
+                      "value": "temperature"
+                    },
+                    {
+                      "label": "Lane Error Counters",
+                      "value": "lane_error_counters"
+                    },
+                    {
+                      "label": "Power Consumption",
+                      "value": "power_consumption"
+                    },
+                    {
+                      "label": "Performance Metrics",
+                      "value": "performance_metrics"
+                    }
+                  ]
                 },
-                "phy": {
-                  "widget": "object",
-                  "help": "Physical layer interface specifications",
-                  "order": 2,
-                  "width": "full",
-                  "properties": {
-                    "standard": {
+                "default": [
+                  "temperature",
+                  "lane_error_counters"
+                ],
+                "order": 5,
+                "width": "full"
+              }
+            }
+          },
+          "packaging": {
+            "widget": "object",
+            "help": "Packaging and assembly specifications",
+            "order": 4,
+            "width": "full",
+            "properties": {
+              "assembly": {
+                "widget": "select",
+                "help": "Assembly type for chiplet integration",
+                "options": [
+                  {
+                    "label": "Organic Substrate",
+                    "value": "organic_substrate"
+                  },
+                  {
+                    "label": "2.5D Interposer",
+                    "value": "2.5D_interposer"
+                  },
+                  {
+                    "label": "Fanout",
+                    "value": "fanout"
+                  },
+                  {
+                    "label": "3D Stacked",
+                    "value": "3D_stacked"
+                  }
+                ],
+                "order": 1,
+                "width": "third"
+              },
+              "substrate_stackup": {
+                "widget": "text",
+                "help": "Substrate stackup reference",
+                "placeholder": "e.g., pkg_stack_v3, custom_stackup, standard_4layer",
+                "order": 2,
+                "width": "third"
+              },
+              "thermal": {
+                "widget": "object",
+                "help": "Thermal characteristics",
+                "order": 3,
+                "width": "full",
+                "properties": {
+                  "theta_ja_c_per_w": {
+                    "widget": "number",
+                    "help": "Junction to ambient thermal resistance in \u00b0C/W",
+                    "min": 1.0,
+                    "max": 100.0,
+                    "step": 0.1,
+                    "default": 18,
+                    "order": 1,
+                    "width": "third"
+                  },
+                  "max_tj_c": {
+                    "widget": "number",
+                    "help": "Maximum junction temperature in \u00b0C",
+                    "min": 25,
+                    "max": 200,
+                    "step": 1,
+                    "default": 110,
+                    "order": 2,
+                    "width": "third"
+                  }
+                }
+              },
+              "power_delivery": {
+                "widget": "object",
+                "help": "Power delivery network specifications",
+                "order": 4,
+                "width": "full",
+                "properties": {
+                  "rails": {
+                    "widget": "array",
+                    "help": "Power rail specifications",
+                    "items": {
+                      "widget": "object",
+                      "properties": {
+                        "name": {
+                          "widget": "text",
+                          "help": "Power rail name",
+                          "placeholder": "e.g., 1.2V_CORE, 1.8V_IO, 3.3V_AUX",
+                          "required": true,
+                          "order": 1,
+                          "width": "third"
+                        },
+                        "imax_a": {
+                          "widget": "number",
+                          "help": "Maximum current in amperes",
+                          "min": 0.001,
+                          "max": 100.0,
+                          "step": 0.001,
+                          "default": 0.6,
+                          "required": true,
+                          "order": 2,
+                          "width": "third"
+                        },
+                        "dvdt_limit_mV_us": {
+                          "widget": "number",
+                          "help": "dV/dt limit in millivolts per microsecond",
+                          "min": 1,
+                          "max": 1000,
+                          "step": 1,
+                          "default": 20,
+                          "order": 3,
+                          "width": "third"
+                        },
+                        "seq": {
+                          "widget": "number",
+                          "help": "Power sequencing order",
+                          "min": 1,
+                          "max": 10,
+                          "step": 1,
+                          "default": 1,
+                          "order": 4,
+                          "width": "third"
+                        }
+                      }
+                    },
+                    "order": 1,
+                    "width": "full"
+                  },
+                  "decap_guidance": {
+                    "widget": "text",
+                    "help": "Decoupling capacitor guidance",
+                    "placeholder": "e.g., min 1nF/mm2 near interface, 100nF per power domain",
+                    "order": 2,
+                    "width": "full"
+                  }
+                }
+              }
+            }
+          },
+          "compliance": {
+            "widget": "object",
+            "help": "Standards compliance and validation tracking",
+            "order": 5,
+            "width": "full",
+            "properties": {
+              "cdxml": {
+                "widget": "object",
+                "help": "CDXML compliance information",
+                "order": 1,
+                "width": "full",
+                "properties": {
+                  "version": {
+                    "widget": "text",
+                    "help": "CDXML specification version",
+                    "placeholder": "e.g., cdxml-v0.2, cdxml-v1.0",
+                    "order": 1,
+                    "width": "third"
+                  },
+                  "protocol_support": {
+                    "widget": "array",
+                    "help": "Supported interface protocols",
+                    "items": {
                       "widget": "select",
-                      "help": "Interface standard",
                       "options": [
                         {
                           "label": "AIB",
-                          "value": "AIB",
-                          "description": "Advanced Interface Bus"
+                          "value": "AIB"
                         },
                         {
                           "label": "BoW",
-                          "value": "BoW",
-                          "description": "Bunch of Wires"
+                          "value": "BoW"
                         },
                         {
                           "label": "UCIe",
-                          "value": "UCIe",
-                          "description": "Universal Chiplet Interconnect Express"
+                          "value": "UCIe"
                         },
                         {
                           "label": "EMIB",
-                          "value": "EMIB",
-                          "description": "Embedded Multi-die Interconnect Bridge"
+                          "value": "EMIB"
                         }
-                      ],
-                      "default": "AIB",
-                      "order": 1,
-                      "width": "third"
+                      ]
                     },
-                    "version": {
-                      "widget": "text",
-                      "help": "Standard version number",
-                      "placeholder": "e.g., 2.0",
-                      "order": 2,
-                      "width": "third"
-                    },
-                    "mode": {
+                    "default": [
+                      "AIB",
+                      "BoW"
+                    ],
+                    "order": 2,
+                    "width": "full"
+                  },
+                  "electrical_validation": {
+                    "widget": "text",
+                    "help": "Electrical validation reference",
+                    "placeholder": "e.g., OCP-ODSA-2025Q1, custom_validation",
+                    "order": 3,
+                    "width": "third"
+                  },
+                  "mechanical_validation": {
+                    "widget": "text",
+                    "help": "Mechanical validation reference",
+                    "placeholder": "e.g., OCP-ODSA-2025Q1, custom_validation",
+                    "order": 4,
+                    "width": "third"
+                  }
+                }
+              },
+              "aib": {
+                "widget": "object",
+                "help": "AIB compliance status",
+                "order": 2,
+                "width": "full",
+                "properties": {
+                  "enabled": {
+                    "widget": "checkbox",
+                    "help": "Whether AIB is enabled",
+                    "default": false,
+                    "order": 1,
+                    "width": "third"
+                  },
+                  "spec_version": {
+                    "widget": "text",
+                    "help": "AIB specification version",
+                    "placeholder": "e.g., 1.0, 2.0, 3.0",
+                    "order": 2,
+                    "width": "third"
+                  },
+                  "features": {
+                    "widget": "array",
+                    "help": "AIB features supported",
+                    "items": {
                       "widget": "select",
-                      "help": "Signaling mode",
                       "options": [
                         {
-                          "label": "Parallel Source Sync",
-                          "value": "parallel_source_sync"
-                        },
-                        {
-                          "label": "Serial",
-                          "value": "serial"
-                        },
-                        {
-                          "label": "Differential",
-                          "value": "differential"
-                        }
-                      ],
-                      "default": "parallel_source_sync",
-                      "order": 3,
-                      "width": "third"
-                    },
-                    "lanes_tx": {
-                      "widget": "number",
-                      "help": "Number of transmit lanes",
-                      "min": 1,
-                      "max": 1024,
-                      "default": 64,
-                      "order": 4,
-                      "width": "third"
-                    },
-                    "lanes_rx": {
-                      "widget": "number",
-                      "help": "Number of receive lanes",
-                      "min": 1,
-                      "max": 1024,
-                      "default": 64,
-                      "order": 5,
-                      "width": "third"
-                    },
-                    "data_rate_gbps_per_lane": {
-                      "widget": "number",
-                      "help": "Data rate per lane in Gbps",
-                      "min": 0.1,
-                      "max": 100.0,
-                      "step": 0.1,
-                      "default": 1.0,
-                      "order": 6,
-                      "width": "third"
-                    },
-                    "io_voltage": {
-                      "widget": "select",
-                      "help": "I/O voltage level",
-                      "options": [
-                        {
-                          "label": "0.8V",
-                          "value": "0.8V"
-                        },
-                        {
-                          "label": "1.1V",
-                          "value": "1.1V"
-                        },
-                        {
-                          "label": "1.2V",
-                          "value": "1.2V"
-                        },
-                        {
-                          "label": "1.8V",
-                          "value": "1.8V"
-                        }
-                      ],
-                      "default": "1.2V",
-                      "order": 7,
-                      "width": "third"
-                    },
-                    "termination": {
-                      "widget": "select",
-                      "help": "Termination scheme",
-                      "options": [
-                        {
-                          "label": "On-die",
-                          "value": "on_die"
-                        },
-                        {
-                          "label": "External",
-                          "value": "external"
-                        }
-                      ],
-                      "default": "on_die",
-                      "order": 8,
-                      "width": "third"
-                    },
-                    "training": {
-                      "widget": "multiselect",
-                      "help": "Training sequence requirements",
-                      "options": [
-                        {
-                          "label": "Deskew",
-                          "value": "deskew"
+                          "label": "Gearboxing",
+                          "value": "gearboxing"
                         },
                         {
                           "label": "PRBS",
                           "value": "prbs"
                         },
                         {
-                          "label": "Eye Optimization",
-                          "value": "eye_optimization"
-                        }
-                      ],
-                      "default": [
-                        "deskew",
-                        "prbs"
-                      ],
-                      "order": 9,
-                      "width": "full"
-                    },
-                    "loopback": {
-                      "widget": "checkbox",
-                      "help": "Loopback capability availability",
-                      "default": true,
-                      "order": 10,
-                      "width": "third"
-                    },
-                    "error_detection": {
-                      "widget": "multiselect",
-                      "help": "Error detection mechanisms",
-                      "options": [
-                        {
-                          "label": "CRC",
-                          "value": "crc"
+                          "label": "Loopback",
+                          "value": "loopback"
                         },
                         {
-                          "label": "Parity",
-                          "value": "parity"
-                        },
-                        {
-                          "label": "ECC",
-                          "value": "ecc"
+                          "label": "Error Counting",
+                          "value": "error_counting"
                         }
-                      ],
-                      "default": [
-                        "crc"
-                      ],
-                      "order": 11,
-                      "width": "full"
+                      ]
                     },
-                    "power_pJ_per_bit": {
-                      "widget": "number",
-                      "help": "Power per bit in picojoules",
-                      "min": 0.1,
-                      "max": 10.0,
-                      "step": 0.1,
-                      "default": 0.8,
-                      "order": 12,
-                      "width": "third"
-                    },
-                    "reach_mm": {
-                      "widget": "number",
-                      "help": "Maximum reach in millimeters",
-                      "min": 1,
-                      "max": 100,
-                      "step": 1,
-                      "default": 10,
-                      "order": 13,
-                      "width": "third"
-                    }
+                    "default": [
+                      "gearboxing",
+                      "prbs"
+                    ],
+                    "order": 3,
+                    "width": "full"
                   }
-                },
-                "link": {
-                  "widget": "object",
-                  "help": "Link layer protocol specifications",
-                  "order": 3,
-                  "width": "full",
-                  "properties": {
-                    "protocol": {
+                }
+              },
+              "ucie": {
+                "widget": "object",
+                "help": "UCIe compliance status",
+                "order": 3,
+                "width": "full",
+                "properties": {
+                  "enabled": {
+                    "widget": "checkbox",
+                    "help": "Whether UCIe is enabled",
+                    "default": false,
+                    "order": 1,
+                    "width": "third"
+                  },
+                  "spec_version": {
+                    "widget": "text",
+                    "help": "UCIe specification version",
+                    "placeholder": "e.g., 1.0, 1.1, 2.0",
+                    "order": 2,
+                    "width": "third"
+                  },
+                  "profile": {
+                    "widget": "select",
+                    "help": "UCIe profile type",
+                    "options": [
+                      {
+                        "label": "Short Reach",
+                        "value": "ShortReach"
+                      },
+                      {
+                        "label": "Long Reach",
+                        "value": "LongReach"
+                      }
+                    ],
+                    "order": 3,
+                    "width": "third"
+                  },
+                  "protocol_modes": {
+                    "widget": "array",
+                    "help": "Supported UCIe protocol modes",
+                    "items": {
                       "widget": "select",
-                      "help": "Link protocol",
                       "options": [
                         {
                           "label": "PCIe",
@@ -1598,2024 +2002,60 @@
                         {
                           "label": "STREAMING",
                           "value": "STREAMING"
-                        },
-                        {
-                          "label": "CUSTOM",
-                          "value": "CUSTOM"
                         }
-                      ],
-                      "default": "STREAMING",
-                      "order": 1,
-                      "width": "third"
+                      ]
                     },
-                    "width_bits": {
-                      "widget": "number",
-                      "help": "Total link width in bits",
-                      "min": 8,
-                      "max": 4096,
-                      "step": 8,
-                      "default": 256,
-                      "order": 2,
-                      "width": "third"
-                    },
-                    "flow_control": {
-                      "widget": "select",
-                      "help": "Flow control mechanism",
-                      "options": [
-                        {
-                          "label": "Credit-based",
-                          "value": "credit"
-                        },
-                        {
-                          "label": "ACK/NACK",
-                          "value": "ack_nack"
-                        },
-                        {
-                          "label": "None",
-                          "value": "none"
-                        }
-                      ],
-                      "default": "credit",
-                      "order": 3,
-                      "width": "third"
-                    },
-                    "replay": {
-                      "widget": "checkbox",
-                      "help": "Replay capability",
-                      "default": false,
-                      "order": 4,
-                      "width": "third"
-                    },
-                    "fec": {
-                      "widget": "select",
-                      "help": "Forward error correction",
-                      "options": [
-                        {
-                          "label": "None",
-                          "value": "none"
-                        },
-                        {
-                          "label": "Reed-Solomon",
-                          "value": "reed_solomon"
-                        },
-                        {
-                          "label": "LDPC",
-                          "value": "ldpc"
-                        }
-                      ],
-                      "default": "none",
-                      "order": 5,
-                      "width": "third"
-                    },
-                    "max_payload_bytes": {
-                      "widget": "number",
-                      "help": "Maximum payload size in bytes",
-                      "min": 64,
-                      "max": 65536,
-                      "step": 64,
-                      "default": 1024,
-                      "order": 6,
-                      "width": "third"
-                    }
-                  }
-                },
-                "management": {
-                  "widget": "object",
-                  "help": "System management and discovery specifications",
-                  "order": 4,
-                  "width": "full",
-                  "properties": {
-                    "discovery": {
-                      "widget": "select",
-                      "help": "Discovery protocol",
-                      "options": [
-                        {
-                          "label": "CDXML",
-                          "value": "CDXML"
-                        },
-                        {
-                          "label": "Custom",
-                          "value": "custom"
-                        }
-                      ],
-                      "default": "CDXML",
-                      "order": 1,
-                      "width": "third"
-                    },
-                    "endpoint_id": {
-                      "widget": "text",
-                      "help": "Unique endpoint identifier",
-                      "placeholder": "e.g., 0x1A2B",
-                      "order": 2,
-                      "width": "third"
-                    },
-                    "config_bus": {
-                      "widget": "text",
-                      "help": "Configuration bus specification",
-                      "placeholder": "e.g., I2C@0x54",
-                      "order": 3,
-                      "width": "third"
-                    },
-                    "firmware_update": {
-                      "widget": "object",
-                      "help": "Firmware update mechanism",
-                      "order": 4,
-                      "width": "full",
-                      "properties": {
-                        "method": {
-                          "widget": "select",
-                          "help": "Update method",
-                          "options": [
-                            {
-                              "label": "In-band",
-                              "value": "in_band"
-                            },
-                            {
-                              "label": "Out-of-band",
-                              "value": "out_of_band"
-                            }
-                          ],
-                          "default": "in_band",
-                          "order": 1,
-                          "width": "third"
-                        },
-                        "format": {
-                          "widget": "text",
-                          "help": "Firmware format",
-                          "placeholder": "e.g., CSIP-v1",
-                          "order": 2,
-                          "width": "third"
-                        }
-                      }
-                    },
-                    "telemetry": {
-                      "widget": "multiselect",
-                      "help": "Available telemetry data",
-                      "options": [
-                        {
-                          "label": "Temperature",
-                          "value": "temperature"
-                        },
-                        {
-                          "label": "Lane Error Counters",
-                          "value": "lane_error_counters"
-                        },
-                        {
-                          "label": "Power Consumption",
-                          "value": "power_consumption"
-                        },
-                        {
-                          "label": "Performance Metrics",
-                          "value": "performance_metrics"
-                        }
-                      ],
-                      "default": [
-                        "temperature",
-                        "lane_error_counters"
-                      ],
-                      "order": 5,
-                      "width": "full"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "security_lifecycle": {
-            "widget": "object",
-            "help": "Security and lifecycle management specifications",
-            "order": 2,
-            "width": "full",
-            "required": false,
-            "properties": {
-              "secure_boot": {
-                "widget": "object",
-                "help": "Secure boot capability and configuration",
-                "order": 1,
-                "width": "full",
-                "properties": {
-                  "enabled": {
-                    "widget": "checkbox",
-                    "help": "Secure boot enabled",
-                    "default": false,
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "method": {
-                    "widget": "select",
-                    "help": "Secure boot method",
-                    "options": [
-                      {
-                        "label": "Hardware Root of Trust",
-                        "value": "hardware_rot"
-                      },
-                      {
-                        "label": "Software-based",
-                        "value": "software_based"
-                      },
-                      {
-                        "label": "Hybrid",
-                        "value": "hybrid"
-                      }
-                    ],
-                    "default": "hardware_rot",
-                    "order": 2,
-                    "width": "third"
-                  },
-                  "key_storage": {
-                    "widget": "select",
-                    "help": "Key storage method",
-                    "options": [
-                      {
-                        "label": "Fuse-based",
-                        "value": "fuse_based"
-                      },
-                      {
-                        "label": "Secure Memory",
-                        "value": "secure_memory"
-                      },
-                      {
-                        "label": "TPM",
-                        "value": "tpm"
-                      }
-                    ],
-                    "default": "fuse_based",
-                    "order": 3,
-                    "width": "third"
-                  }
-                }
-              },
-              "attestation": {
-                "widget": "object",
-                "help": "Attestation and identity management",
-                "order": 2,
-                "width": "full",
-                "properties": {
-                  "attestation_block": {
-                    "widget": "select",
-                    "help": "Attestation block type",
-                    "options": [
-                      {
-                        "label": "Caliptra v0.7",
-                        "value": "caliptra_v0.7"
-                      },
-                      {
-                        "label": "DICE",
-                        "value": "dice"
-                      },
-                      {
-                        "label": "Custom",
-                        "value": "custom"
-                      }
-                    ],
-                    "default": "caliptra_v0.7",
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "measurement_capability": {
-                    "widget": "checkbox",
-                    "help": "Measurement capability available",
-                    "default": false,
-                    "order": 2,
-                    "width": "third"
-                  },
-                  "quote_generation": {
-                    "widget": "checkbox",
-                    "help": "Quote generation capability",
-                    "default": false,
-                    "order": 3,
-                    "width": "third"
-                  }
-                }
-              },
-              "firmware_authentication": {
-                "widget": "object",
-                "help": "Firmware authentication mechanisms",
-                "order": 3,
-                "width": "full",
-                "properties": {
-                  "method": {
-                    "widget": "select",
-                    "help": "Authentication method",
-                    "options": [
-                      {
-                        "label": "ECDSA-SHA384",
-                        "value": "ecdsa_sha384"
-                      },
-                      {
-                        "label": "RSA-SHA256",
-                        "value": "rsa_sha256"
-                      },
-                      {
-                        "label": "HMAC-SHA256",
-                        "value": "hmac_sha256"
-                      }
-                    ],
-                    "default": "ecdsa_sha384",
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "version_control": {
-                    "widget": "checkbox",
-                    "help": "Rollback protection enabled",
-                    "default": false,
-                    "order": 2,
-                    "width": "third"
-                  }
-                }
-              }
-            }
-          },
-          "test_validation": {
-            "widget": "object",
-            "help": "Test, validation, and bring-up specifications",
-            "order": 3,
-            "width": "full",
-            "required": false,
-            "properties": {
-              "loopback_modes": {
-                "widget": "object",
-                "help": "Available loopback testing modes",
-                "order": 1,
-                "width": "full",
-                "properties": {
-                  "internal_loopback": {
-                    "widget": "checkbox",
-                    "help": "Internal loopback supported",
-                    "default": true,
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "external_loopback": {
-                    "widget": "checkbox",
-                    "help": "External loopback supported",
-                    "default": false,
-                    "order": 2,
-                    "width": "third"
-                  },
-                  "pattern_generation": {
-                    "widget": "multiselect",
-                    "help": "Pattern generation capabilities",
-                    "options": [
-                      {
-                        "label": "PRBS7",
-                        "value": "PRBS7"
-                      },
-                      {
-                        "label": "PRBS31",
-                        "value": "PRBS31"
-                      },
-                      {
-                        "label": "PRBS23",
-                        "value": "PRBS23"
-                      },
-                      {
-                        "label": "Custom Patterns",
-                        "value": "custom"
-                      }
-                    ],
                     "default": [
-                      "PRBS7",
-                      "PRBS31"
+                      "PCIe",
+                      "CXL"
                     ],
-                    "order": 3,
-                    "width": "full"
-                  }
-                }
-              },
-              "bist_hooks": {
-                "widget": "object",
-                "help": "Built-in self-test capabilities",
-                "order": 2,
-                "width": "full",
-                "properties": {
-                  "memory_bist": {
-                    "widget": "checkbox",
-                    "help": "Memory built-in self-test",
-                    "default": false,
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "logic_bist": {
-                    "widget": "checkbox",
-                    "help": "Logic built-in self-test",
-                    "default": false,
-                    "order": 2,
-                    "width": "third"
-                  },
-                  "boundary_scan": {
-                    "widget": "checkbox",
-                    "help": "JTAG boundary scan support",
-                    "default": true,
-                    "order": 3,
-                    "width": "third"
-                  }
-                }
-              },
-              "error_counters": {
-                "widget": "object",
-                "help": "Error monitoring and counting capabilities",
-                "order": 3,
-                "width": "full",
-                "properties": {
-                  "bit_errors": {
-                    "widget": "checkbox",
-                    "help": "Bit error counting per lane",
-                    "default": true,
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "crc_errors": {
-                    "widget": "checkbox",
-                    "help": "CRC error counting",
-                    "default": true,
-                    "order": 2,
-                    "width": "third"
-                  },
-                  "timeout_errors": {
-                    "widget": "checkbox",
-                    "help": "Timeout and protocol errors",
-                    "default": false,
-                    "order": 3,
-                    "width": "third"
-                  }
-                }
-              }
-            }
-          },
-          "compliance": {
-            "widget": "object",
-            "help": "Standards compliance foundation (CDXML/BoW) - required for interoperability",
-            "order": 4,
-            "width": "full",
-            "required": true,
-            "properties": {
-              "cdxml": {
-                "widget": "object",
-                "help": "CDXML (Chiplet Design Exchange Format) compliance for OCP integration",
-                "order": 1,
-                "width": "full",
-                "properties": {
-                  "version": {
-                    "widget": "select",
-                    "help": "CDXML specification version this chiplet complies with",
-                    "options": [
-                      {
-                        "label": "CDXML v0.1",
-                        "value": "cdxml-v0.1"
-                      },
-                      {
-                        "label": "CDXML v0.2",
-                        "value": "cdxml-v0.2"
-                      },
-                      {
-                        "label": "CDXML v1.0",
-                        "value": "cdxml-v1.0"
-                      }
-                    ],
-                    "default": "cdxml-v0.2",
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "interface": {
-                    "widget": "object",
-                    "help": "Die-to-die interface characteristics per CDXML specification",
-                    "order": 2,
-                    "width": "full",
-                    "properties": {
-                      "type": {
-                        "widget": "select",
-                        "help": "Interface protocol type",
-                        "options": [
-                          {
-                            "label": "BoW",
-                            "value": "BoW",
-                            "description": "Bunch of Wires"
-                          },
-                          {
-                            "label": "UCIe",
-                            "value": "UCIe",
-                            "description": "Universal Chiplet Interconnect Express"
-                          },
-                          {
-                            "label": "AIB",
-                            "value": "AIB",
-                            "description": "Advanced Interface Bus"
-                          },
-                          {
-                            "label": "EMIB",
-                            "value": "EMIB",
-                            "description": "Embedded Multi-die Interconnect Bridge"
-                          },
-                          {
-                            "label": "Custom",
-                            "value": "custom",
-                            "description": "Custom interface protocol"
-                          }
-                        ],
-                        "default": "BoW",
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "lanes": {
-                        "widget": "number",
-                        "help": "Number of interface lanes",
-                        "min": 1,
-                        "max": 128,
-                        "default": 8,
-                        "order": 2,
-                        "width": "third"
-                      },
-                      "tx_pads": {
-                        "widget": "number",
-                        "help": "Number of transmit pads",
-                        "min": 1,
-                        "max": 1024,
-                        "default": 32,
-                        "order": 3,
-                        "width": "third"
-                      },
-                      "rx_pads": {
-                        "widget": "number",
-                        "help": "Number of receive pads",
-                        "min": 1,
-                        "max": 1024,
-                        "default": 32,
-                        "order": 4,
-                        "width": "third"
-                      },
-                      "data_rate_gbps": {
-                        "widget": "number",
-                        "help": "Data rate per lane in Gbps",
-                        "min": 0.1,
-                        "max": 100.0,
-                        "step": 0.1,
-                        "default": 8.0,
-                        "order": 5,
-                        "width": "third"
-                      }
-                    }
-                  },
-                  "electrical": {
-                    "widget": "object",
-                    "help": "Electrical characteristics per CDXML specification",
-                    "order": 3,
-                    "width": "full",
-                    "properties": {
-                      "core_voltage": {
-                        "widget": "number",
-                        "help": "Core operating voltage in volts",
-                        "min": 0.5,
-                        "max": 3.3,
-                        "step": 0.05,
-                        "default": 0.8,
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "io_voltage": {
-                        "widget": "number",
-                        "help": "I/O operating voltage in volts",
-                        "min": 0.8,
-                        "max": 3.3,
-                        "step": 0.1,
-                        "default": 1.2,
-                        "order": 2,
-                        "width": "third"
-                      },
-                      "max_current_ma": {
-                        "widget": "number",
-                        "help": "Maximum current draw in milliamps",
-                        "min": 1,
-                        "max": 10000,
-                        "default": 120,
-                        "order": 3,
-                        "width": "third"
-                      },
-                      "leakage_ma": {
-                        "widget": "number",
-                        "help": "Typical leakage current in milliamps",
-                        "min": 0.1,
-                        "max": 1000,
-                        "step": 0.1,
-                        "default": 4.5,
-                        "order": 4,
-                        "width": "third"
-                      }
-                    }
-                  },
-                  "mechanical": {
-                    "widget": "object",
-                    "help": "Mechanical characteristics per CDXML specification",
                     "order": 4,
-                    "width": "full",
-                    "properties": {
-                      "die_width_um": {
-                        "widget": "number",
-                        "help": "Die width in micrometers",
-                        "min": 100,
-                        "max": 50000,
-                        "default": 4000,
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "die_height_um": {
-                        "widget": "number",
-                        "help": "Die height in micrometers",
-                        "min": 100,
-                        "max": 50000,
-                        "default": 3000,
-                        "order": 2,
-                        "width": "third"
-                      },
-                      "bump_pitch_um": {
-                        "widget": "number",
-                        "help": "Bump pitch in micrometers",
-                        "min": 10,
-                        "max": 200,
-                        "default": 100,
-                        "order": 3,
-                        "width": "third"
-                      },
-                      "substrate_type": {
-                        "widget": "select",
-                        "help": "Substrate material type",
-                        "options": [
-                          {
-                            "label": "Organic",
-                            "value": "organic"
-                          },
-                          {
-                            "label": "Silicon",
-                            "value": "silicon"
-                          },
-                          {
-                            "label": "Glass",
-                            "value": "glass"
-                          },
-                          {
-                            "label": "Ceramic",
-                            "value": "ceramic"
-                          }
-                        ],
-                        "default": "organic",
-                        "order": 4,
-                        "width": "third"
-                      }
-                    }
-                  },
-                  "checklist": {
-                    "widget": "object",
-                    "help": "CDXML compliance checklist items",
-                    "order": 5,
-                    "width": "full",
-                    "properties": {
-                      "known_good_die": {
-                        "widget": "checkbox",
-                        "help": "Whether die has been tested and verified as known-good",
-                        "default": false,
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "reticle_compatible": {
-                        "widget": "checkbox",
-                        "help": "Whether die is compatible with standard reticle formats",
-                        "default": false,
-                        "order": 2,
-                        "width": "third"
-                      },
-                      "has_dft_hooks": {
-                        "widget": "checkbox",
-                        "help": "Whether die includes design-for-test hooks",
-                        "default": false,
-                        "order": 3,
-                        "width": "third"
-                      },
-                      "test_vector_included": {
-                        "widget": "checkbox",
-                        "help": "Whether test vectors are included with the die",
-                        "default": false,
-                        "order": 4,
-                        "width": "third"
-                      },
-                      "thermal_model_available": {
-                        "widget": "checkbox",
-                        "help": "Whether thermal model is available for analysis",
-                        "default": false,
-                        "order": 5,
-                        "width": "third"
-                      },
-                      "power_model_available": {
-                        "widget": "checkbox",
-                        "help": "Whether power model is available for analysis",
-                        "default": false,
-                        "order": 6,
-                        "width": "third"
-                      },
-                      "d2d_loopback_coverage": {
-                        "widget": "checkbox",
-                        "help": "Whether die-to-die loopback testing is covered",
-                        "default": false,
-                        "order": 7,
-                        "width": "third"
-                      }
-                    }
-                  },
-                  "validation": {
-                    "widget": "object",
-                    "help": "CDXML validation status and tools",
-                    "order": 6,
-                    "width": "full",
-                    "properties": {
-                      "status": {
-                        "widget": "select",
-                        "help": "CDXML validation status",
-                        "options": [
-                          {
-                            "label": "Not Validated",
-                            "value": "not_validated"
-                          },
-                          {
-                            "label": "In Progress",
-                            "value": "in_progress"
-                          },
-                          {
-                            "label": "Validated",
-                            "value": "validated"
-                          },
-                          {
-                            "label": "Failed",
-                            "value": "failed"
-                          }
-                        ],
-                        "default": "not_validated",
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "date": {
-                        "widget": "date",
-                        "help": "Date when CDXML validation was completed",
-                        "order": 2,
-                        "width": "third"
-                      },
-                      "tool": {
-                        "widget": "text",
-                        "help": "Tool used for CDXML validation",
-                        "placeholder": "e.g., CDXML Validator v0.2",
-                        "order": 3,
-                        "width": "third"
-                      }
-                    }
-                  }
-                }
-              },
-              "bow_specification": {
-                "widget": "object",
-                "help": "BoW (Bunch of Wires) specification details",
-                "order": 2,
-                "width": "full",
-                "properties": {
-                  "spec_version": {
-                    "widget": "text",
-                    "help": "BoW specification version",
-                    "placeholder": "e.g., 2.0d.1",
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "signaling": {
-                    "widget": "object",
-                    "help": "BoW signaling characteristics",
-                    "order": 2,
-                    "width": "full",
-                    "properties": {
-                      "signaling_class": {
-                        "widget": "select",
-                        "help": "BoW signaling class",
-                        "options": [
-                          {
-                            "label": "Class A",
-                            "value": "A"
-                          },
-                          {
-                            "label": "Class B",
-                            "value": "B"
-                          },
-                          {
-                            "label": "Class C",
-                            "value": "C"
-                          },
-                          {
-                            "label": "Class D",
-                            "value": "D"
-                          }
-                        ],
-                        "default": "B",
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "tx_voltage": {
-                        "widget": "number",
-                        "help": "Transmit voltage in volts",
-                        "min": 0.1,
-                        "max": 3.3,
-                        "step": 0.05,
-                        "default": 0.4,
-                        "order": 2,
-                        "width": "third"
-                      },
-                      "rx_voltage": {
-                        "widget": "number",
-                        "help": "Receive voltage in volts",
-                        "min": 0.1,
-                        "max": 3.3,
-                        "step": 0.05,
-                        "default": 0.4,
-                        "order": 3,
-                        "width": "third"
-                      },
-                      "clocking_scheme": {
-                        "widget": "select",
-                        "help": "Clock distribution scheme",
-                        "options": [
-                          {
-                            "label": "Forwarded",
-                            "value": "forwarded"
-                          },
-                          {
-                            "label": "Embedded",
-                            "value": "embedded"
-                          },
-                          {
-                            "label": "Recovered",
-                            "value": "recovered"
-                          }
-                        ],
-                        "default": "forwarded",
-                        "order": 4,
-                        "width": "third"
-                      },
-                      "link_training": {
-                        "widget": "checkbox",
-                        "help": "Whether link training is supported",
-                        "default": true,
-                        "order": 5,
-                        "width": "third"
-                      },
-                      "protocol_layer": {
-                        "widget": "select",
-                        "help": "Protocol layer type",
-                        "options": [
-                          {
-                            "label": "Raw",
-                            "value": "raw"
-                          },
-                          {
-                            "label": "Packetized",
-                            "value": "packetized"
-                          },
-                          {
-                            "label": "Streaming",
-                            "value": "streaming"
-                          }
-                        ],
-                        "default": "raw",
-                        "order": 6,
-                        "width": "third"
-                      },
-                      "serialization_factor": {
-                        "widget": "number",
-                        "help": "Serialization factor",
-                        "min": 1,
-                        "max": 32,
-                        "default": 8,
-                        "order": 7,
-                        "width": "third"
-                      }
-                    }
-                  },
-                  "timing": {
-                    "widget": "object",
-                    "help": "BoW timing constraints",
-                    "order": 3,
-                    "width": "full",
-                    "properties": {
-                      "setup_time_ps": {
-                        "widget": "number",
-                        "help": "Setup time in picoseconds",
-                        "min": 0,
-                        "max": 1000,
-                        "default": 50,
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "hold_time_ps": {
-                        "widget": "number",
-                        "help": "Hold time in picoseconds",
-                        "min": 0,
-                        "max": 1000,
-                        "default": 50,
-                        "order": 2,
-                        "width": "third"
-                      },
-                      "max_jitter_ps": {
-                        "widget": "number",
-                        "help": "Maximum jitter in picoseconds",
-                        "min": 0,
-                        "max": 1000,
-                        "default": 10,
-                        "order": 3,
-                        "width": "third"
-                      },
-                      "skew_tolerance_ps": {
-                        "widget": "number",
-                        "help": "Skew tolerance in picoseconds",
-                        "min": 0,
-                        "max": 1000,
-                        "default": 25,
-                        "order": 4,
-                        "width": "third"
-                      }
-                    }
-                  },
-                  "compliance": {
-                    "widget": "object",
-                    "help": "BoW compliance features",
-                    "order": 4,
-                    "width": "full",
-                    "properties": {
-                      "has_loopback": {
-                        "widget": "checkbox",
-                        "help": "Whether loopback testing is supported",
-                        "default": true,
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "supports_prbs": {
-                        "widget": "checkbox",
-                        "help": "Whether PRBS testing is supported",
-                        "default": true,
-                        "order": 2,
-                        "width": "third"
-                      },
-                      "supports_inband_error_detect": {
-                        "widget": "checkbox",
-                        "help": "Whether in-band error detection is supported",
-                        "default": true,
-                        "order": 3,
-                        "width": "third"
-                      },
-                      "supports_eye_monitoring": {
-                        "widget": "checkbox",
-                        "help": "Whether eye monitoring is supported",
-                        "default": true,
-                        "order": 4,
-                        "width": "third"
-                      },
-                      "supports_jitter_tolerance": {
-                        "widget": "checkbox",
-                        "help": "Whether jitter tolerance testing is supported",
-                        "default": true,
-                        "order": 5,
-                        "width": "third"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "discovery_composition": {
-            "widget": "object",
-            "help": "Discovery, composition, and system integration specifications",
-            "order": 5,
-            "width": "full",
-            "required": false,
-            "properties": {
-              "chiplet_uuid": {
-                "widget": "text",
-                "help": "Globally unique chiplet identifier (UUID v4)",
-                "placeholder": "e.g., 550e8400-e29b-41d4-a716-446655440000",
-                "order": 1,
-                "width": "full"
-              },
-              "dependencies": {
-                "widget": "object",
-                "help": "External dependencies and requirements",
-                "order": 2,
-                "width": "full",
-                "properties": {
-                  "power_rails": {
-                    "widget": "array",
-                    "help": "Required power rails",
-                    "items": {
-                      "widget": "object",
-                      "properties": {
-                        "name": {
-                          "widget": "text",
-                          "help": "Power rail name",
-                          "placeholder": "e.g., 1.2V_CORE",
-                          "order": 1,
-                          "width": "third"
-                        },
-                        "voltage": {
-                          "widget": "text",
-                          "help": "Voltage level",
-                          "placeholder": "e.g., 1.2V",
-                          "order": 2,
-                          "width": "third"
-                        },
-                        "current_max": {
-                          "widget": "text",
-                          "help": "Maximum current",
-                          "placeholder": "e.g., 0.6A",
-                          "order": 3,
-                          "width": "third"
-                        },
-                        "required": {
-                          "widget": "checkbox",
-                          "help": "Required for operation",
-                          "default": true,
-                          "order": 4,
-                          "width": "third"
-                        }
-                      }
-                    },
-                    "order": 1,
-                    "width": "full"
-                  },
-                  "clock_sources": {
-                    "widget": "array",
-                    "help": "Required clock sources",
-                    "items": {
-                      "widget": "object",
-                      "properties": {
-                        "name": {
-                          "widget": "text",
-                          "help": "Clock source name",
-                          "placeholder": "e.g., REFCLK",
-                          "order": 1,
-                          "width": "third"
-                        },
-                        "frequency_mhz": {
-                          "widget": "number",
-                          "help": "Frequency in MHz",
-                          "min": 1,
-                          "max": 10000,
-                          "step": 1,
-                          "default": 100,
-                          "order": 2,
-                          "width": "third"
-                        },
-                        "jitter_ps_rms": {
-                          "widget": "number",
-                          "help": "Jitter in picoseconds RMS",
-                          "min": 0.1,
-                          "max": 100.0,
-                          "step": 0.1,
-                          "default": 1.5,
-                          "order": 3,
-                          "width": "third"
-                        }
-                      }
-                    },
-                    "order": 2,
-                    "width": "full"
-                  }
-                }
-              },
-              "capabilities": {
-                "widget": "object",
-                "help": "Chiplet capabilities and provided services",
-                "order": 3,
-                "width": "full",
-                "properties": {
-                  "interface_capabilities": {
-                    "widget": "array",
-                    "help": "Interface capabilities",
-                    "items": {
-                      "widget": "object",
-                      "properties": {
-                        "type": {
-                          "widget": "select",
-                          "help": "Interface type",
-                          "options": [
-                            {
-                              "label": "AIB",
-                              "value": "AIB"
-                            },
-                            {
-                              "label": "BoW",
-                              "value": "BoW"
-                            },
-                            {
-                              "label": "UCIe",
-                              "value": "UCIe"
-                            }
-                          ],
-                          "order": 1,
-                          "width": "third"
-                        },
-                        "lanes": {
-                          "widget": "number",
-                          "help": "Number of lanes",
-                          "min": 1,
-                          "max": 1024,
-                          "step": 1,
-                          "default": 64,
-                          "order": 2,
-                          "width": "third"
-                        },
-                        "data_rate_gbps_per_lane": {
-                          "widget": "number",
-                          "help": "Data rate per lane in Gbps",
-                          "min": 0.1,
-                          "max": 100.0,
-                          "step": 0.1,
-                          "default": 1.0,
-                          "order": 3,
-                          "width": "third"
-                        }
-                      }
-                    },
-                    "order": 1,
                     "width": "full"
                   }
                 }
               }
             }
           },
-          "enhanced_packaging": {
+          "migrationPath": {
             "widget": "object",
-            "help": "Enhanced packaging specifications for mechanical and assembly teams",
+            "help": "Migration path information for transitioning between standards",
             "order": 6,
             "width": "full",
-            "required": false,
             "properties": {
-              "mechanical_constraints": {
-                "widget": "object",
-                "help": "Mechanical and physical constraints for packaging",
+              "prepareForUCIe": {
+                "widget": "checkbox",
+                "help": "Whether the design is prepared for UCIe migration",
+                "default": false,
                 "order": 1,
-                "width": "full",
-                "properties": {
-                  "die_thickness_um": {
-                    "widget": "number",
-                    "help": "Die thickness in micrometers",
-                    "min": 50,
-                    "max": 1000,
-                    "step": 10,
-                    "default": 150,
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "warpage_limit_um": {
-                    "widget": "number",
-                    "help": "Warpage limit in micrometers",
-                    "min": 10,
-                    "max": 200,
-                    "step": 5,
-                    "default": 40,
-                    "order": 2,
-                    "width": "third"
-                  },
-                  "co_planarity": {
-                    "widget": "text",
-                    "help": "Co-planarity specification",
-                    "placeholder": "e.g., \u00b15um",
-                    "order": 3,
-                    "width": "third"
-                  },
-                  "bump_height_um": {
-                    "widget": "number",
-                    "help": "Bump height in micrometers",
-                    "min": 20,
-                    "max": 200,
-                    "step": 5,
-                    "default": 80,
-                    "order": 4,
-                    "width": "third"
-                  },
-                  "bump_diameter_um": {
-                    "widget": "number",
-                    "help": "Bump diameter in micrometers",
-                    "min": 10,
-                    "max": 150,
-                    "step": 5,
-                    "default": 100,
-                    "order": 5,
-                    "width": "third"
-                  }
-                }
+                "width": "third"
               },
-              "assembly_requirements": {
-                "widget": "object",
-                "help": "Assembly and manufacturing requirements",
+              "targetStandard": {
+                "widget": "text",
+                "help": "Target standard for migration",
+                "placeholder": "e.g., UCIe 1.1, UCIe 2.0, AIB 3.0",
                 "order": 2,
-                "width": "full",
-                "properties": {
-                  "pick_and_place_accuracy": {
-                    "widget": "text",
-                    "help": "Pick and place accuracy",
-                    "placeholder": "e.g., \u00b125um",
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "reflow_profile": {
-                    "widget": "select",
-                    "help": "Reflow profile type",
-                    "options": [
-                      {
-                        "label": "Standard Lead-free",
-                        "value": "standard_lead_free"
-                      },
-                      {
-                        "label": "Low Temperature",
-                        "value": "low_temperature"
-                      },
-                      {
-                        "label": "Custom",
-                        "value": "custom"
-                      }
-                    ],
-                    "default": "standard_lead_free",
-                    "order": 2,
-                    "width": "third"
-                  },
-                  "bonding_temperature": {
-                    "widget": "text",
-                    "help": "Bonding temperature range",
-                    "placeholder": "e.g., 220-260\u00b0C",
-                    "order": 3,
-                    "width": "third"
-                  },
-                  "bonding_pressure": {
-                    "widget": "text",
-                    "help": "Bonding pressure per bump",
-                    "placeholder": "e.g., 50-100g",
-                    "order": 4,
-                    "width": "third"
-                  }
-                }
+                "width": "third"
               },
-              "interposer_specifications": {
-                "widget": "object",
-                "help": "Interposer and substrate specifications",
+              "migrationSteps": {
+                "widget": "array",
+                "help": "Steps required for migration",
+                "items": {
+                  "widget": "text"
+                },
+                "default": [
+                  "Maintain AIB compliance for current designs",
+                  "Prepare UCIe interface wrapper",
+                  "Implement protocol translation"
+                ],
                 "order": 3,
-                "width": "full",
-                "properties": {
-                  "interposer_material": {
-                    "widget": "select",
-                    "help": "Interposer material type",
-                    "options": [
-                      {
-                        "label": "Silicon",
-                        "value": "silicon"
-                      },
-                      {
-                        "label": "Organic",
-                        "value": "organic"
-                      },
-                      {
-                        "label": "Glass",
-                        "value": "glass"
-                      }
-                    ],
-                    "default": "silicon",
-                    "order": 4,
-                    "width": "third"
-                  },
-                  "interposer_thickness_um": {
-                    "widget": "number",
-                    "help": "Interposer thickness in micrometers",
-                    "min": 50,
-                    "max": 500,
-                    "step": 10,
-                    "default": 100,
-                    "order": 5,
-                    "width": "third"
-                  },
-                  "routing_layers": {
-                    "widget": "number",
-                    "help": "Number of routing layers",
-                    "min": 1,
-                    "max": 20,
-                    "step": 1,
-                    "default": 4,
-                    "order": 6,
-                    "width": "third"
-                  },
-                  "minimum_feature_size_um": {
-                    "widget": "number",
-                    "help": "Minimum feature size in micrometers",
-                    "min": 0.1,
-                    "max": 10.0,
-                    "step": 0.1,
-                    "default": 2.0,
-                    "order": 7,
-                    "width": "third"
-                  }
-                }
+                "width": "full"
               },
-              "thermal_management": {
-                "widget": "object",
-                "help": "Thermal management specifications",
+              "compatibilityLayer": {
+                "widget": "text",
+                "help": "Compatibility layer description",
+                "placeholder": "e.g., Protocol translation layer, Interface wrapper, None",
                 "order": 4,
-                "width": "full",
-                "properties": {
-                  "thermal_interface_material": {
-                    "widget": "select",
-                    "help": "Thermal interface material",
-                    "options": [
-                      {
-                        "label": "Thermal Grease",
-                        "value": "thermal_grease"
-                      },
-                      {
-                        "label": "Thermal Pad",
-                        "value": "thermal_pad"
-                      },
-                      {
-                        "label": "Phase Change",
-                        "value": "phase_change"
-                      }
-                    ],
-                    "default": "thermal_grease",
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "junction_to_case_resistance": {
-                    "widget": "number",
-                    "help": "Junction to case thermal resistance (\u00b0C/W)",
-                    "min": 0.1,
-                    "max": 50.0,
-                    "step": 0.1,
-                    "default": 2.0,
-                    "order": 2,
-                    "width": "third"
-                  },
-                  "case_to_ambient_resistance": {
-                    "widget": "number",
-                    "help": "Case to ambient thermal resistance (\u00b0C/W)",
-                    "min": 1.0,
-                    "max": 100.0,
-                    "step": 0.5,
-                    "default": 16.0,
-                    "order": 3,
-                    "width": "third"
-                  }
-                }
-              }
-            }
-          },
-          "extensions": {
-            "widget": "object",
-            "help": "Vendor-specific extensions and customizations beyond standards",
-            "order": 7,
-            "width": "full",
-            "required": false,
-            "properties": {
-              "meta": {
-                "widget": "object",
-                "help": "Basic chiplet configuration and integration metadata",
-                "order": 1,
-                "width": "full",
-                "properties": {
-                  "chiplet_ready": {
-                    "widget": "checkbox",
-                    "help": "Whether this IP is designed for chiplet integration",
-                    "default": false,
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "integration_level": {
-                    "widget": "select",
-                    "help": "Integration abstraction level for chiplet design",
-                    "options": [
-                      {
-                        "label": "RTL",
-                        "value": "rtl",
-                        "description": "RTL-level integration"
-                      },
-                      {
-                        "label": "Netlist",
-                        "value": "netlist",
-                        "description": "Post-synthesis netlist"
-                      },
-                      {
-                        "label": "Hard IP",
-                        "value": "hard_ip",
-                        "description": "GDSII/LEF hard IP"
-                      }
-                    ],
-                    "default": "rtl",
-                    "order": 2,
-                    "width": "third"
-                  },
-                  "die_to_die_interfaces": {
-                    "widget": "multiselect",
-                    "help": "Supported die-to-die interface protocols",
-                    "options": [
-                      {
-                        "label": "UCIe",
-                        "value": "ucie"
-                      },
-                      {
-                        "label": "BoW",
-                        "value": "bow"
-                      },
-                      {
-                        "label": "AIB",
-                        "value": "aib"
-                      },
-                      {
-                        "label": "EMIB",
-                        "value": "emib"
-                      },
-                      {
-                        "label": "Custom",
-                        "value": "custom"
-                      }
-                    ],
-                    "default": [
-                      "bow"
-                    ],
-                    "order": 3,
-                    "width": "third"
-                  }
-                }
-              },
-              "testing": {
-                "widget": "object",
-                "help": "Custom testing and validation requirements beyond standards",
-                "order": 2,
-                "width": "full",
-                "properties": {
-                  "multi_die_testing": {
-                    "widget": "object",
-                    "help": "Multi-die testing and validation requirements",
-                    "order": 1,
-                    "width": "full",
-                    "properties": {
-                      "test_access": {
-                        "widget": "select",
-                        "help": "Test access method",
-                        "options": [
-                          {
-                            "label": "Boundary Scan",
-                            "value": "boundary_scan"
-                          },
-                          {
-                            "label": "Internal Access",
-                            "value": "internal_access"
-                          },
-                          {
-                            "label": "Functional",
-                            "value": "functional"
-                          }
-                        ],
-                        "default": "boundary_scan",
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "test_coverage": {
-                        "widget": "object",
-                        "help": "Test coverage requirements",
-                        "order": 2,
-                        "width": "full",
-                        "properties": {
-                          "interconnect": {
-                            "widget": "number",
-                            "help": "Interconnect test coverage percentage",
-                            "min": 0,
-                            "max": 100,
-                            "default": 95,
-                            "order": 1,
-                            "width": "third"
-                          },
-                          "functionality": {
-                            "widget": "number",
-                            "help": "Functional test coverage percentage",
-                            "min": 0,
-                            "max": 100,
-                            "default": 90,
-                            "order": 2,
-                            "width": "third"
-                          }
-                        }
-                      },
-                      "test_vectors": {
-                        "widget": "multiselect",
-                        "help": "List of test vector files or formats",
-                        "options": [
-                          {
-                            "label": "Interconnect Test",
-                            "value": "interconnect_test.v"
-                          },
-                          {
-                            "label": "Functional Test",
-                            "value": "functional_test.v"
-                          },
-                          {
-                            "label": "Power Test",
-                            "value": "power_test.v"
-                          },
-                          {
-                            "label": "Thermal Test",
-                            "value": "thermal_test.v"
-                          }
-                        ],
-                        "default": [
-                          "interconnect_test.v",
-                          "functional_test.v"
-                        ],
-                        "order": 3,
-                        "width": "third"
-                      }
-                    }
-                  },
-                  "signal_conformance": {
-                    "widget": "object",
-                    "help": "Signal and protocol conformance validation",
-                    "order": 2,
-                    "width": "full",
-                    "properties": {
-                      "protocol_reference": {
-                        "widget": "text",
-                        "help": "Protocol specification version and reference",
-                        "placeholder": "e.g., UCIe 1.1",
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "verified_against": {
-                        "widget": "checkbox",
-                        "help": "Whether interface was verified against protocol test suite",
-                        "default": false,
-                        "order": 2,
-                        "width": "third"
-                      },
-                      "test_suite": {
-                        "widget": "text",
-                        "help": "Name and version of test suite used for verification",
-                        "placeholder": "e.g., UCIe Compliance Test Suite v1.1",
-                        "order": 3,
-                        "width": "third"
-                      },
-                      "verification_date": {
-                        "widget": "date",
-                        "help": "Date when protocol verification was completed",
-                        "order": 4,
-                        "width": "third"
-                      },
-                      "verification_tool": {
-                        "widget": "text",
-                        "help": "Tool used for protocol verification",
-                        "placeholder": "e.g., UCIe Compliance Checker",
-                        "order": 5,
-                        "width": "third"
-                      },
-                      "compliance_level": {
-                        "widget": "select",
-                        "help": "Level of protocol compliance achieved",
-                        "options": [
-                          {
-                            "label": "Basic",
-                            "value": "basic"
-                          },
-                          {
-                            "label": "Full",
-                            "value": "full"
-                          },
-                          {
-                            "label": "Extended",
-                            "value": "extended"
-                          }
-                        ],
-                        "default": "basic",
-                        "order": 6,
-                        "width": "third"
-                      }
-                    }
-                  }
-                }
-              },
-              "lifecycle": {
-                "widget": "object",
-                "help": "Supply chain and manufacturing metadata beyond standards",
-                "order": 3,
-                "width": "full",
-                "properties": {
-                  "origin": {
-                    "widget": "text",
-                    "help": "Origin of the chiplet (e.g., vyges/partner-x, internal)",
-                    "placeholder": "e.g., vyges/partner-x",
-                    "order": 1,
-                    "width": "third"
-                  },
-                  "trusted_fabricator": {
-                    "widget": "checkbox",
-                    "help": "Whether this chiplet comes from a trusted fabricator",
-                    "default": false,
-                    "order": 2,
-                    "width": "third"
-                  },
-                  "version_control": {
-                    "widget": "select",
-                    "help": "Version control system used",
-                    "options": [
-                      {
-                        "label": "Git",
-                        "value": "git"
-                      },
-                      {
-                        "label": "SVN",
-                        "value": "svn"
-                      },
-                      {
-                        "label": "Perforce",
-                        "value": "perforce"
-                      },
-                      {
-                        "label": "None",
-                        "value": "none"
-                      }
-                    ],
-                    "default": "git",
-                    "order": 3,
-                    "width": "third"
-                  },
-                  "release_status": {
-                    "widget": "select",
-                    "help": "Release status in the supply chain",
-                    "options": [
-                      {
-                        "label": "Development",
-                        "value": "development"
-                      },
-                      {
-                        "label": "Alpha",
-                        "value": "alpha"
-                      },
-                      {
-                        "label": "Beta",
-                        "value": "beta"
-                      },
-                      {
-                        "label": "Qualified",
-                        "value": "qualified"
-                      },
-                      {
-                        "label": "Production",
-                        "value": "production"
-                      },
-                      {
-                        "label": "Deprecated",
-                        "value": "deprecated"
-                      }
-                    ],
-                    "default": "development",
-                    "order": 4,
-                    "width": "third"
-                  },
-                  "fabrication_node": {
-                    "widget": "text",
-                    "help": "Fabrication process node",
-                    "placeholder": "e.g., tsmc7nm",
-                    "order": 5,
-                    "width": "third"
-                  },
-                  "package_type": {
-                    "widget": "select",
-                    "help": "Package type for chiplet integration",
-                    "options": [
-                      {
-                        "label": "2.5D Interposer",
-                        "value": "2.5d_interposer"
-                      },
-                      {
-                        "label": "3D Stacked",
-                        "value": "3d_stacked"
-                      },
-                      {
-                        "label": "Organic Substrate",
-                        "value": "organic_substrate"
-                      },
-                      {
-                        "label": "Fan-Out",
-                        "value": "fan_out"
-                      }
-                    ],
-                    "default": "2.5d_interposer",
-                    "order": 6,
-                    "width": "third"
-                  },
-                  "supply_chain_tracking": {
-                    "widget": "checkbox",
-                    "help": "Whether supply chain is tracked and verified",
-                    "default": false,
-                    "order": 7,
-                    "width": "third"
-                  },
-                  "certification": {
-                    "widget": "multiselect",
-                    "help": "List of certifications (e.g., ISO 9001, automotive)",
-                    "options": [
-                      {
-                        "label": "ISO 9001",
-                        "value": "ISO 9001"
-                      },
-                      {
-                        "label": "IATF 16949",
-                        "value": "IATF 16949"
-                      },
-                      {
-                        "label": "AS9100",
-                        "value": "AS9100"
-                      },
-                      {
-                        "label": "ISO 14001",
-                        "value": "ISO 14001"
-                      }
-                    ],
-                    "default": [],
-                    "order": 8,
-                    "width": "third"
-                  }
-                }
-              },
-              "custom_electrical": {
-                "widget": "object",
-                "help": "Vendor-specific electrical characteristics beyond standards",
-                "order": 4,
-                "width": "full",
-                "properties": {
-                  "power_domains": {
-                    "widget": "array",
-                    "help": "Power domain configuration for SoC/Chiplet partitioning",
-                    "order": 1,
-                    "width": "full",
-                    "items": {
-                      "widget": "object",
-                      "properties": {
-                        "name": {
-                          "widget": "text",
-                          "help": "Power domain name",
-                          "placeholder": "e.g., core_pd",
-                          "order": 1,
-                          "width": "third"
-                        },
-                        "voltage": {
-                          "widget": "number",
-                          "help": "Power domain voltage in volts",
-                          "min": 0.5,
-                          "max": 3.3,
-                          "step": 0.05,
-                          "default": 0.8,
-                          "order": 2,
-                          "width": "third"
-                        },
-                        "type": {
-                          "widget": "select",
-                          "help": "Power domain type",
-                          "options": [
-                            {
-                              "label": "Logic",
-                              "value": "logic"
-                            },
-                            {
-                              "label": "Memory",
-                              "value": "memory"
-                            },
-                            {
-                              "label": "Analog",
-                              "value": "analog"
-                            },
-                            {
-                              "label": "I/O",
-                              "value": "io"
-                            },
-                            {
-                              "label": "Mixed",
-                              "value": "mixed"
-                            }
-                          ],
-                          "default": "logic",
-                          "order": 3,
-                          "width": "third"
-                        },
-                        "isolation_required": {
-                          "widget": "checkbox",
-                          "help": "Whether power domain isolation is required",
-                          "default": false,
-                          "order": 4,
-                          "width": "third"
-                        },
-                        "retention_required": {
-                          "widget": "checkbox",
-                          "help": "Whether state retention is required",
-                          "default": false,
-                          "order": 5,
-                          "width": "third"
-                        },
-                        "max_current_ma": {
-                          "widget": "number",
-                          "help": "Maximum current in milliamps",
-                          "min": 1,
-                          "max": 10000,
-                          "default": 100,
-                          "order": 6,
-                          "width": "third"
-                        },
-                        "description": {
-                          "widget": "textarea",
-                          "help": "Power domain description",
-                          "placeholder": "Describe the power domain...",
-                          "order": 7,
-                          "width": "full"
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "custom_physical": {
-                "widget": "object",
-                "help": "Vendor-specific physical constraints beyond standards",
-                "order": 5,
-                "width": "full",
-                "properties": {
-                  "packaging_considerations": {
-                    "widget": "textarea",
-                    "help": "Notes about physical packaging requirements",
-                    "placeholder": "Describe packaging considerations...",
-                    "order": 1,
-                    "width": "full"
-                  },
-                  "interposer_constraints": {
-                    "widget": "object",
-                    "help": "Interposer design constraints",
-                    "order": 2,
-                    "width": "full",
-                    "properties": {
-                      "technology": {
-                        "widget": "select",
-                        "help": "Interposer technology type",
-                        "options": [
-                          {
-                            "label": "Silicon",
-                            "value": "silicon"
-                          },
-                          {
-                            "label": "Organic",
-                            "value": "organic"
-                          },
-                          {
-                            "label": "Glass",
-                            "value": "glass"
-                          }
-                        ],
-                        "default": "silicon",
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "routing_layers": {
-                        "widget": "number",
-                        "help": "Number of routing layers required",
-                        "min": 1,
-                        "max": 20,
-                        "default": 4,
-                        "order": 2,
-                        "width": "third"
-                      },
-                      "minimum_pitch": {
-                        "widget": "number",
-                        "help": "Minimum routing pitch in micrometers",
-                        "min": 0.1,
-                        "max": 10.0,
-                        "step": 0.1,
-                        "default": 0.8,
-                        "order": 3,
-                        "width": "third"
-                      },
-                      "die_spacing": {
-                        "widget": "number",
-                        "help": "Minimum spacing between dies in millimeters",
-                        "min": 0.01,
-                        "max": 10.0,
-                        "step": 0.01,
-                        "default": 0.1,
-                        "order": 4,
-                        "width": "third"
-                      }
-                    }
-                  },
-                  "bump_constraints": {
-                    "widget": "object",
-                    "help": "Bump map and connectivity constraints",
-                    "order": 3,
-                    "width": "full",
-                    "properties": {
-                      "pitch": {
-                        "widget": "number",
-                        "help": "Bump pitch in micrometers",
-                        "min": 10,
-                        "max": 200,
-                        "default": 100,
-                        "order": 4,
-                        "width": "third"
-                      },
-                      "size": {
-                        "widget": "number",
-                        "help": "Bump size in micrometers",
-                        "min": 5,
-                        "max": 100,
-                        "default": 50,
-                        "order": 5,
-                        "width": "third"
-                      },
-                      "array": {
-                        "widget": "select",
-                        "help": "Bump array configuration",
-                        "options": [
-                          {
-                            "label": "Full",
-                            "value": "full"
-                          },
-                          {
-                            "label": "Peripheral",
-                            "value": "peripheral"
-                          },
-                          {
-                            "label": "Area",
-                            "value": "area"
-                          }
-                        ],
-                        "default": "full",
-                        "order": 6,
-                        "width": "third"
-                      },
-                      "power_bumps": {
-                        "widget": "number",
-                        "help": "Number of power/ground bumps required",
-                        "min": 1,
-                        "max": 10000,
-                        "default": 100,
-                        "order": 7,
-                        "width": "third"
-                      },
-                      "signal_bumps": {
-                        "widget": "number",
-                        "help": "Number of signal bumps required",
-                        "min": 1,
-                        "max": 10000,
-                        "default": 200,
-                        "order": 8,
-                        "width": "third"
-                      }
-                    }
-                  },
-                  "thermal_constraints": {
-                    "widget": "object",
-                    "help": "Thermal analysis constraints",
-                    "order": 4,
-                    "width": "full",
-                    "properties": {
-                      "max_power_per_die": {
-                        "widget": "number",
-                        "help": "Maximum power per die in watts",
-                        "min": 0.1,
-                        "max": 100.0,
-                        "step": 0.1,
-                        "default": 5.0,
-                        "order": 1,
-                        "width": "third"
-                      },
-                      "junction_temperature": {
-                        "widget": "number",
-                        "help": "Maximum junction temperature in Celsius",
-                        "min": 25,
-                        "max": 200,
-                        "default": 125,
-                        "order": 2,
-                        "width": "third"
-                      },
-                      "thermal_resistance": {
-                        "widget": "number",
-                        "help": "Thermal resistance in degrees C per watt",
-                        "min": 0.1,
-                        "max": 100.0,
-                        "step": 0.1,
-                        "default": 10.0,
-                        "order": 3,
-                        "width": "third"
-                      },
-                      "cooling_requirements": {
-                        "widget": "textarea",
-                        "help": "Cooling requirements description",
-                        "placeholder": "Describe cooling requirements...",
-                        "order": 4,
-                        "width": "full"
-                      }
-                    }
-                  }
-                }
+                "width": "full"
               }
             }
           }

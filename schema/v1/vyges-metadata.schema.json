@@ -3192,35 +3192,6 @@
       "type": "object",
       "description": "Security and safety-related metadata for RTL design validation",
       "$defs": {
-        "riskArea": {
-          "type": "string",
-          "enum": [
-            "memory_access",
-            "fsm_state_control",
-            "bus_protocol",
-            "reset_glitch",
-            "clock_domain_crossing",
-            "side_channel",
-            "input_overdrive",
-            "address_decoding",
-            "fifo_boundary",
-            "signal_validation",
-            "cryptographic_operations",
-            "privilege_escalation",
-            "data_integrity",
-            "timing_attacks",
-            "fault_injection"
-          ]
-        },
-        "attackVector": {
-          "type": "string",
-          "enum": [
-            "timing",
-            "power",
-            "electromagnetic",
-            "fault_injection"
-          ]
-        },
         "securityLevel": {
           "type": "string",
           "enum": [
@@ -3228,7 +3199,17 @@
             "medium",
             "high",
             "critical"
-          ]
+          ],
+          "description": "Security level classification for IP blocks"
+        },
+        "toolAvailability": {
+          "type": "string",
+          "enum": [
+            "open_source",
+            "commercial",
+            "hybrid"
+          ],
+          "description": "Tool availability for security testing"
         },
         "flowType": {
           "type": "string",
@@ -3237,15 +3218,33 @@
             "fpga",
             "chiplet",
             "analog"
-          ]
+          ],
+          "description": "Target design flow for security tool selection"
         },
-        "toolAvailability": {
+        "riskArea": {
           "type": "string",
           "enum": [
-            "open_source",
-            "commercial",
-            "hybrid"
-          ]
+            "memory_access",
+            "fsm_state_control",
+            "reset_glitch",
+            "bus_protocol",
+            "clock_domain_crossing",
+            "side_channel",
+            "cryptographic_operations",
+            "timing_attacks",
+            "fault_injection"
+          ],
+          "description": "Functional areas where security validation is critical"
+        },
+        "attackVector": {
+          "type": "string",
+          "enum": [
+            "timing",
+            "power",
+            "electromagnetic",
+            "fault_injection"
+          ],
+          "description": "Side-channel attack vectors to protect against"
         },
         "assertionCoverage": {
           "type": "object",
@@ -3256,76 +3255,22 @@
               "items": {
                 "type": "string"
               },
-              "description": "List of required security assertions",
-              "examples": [
-                [
-                  "address_bounds_check",
-                  "fsm_state_validity",
-                  "reset_synchronization"
-                ],
-                [
-                  "protocol_timing",
-                  "cdc_synchronization",
-                  "side_channel_protection"
-                ]
-              ]
+              "description": "List of required security assertions"
             },
             "coverage_target": {
               "type": "number",
               "minimum": 0,
               "maximum": 100,
-              "description": "Target assertion coverage percentage",
-              "examples": [
-                90,
-                95,
-                98,
-                100
-              ]
+              "description": "Target assertion coverage percentage"
             },
             "critical_paths": {
               "type": "array",
               "items": {
                 "type": "string"
               },
-              "description": "Critical security paths that must be covered",
-              "examples": [
-                [
-                  "memory_access_control",
-                  "privilege_check",
-                  "cryptographic_key_path"
-                ],
-                [
-                  "reset_recovery",
-                  "error_handling",
-                  "state_transition_validation"
-                ]
-              ]
+              "description": "Critical security paths that must be covered"
             }
-          },
-          "examples": [
-            {
-              "required_assertions": [
-                "address_bounds_check",
-                "fsm_state_validity"
-              ],
-              "coverage_target": 95,
-              "critical_paths": [
-                "memory_access_control",
-                "reset_recovery"
-              ]
-            },
-            {
-              "required_assertions": [
-                "protocol_timing",
-                "cdc_synchronization"
-              ],
-              "coverage_target": 98,
-              "critical_paths": [
-                "cryptographic_key_path",
-                "privilege_check"
-              ]
-            }
-          ]
+          }
         },
         "fuzzingConfig": {
           "type": "object",
@@ -3334,11 +3279,7 @@
             "enabled": {
               "type": "boolean",
               "default": false,
-              "description": "Whether fuzzing tests should be generated",
-              "examples": [
-                true,
-                false
-              ]
+              "description": "Whether fuzzing tests should be generated"
             },
             "input_ranges": {
               "type": "array",
@@ -3364,32 +3305,11 @@
                   "max_value"
                 ]
               },
-              "description": "Input signal ranges for fuzzing",
-              "examples": [
-                [
-                  {
-                    "signal": "addr",
-                    "min_value": 0,
-                    "max_value": 1023,
-                    "include_invalid": true
-                  },
-                  {
-                    "signal": "data",
-                    "min_value": 0,
-                    "max_value": 255,
-                    "include_invalid": false
-                  }
-                ]
-              ]
+              "description": "Input signal ranges for fuzzing"
             },
             "test_duration": {
               "type": "integer",
-              "description": "Duration of fuzzing tests in cycles",
-              "examples": [
-                1000,
-                10000,
-                100000
-              ]
+              "description": "Duration of fuzzing tests in cycles"
             },
             "mutation_strategy": {
               "type": "string",
@@ -3398,29 +3318,9 @@
                 "directed",
                 "coverage_guided"
               ],
-              "description": "Fuzzing mutation strategy",
-              "examples": [
-                "random",
-                "directed",
-                "coverage_guided"
-              ]
+              "description": "Fuzzing mutation strategy"
             }
-          },
-          "examples": [
-            {
-              "enabled": true,
-              "input_ranges": [
-                {
-                  "signal": "addr",
-                  "min_value": 0,
-                  "max_value": 1023,
-                  "include_invalid": true
-                }
-              ],
-              "test_duration": 10000,
-              "mutation_strategy": "random"
-            }
-          ]
+          }
         },
         "formalVerification": {
           "type": "object",
@@ -3429,30 +3329,14 @@
             "enabled": {
               "type": "boolean",
               "default": false,
-              "description": "Whether formal verification is required",
-              "examples": [
-                true,
-                false
-              ]
+              "description": "Whether formal verification is required"
             },
             "security_properties": {
               "type": "array",
               "items": {
                 "type": "string"
               },
-              "description": "Security properties to be formally verified",
-              "examples": [
-                [
-                  "no_illegal_memory_access",
-                  "fsm_reachability",
-                  "reset_recovery"
-                ],
-                [
-                  "protocol_compliance",
-                  "cdc_safety",
-                  "side_channel_protection"
-                ]
-              ]
+              "description": "Security properties to be formally verified"
             },
             "tools": {
               "type": "object",
@@ -3463,71 +3347,22 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "Open-source formal verification tools (references tools.{flow}.open_source.formal)",
-                  "examples": [
-                    [
-                      "yosys-smtbmc",
-                      "sby",
-                      "symbiyosys",
-                      "jtag"
-                    ]
-                  ]
+                  "description": "Open-source formal verification tools"
                 },
                 "commercial": {
                   "type": "array",
                   "items": {
                     "type": "string"
                   },
-                  "description": "Commercial formal verification tools (references tools.{flow}.commercial.formal)",
-                  "examples": [
-                    [
-                      "oneSpin",
-                      "jasper",
-                      "vc_formal",
-                      "questa_formal"
-                    ]
-                  ]
+                  "description": "Commercial formal verification tools"
                 }
-              },
-              "examples": [
-                {
-                  "open_source": [
-                    "yosys-smtbmc",
-                    "sby"
-                  ],
-                  "commercial": [
-                    "oneSpin"
-                  ]
-                }
-              ]
+              }
             },
             "timeout": {
               "type": "integer",
-              "description": "Formal verification timeout in seconds",
-              "examples": [
-                300,
-                600,
-                1800
-              ]
+              "description": "Formal verification timeout in seconds"
             }
-          },
-          "examples": [
-            {
-              "enabled": true,
-              "security_properties": [
-                "no_illegal_memory_access",
-                "fsm_reachability"
-              ],
-              "tools": {
-                "open_source": [
-                  "yosys-smtbmc",
-                  "sby"
-                ],
-                "commercial": []
-              },
-              "timeout": 600
-            }
-          ]
+          }
         }
       },
       "properties": {
@@ -5089,7 +4924,7 @@
                       "current_max": {
                         "type": "number"
                       },
-                      "required": {
+                      "is_required": {
                         "type": "boolean"
                       }
                     }
@@ -5109,7 +4944,7 @@
                       "jitter_ps_rms": {
                         "type": "number"
                       },
-                      "required": {
+                      "is_required": {
                         "type": "boolean"
                       }
                     }
@@ -6149,7 +5984,7 @@
                       "current_max": {
                         "type": "number"
                       },
-                      "required": {
+                      "is_required": {
                         "type": "boolean"
                       }
                     }
@@ -6169,7 +6004,7 @@
                       "jitter_ps_rms": {
                         "type": "number"
                       },
-                      "required": {
+                      "is_required": {
                         "type": "boolean"
                       }
                     }
@@ -6990,7 +6825,7 @@
                   }
                 ]
               },
-              "required": {
+              "is_required": {
                 "type": "boolean",
                 "description": "Whether this parameter is required",
                 "default": false,
@@ -7032,7 +6867,7 @@
                 "min": 2,
                 "max": 256
               },
-              "required": false
+              "is_required": false
             },
             "metadata": {
               "units": "cycles"
@@ -7050,7 +6885,7 @@
                 "min": 1,
                 "max": 32
               },
-              "required": true
+              "is_required": true
             },
             "metadata": {
               "units": "bits"
@@ -7072,7 +6907,7 @@
                 "min": 2,
                 "max": 256
               },
-              "required": false
+              "is_required": false
             },
             "metadata": {
               "units": "cycles"
@@ -7090,7 +6925,7 @@
                 "min": 1,
                 "max": 32
               },
-              "required": true
+              "is_required": true
             },
             "metadata": {
               "units": "bits"
@@ -7972,6 +7807,866 @@
                 "secure_ic"
               ]
             }
+          }
+        }
+      ]
+    },
+    "chipletIntegration": {
+      "type": "object",
+      "description": "Metadata for chiplet-based IP and interoperability. This section provides comprehensive chiplet metadata including physical interfaces, packaging, compliance, and migration paths. Only required for IP that implements chiplet functionality.",
+      "is_required": false,
+      "properties": {
+        "phy": {
+          "type": "object",
+          "description": "Physical layer interface specifications for die-to-die communication",
+          "properties": {
+            "standard": {
+              "type": "string",
+              "enum": [
+                "AIB",
+                "BoW",
+                "UCIe",
+                "EMIB"
+              ],
+              "description": "Interface standard for die-to-die communication",
+              "examples": [
+                "AIB",
+                "BoW",
+                "UCIe"
+              ]
+            },
+            "version": {
+              "type": "string",
+              "description": "Standard version number",
+              "examples": [
+                "2.0",
+                "1.1",
+                "3.0"
+              ]
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "parallel_source_sync",
+                "serial",
+                "differential"
+              ],
+              "description": "Signaling mode for the interface",
+              "default": "parallel_source_sync"
+            },
+            "lanes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1024,
+              "description": "Number of interface lanes (transmit and receive)",
+              "examples": [
+                16,
+                32,
+                64,
+                128,
+                256
+              ]
+            },
+            "lanes_tx": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1024,
+              "description": "Number of transmit lanes",
+              "examples": [
+                16,
+                32,
+                64,
+                128
+              ]
+            },
+            "lanes_rx": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1024,
+              "description": "Number of receive lanes",
+              "examples": [
+                16,
+                32,
+                64,
+                128
+              ]
+            },
+            "data_rate_gbps_per_lane": {
+              "type": "number",
+              "minimum": 0.1,
+              "maximum": 100.0,
+              "description": "Data rate per lane in Gbps",
+              "examples": [
+                0.5,
+                1.0,
+                1.5,
+                2.0,
+                4.0,
+                8.0
+              ]
+            },
+            "io_voltage": {
+              "type": "string",
+              "enum": [
+                "0.8V",
+                "1.1V",
+                "1.2V",
+                "1.8V"
+              ],
+              "description": "I/O voltage level for the interface",
+              "examples": [
+                "1.2V",
+                "1.8V"
+              ]
+            },
+            "termination": {
+              "type": "string",
+              "enum": [
+                "on_die",
+                "external"
+              ],
+              "description": "Termination scheme for the interface",
+              "default": "on_die"
+            },
+            "training": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "deskew",
+                  "prbs",
+                  "eye_optimization"
+                ]
+              },
+              "description": "Training sequence requirements for the interface",
+              "examples": [
+                [
+                  "deskew",
+                  "prbs"
+                ],
+                [
+                  "deskew",
+                  "prbs",
+                  "eye_optimization"
+                ]
+              ]
+            },
+            "loopback": {
+              "type": "boolean",
+              "description": "Whether loopback capability is available",
+              "default": true
+            },
+            "error_detection": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "crc",
+                  "parity",
+                  "ecc"
+                ]
+              },
+              "description": "Error detection mechanisms supported",
+              "examples": [
+                [
+                  "crc"
+                ],
+                [
+                  "crc",
+                  "parity"
+                ]
+              ]
+            },
+            "power_pJ_per_bit": {
+              "type": "number",
+              "minimum": 0.1,
+              "maximum": 10.0,
+              "description": "Power per bit in picojoules",
+              "examples": [
+                0.5,
+                0.8,
+                1.2
+              ]
+            },
+            "reach_mm": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "Maximum reach in millimeters",
+              "examples": [
+                5,
+                8,
+                10,
+                15,
+                25
+              ]
+            },
+            "bump_map_ref": {
+              "type": "string",
+              "description": "Reference to bump map artifact (should point to an entry in the artifacts section)",
+              "format": "uri-reference",
+              "examples": [
+                "path://bump_map.csv",
+                "artifacts://bump_map_v1"
+              ]
+            }
+          },
+          "required": [
+            "standard",
+            "version",
+            "lanes",
+            "data_rate_gbps_per_lane",
+            "io_voltage"
+          ]
+        },
+        "link": {
+          "type": "object",
+          "description": "Link layer protocol specifications for data transfer",
+          "properties": {
+            "protocol": {
+              "type": "string",
+              "enum": [
+                "PCIe",
+                "CXL",
+                "STREAMING",
+                "CUSTOM"
+              ],
+              "description": "Link protocol for data transfer",
+              "examples": [
+                "STREAMING",
+                "PCIe",
+                "CXL"
+              ]
+            },
+            "width_bits": {
+              "type": "integer",
+              "minimum": 8,
+              "maximum": 4096,
+              "description": "Total link width in bits",
+              "examples": [
+                64,
+                128,
+                256,
+                512,
+                1024
+              ]
+            },
+            "flow_control": {
+              "type": "string",
+              "enum": [
+                "credit",
+                "ack_nack",
+                "none"
+              ],
+              "description": "Flow control mechanism",
+              "default": "credit"
+            },
+            "replay": {
+              "type": "boolean",
+              "description": "Whether replay capability is supported",
+              "default": false
+            },
+            "fec": {
+              "type": "string",
+              "enum": [
+                "none",
+                "reed_solomon",
+                "ldpc"
+              ],
+              "description": "Forward error correction method",
+              "default": "none"
+            },
+            "max_payload_bytes": {
+              "type": "integer",
+              "minimum": 64,
+              "maximum": 65536,
+              "description": "Maximum payload size in bytes",
+              "examples": [
+                256,
+                512,
+                1024,
+                2048
+              ]
+            }
+          },
+          "required": [
+            "protocol",
+            "width_bits"
+          ]
+        },
+        "management": {
+          "type": "object",
+          "description": "System management and discovery specifications",
+          "properties": {
+            "discovery": {
+              "type": "string",
+              "enum": [
+                "CDXML",
+                "custom"
+              ],
+              "description": "Discovery protocol for chiplet integration",
+              "default": "CDXML"
+            },
+            "endpoint_id": {
+              "type": "string",
+              "description": "Unique endpoint identifier",
+              "examples": [
+                "0x1A2B",
+                "chiplet_0",
+                "memory_interface"
+              ]
+            },
+            "config_bus": {
+              "type": "string",
+              "description": "Configuration bus specification",
+              "examples": [
+                "I2C@0x54",
+                "SPI@0x100",
+                "APB@0x200"
+              ]
+            },
+            "firmware_update": {
+              "type": "object",
+              "description": "Firmware update mechanism",
+              "properties": {
+                "method": {
+                  "type": "string",
+                  "enum": [
+                    "in_band",
+                    "out_of_band"
+                  ],
+                  "description": "Firmware update method",
+                  "default": "in_band"
+                },
+                "format": {
+                  "type": "string",
+                  "description": "Firmware format specification",
+                  "examples": [
+                    "CSIP-v1",
+                    "custom",
+                    "standard"
+                  ]
+                },
+                "secure_boot": {
+                  "type": "boolean",
+                  "description": "Whether secure boot is required for firmware updates",
+                  "default": false
+                },
+                "rot_block": {
+                  "type": "string",
+                  "description": "Root of trust block type",
+                  "examples": [
+                    "caliptra_v0.7",
+                    "dice",
+                    "custom"
+                  ]
+                }
+              }
+            },
+            "telemetry": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "temperature",
+                  "lane_error_counters",
+                  "power_consumption",
+                  "performance_metrics"
+                ]
+              },
+              "description": "Available telemetry data",
+              "examples": [
+                [
+                  "temperature",
+                  "lane_error_counters"
+                ],
+                [
+                  "temperature",
+                  "power_consumption"
+                ]
+              ]
+            }
+          },
+          "required": [
+            "discovery"
+          ]
+        },
+        "packaging": {
+          "type": "object",
+          "description": "Packaging and assembly specifications",
+          "properties": {
+            "assembly": {
+              "type": "string",
+              "enum": [
+                "organic_substrate",
+                "2.5D_interposer",
+                "fanout",
+                "3D_stacked"
+              ],
+              "description": "Assembly type for chiplet integration",
+              "examples": [
+                "2.5D_interposer",
+                "organic_substrate"
+              ]
+            },
+            "substrate_stackup": {
+              "type": "string",
+              "description": "Substrate stackup reference",
+              "examples": [
+                "pkg_stack_v3",
+                "custom_stackup",
+                "standard_4layer"
+              ]
+            },
+            "thermal": {
+              "type": "object",
+              "description": "Thermal characteristics",
+              "properties": {
+                "theta_ja_c_per_w": {
+                  "type": "number",
+                  "minimum": 1.0,
+                  "maximum": 100.0,
+                  "description": "Junction to ambient thermal resistance in \u00b0C/W",
+                  "examples": [
+                    18,
+                    25,
+                    35
+                  ]
+                },
+                "max_tj_c": {
+                  "type": "number",
+                  "minimum": 25,
+                  "maximum": 200,
+                  "description": "Maximum junction temperature in \u00b0C",
+                  "examples": [
+                    110,
+                    125,
+                    150
+                  ]
+                }
+              }
+            },
+            "power_delivery": {
+              "type": "object",
+              "description": "Power delivery network specifications",
+              "properties": {
+                "rails": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Power rail name",
+                        "examples": [
+                          "1.2V_CORE",
+                          "1.8V_IO",
+                          "3.3V_AUX"
+                        ]
+                      },
+                      "imax_a": {
+                        "type": "number",
+                        "minimum": 0.001,
+                        "maximum": 100.0,
+                        "description": "Maximum current in amperes",
+                        "examples": [
+                          0.6,
+                          1.2,
+                          2.0
+                        ]
+                      },
+                      "dvdt_limit_mV_us": {
+                        "type": "number",
+                        "minimum": 1,
+                        "maximum": 1000,
+                        "description": "dV/dt limit in millivolts per microsecond",
+                        "examples": [
+                          20,
+                          50,
+                          100
+                        ]
+                      },
+                      "seq": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 10,
+                        "description": "Power sequencing order",
+                        "examples": [
+                          1,
+                          2,
+                          3
+                        ]
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "imax_a"
+                    ]
+                  }
+                },
+                "decap_guidance": {
+                  "type": "string",
+                  "description": "Decoupling capacitor guidance",
+                  "examples": [
+                    "min 1nF/mm2 near interface",
+                    "100nF per power domain"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "compliance": {
+          "type": "object",
+          "description": "Standards compliance and validation tracking",
+          "properties": {
+            "cdxml": {
+              "type": "object",
+              "description": "CDXML compliance information",
+              "properties": {
+                "version": {
+                  "type": "string",
+                  "description": "CDXML specification version",
+                  "examples": [
+                    "cdxml-v0.2",
+                    "cdxml-v1.0"
+                  ]
+                },
+                "protocol_support": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "AIB",
+                      "BoW",
+                      "UCIe",
+                      "EMIB"
+                    ]
+                  },
+                  "description": "Supported interface protocols",
+                  "examples": [
+                    [
+                      "AIB",
+                      "BoW"
+                    ],
+                    [
+                      "AIB",
+                      "UCIe"
+                    ]
+                  ]
+                },
+                "electrical_validation": {
+                  "type": "string",
+                  "description": "Electrical validation reference",
+                  "examples": [
+                    "OCP-ODSA-2025Q1",
+                    "custom_validation"
+                  ]
+                },
+                "mechanical_validation": {
+                  "type": "string",
+                  "description": "Mechanical validation reference",
+                  "examples": [
+                    "OCP-ODSA-2025Q1",
+                    "custom_validation"
+                  ]
+                }
+              }
+            },
+            "aib": {
+              "type": "object",
+              "description": "AIB compliance status",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Whether AIB is enabled",
+                  "default": false
+                },
+                "spec_version": {
+                  "type": "string",
+                  "description": "AIB specification version",
+                  "examples": [
+                    "1.0",
+                    "2.0",
+                    "3.0"
+                  ]
+                },
+                "features": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "gearboxing",
+                      "prbs",
+                      "loopback",
+                      "error_counting"
+                    ]
+                  },
+                  "description": "AIB features supported",
+                  "examples": [
+                    [
+                      "gearboxing",
+                      "prbs"
+                    ],
+                    [
+                      "loopback"
+                    ]
+                  ]
+                }
+              }
+            },
+            "ucie": {
+              "type": "object",
+              "description": "UCIe compliance status",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Whether UCIe is enabled",
+                  "default": false
+                },
+                "spec_version": {
+                  "type": "string",
+                  "description": "UCIe specification version",
+                  "examples": [
+                    "1.0",
+                    "1.1",
+                    "2.0"
+                  ]
+                },
+                "profile": {
+                  "type": "string",
+                  "enum": [
+                    "ShortReach",
+                    "LongReach"
+                  ],
+                  "description": "UCIe profile type",
+                  "examples": [
+                    "ShortReach",
+                    "LongReach"
+                  ]
+                },
+                "protocol_modes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "PCIe",
+                      "CXL",
+                      "STREAMING"
+                    ]
+                  },
+                  "description": "Supported UCIe protocol modes",
+                  "examples": [
+                    [
+                      "PCIe",
+                      "CXL"
+                    ],
+                    [
+                      "STREAMING"
+                    ]
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "migrationPath": {
+          "type": "object",
+          "description": "Migration path information for transitioning between standards",
+          "properties": {
+            "prepareForUCIe": {
+              "type": "boolean",
+              "description": "Whether the design is prepared for UCIe migration",
+              "default": false
+            },
+            "targetStandard": {
+              "type": "string",
+              "description": "Target standard for migration",
+              "examples": [
+                "UCIe 1.1",
+                "UCIe 2.0",
+                "AIB 3.0"
+              ]
+            },
+            "migrationSteps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Steps required for migration",
+              "examples": [
+                "Maintain AIB compliance for current designs",
+                "Prepare UCIe interface wrapper",
+                "Implement protocol translation"
+              ]
+            },
+            "compatibilityLayer": {
+              "type": "string",
+              "description": "Compatibility layer description",
+              "examples": [
+                "Protocol translation layer",
+                "Interface wrapper",
+                "None"
+              ]
+            }
+          }
+        }
+      },
+      "examples": [
+        {
+          "phy": {
+            "standard": "AIB",
+            "version": "2.0",
+            "mode": "parallel_source_sync",
+            "lanes": 64,
+            "lanes_tx": 32,
+            "lanes_rx": 32,
+            "data_rate_gbps_per_lane": 2.0,
+            "io_voltage": "1.2V",
+            "termination": "on_die",
+            "training": [
+              "deskew",
+              "prbs"
+            ],
+            "loopback": true,
+            "error_detection": [
+              "crc",
+              "parity"
+            ],
+            "power_pJ_per_bit": 0.8,
+            "reach_mm": 25
+          },
+          "link": {
+            "protocol": "AIB",
+            "width_bits": 512,
+            "flow_control": "credit_based",
+            "retry_mechanism": true,
+            "max_payload_size": 256,
+            "latency_ns": 50
+          },
+          "management": {
+            "discovery": "AIB_Discovery_v2",
+            "configuration": "register_based",
+            "firmware_update": "secure_boot",
+            "monitoring": [
+              "temperature",
+              "voltage",
+              "performance"
+            ]
+          },
+          "packaging": {
+            "substrate": "organic",
+            "interposer": "silicon",
+            "bump_pitch_um": 130,
+            "thermal_management": "heat_spreader"
+          },
+          "compliance": {
+            "aib": {
+              "enabled": true,
+              "spec_version": "2.0",
+              "features": [
+                "gearboxing",
+                "prbs",
+                "loopback",
+                "error_counting"
+              ]
+            },
+            "ucie": {
+              "enabled": false,
+              "spec_version": "1.0",
+              "profile": "ShortReach",
+              "protocol_modes": [
+                "PCIe",
+                "CXL"
+              ]
+            }
+          },
+          "migrationPath": {
+            "prepareForUCIe": true,
+            "targetStandard": "UCIe 1.1",
+            "migrationSteps": [
+              "Maintain AIB compliance for current designs",
+              "Prepare UCIe interface wrapper",
+              "Implement protocol translation"
+            ],
+            "compatibilityLayer": "Interface wrapper"
+          }
+        },
+        {
+          "phy": {
+            "standard": "UCIe",
+            "version": "1.1",
+            "mode": "serial",
+            "lanes": 32,
+            "lanes_tx": 16,
+            "lanes_rx": 16,
+            "data_rate_gbps_per_lane": 8.0,
+            "io_voltage": "0.8V",
+            "termination": "on_die",
+            "training": [
+              "deskew",
+              "prbs",
+              "eye_optimization"
+            ],
+            "loopback": true,
+            "error_detection": [
+              "crc",
+              "ecc"
+            ],
+            "power_pJ_per_bit": 0.5,
+            "reach_mm": 100
+          },
+          "link": {
+            "protocol": "UCIe",
+            "width_bits": 256,
+            "flow_control": "credit_based",
+            "retry_mechanism": true,
+            "max_payload_size": 512,
+            "latency_ns": 30
+          },
+          "management": {
+            "discovery": "UCIe_Discovery_v1",
+            "configuration": "memory_mapped",
+            "firmware_update": "secure_boot",
+            "monitoring": [
+              "temperature",
+              "voltage",
+              "performance",
+              "link_quality"
+            ]
+          },
+          "packaging": {
+            "substrate": "organic",
+            "interposer": "none",
+            "bump_pitch_um": 100,
+            "thermal_management": "microchannel"
+          },
+          "compliance": {
+            "aib": {
+              "enabled": false,
+              "spec_version": "2.0",
+              "features": []
+            },
+            "ucie": {
+              "enabled": true,
+              "spec_version": "1.1",
+              "profile": "LongReach",
+              "protocol_modes": [
+                "PCIe",
+                "CXL",
+                "STREAMING"
+              ]
+            }
+          },
+          "migrationPath": {
+            "prepareForUCIe": true,
+            "targetStandard": "UCIe 2.0",
+            "migrationSteps": [
+              "Upgrade to UCIe 2.0 interface",
+              "Implement new protocol features",
+              "Update compliance validation"
+            ],
+            "compatibilityLayer": "None"
           }
         }
       ]
@@ -9000,6 +9695,1511 @@
       ]
     }
   },
+  "$defs": {
+    "securityLevel": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Security level classification for IP blocks"
+    },
+    "toolAvailability": {
+      "type": "string",
+      "enum": [
+        "open_source",
+        "commercial",
+        "hybrid"
+      ],
+      "description": "Tool availability for security testing"
+    },
+    "flowType": {
+      "type": "string",
+      "enum": [
+        "asic",
+        "fpga",
+        "chiplet",
+        "analog"
+      ],
+      "description": "Target design flow for security tool selection"
+    },
+    "riskArea": {
+      "type": "string",
+      "enum": [
+        "memory_access",
+        "fsm_state_control",
+        "reset_glitch",
+        "bus_protocol",
+        "clock_domain_crossing",
+        "side_channel",
+        "cryptographic_operations",
+        "timing_attacks",
+        "fault_injection"
+      ],
+      "description": "Functional areas where security validation is critical"
+    },
+    "attackVector": {
+      "type": "string",
+      "enum": [
+        "timing",
+        "power",
+        "electromagnetic",
+        "fault_injection"
+      ],
+      "description": "Side-channel attack vectors to protect against"
+    },
+    "assertionCoverage": {
+      "type": "object",
+      "description": "Security assertion coverage requirements",
+      "properties": {
+        "required_assertions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of required security assertions"
+        },
+        "coverage_target": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Target assertion coverage percentage"
+        },
+        "critical_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Critical security paths that must be covered"
+        }
+      }
+    },
+    "fuzzingConfig": {
+      "type": "object",
+      "description": "Configuration for security-focused fuzzing tests",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether fuzzing tests should be generated"
+        },
+        "input_ranges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "signal": {
+                "type": "string"
+              },
+              "min_value": {
+                "type": "integer"
+              },
+              "max_value": {
+                "type": "integer"
+              },
+              "include_invalid": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "signal",
+              "min_value",
+              "max_value"
+            ]
+          },
+          "description": "Input signal ranges for fuzzing"
+        },
+        "test_duration": {
+          "type": "integer",
+          "description": "Duration of fuzzing tests in cycles"
+        },
+        "mutation_strategy": {
+          "type": "string",
+          "enum": [
+            "random",
+            "directed",
+            "coverage_guided"
+          ],
+          "description": "Fuzzing mutation strategy"
+        }
+      }
+    },
+    "formalVerification": {
+      "type": "object",
+      "description": "Formal verification requirements for security properties",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether formal verification is required"
+        },
+        "security_properties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Security properties to be formally verified"
+        },
+        "tools": {
+          "type": "object",
+          "description": "Formal verification tools categorized by availability",
+          "properties": {
+            "open_source": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Open-source formal verification tools"
+            },
+            "commercial": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Commercial formal verification tools"
+            }
+          }
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Formal verification timeout in seconds"
+        }
+      }
+    },
+    "voltage_spec": {
+      "type": "object",
+      "description": "Voltage specification with core and I/O voltages",
+      "properties": {
+        "core_voltage": {
+          "type": "number",
+          "description": "Core operating voltage in volts"
+        },
+        "io_voltage": {
+          "type": "number",
+          "description": "I/O operating voltage in volts"
+        }
+      }
+    },
+    "current_spec": {
+      "type": "object",
+      "description": "Current specification with maximum and leakage currents",
+      "properties": {
+        "max_current_ma": {
+          "type": "number",
+          "description": "Maximum current draw in milliamps"
+        },
+        "leakage_ma": {
+          "type": "number",
+          "description": "Typical leakage current in milliamps"
+        }
+      }
+    },
+    "electrical_characteristics": {
+      "type": "object",
+      "description": "Combined electrical characteristics",
+      "allOf": [
+        {
+          "$ref": "#/$defs/voltage_spec"
+        },
+        {
+          "$ref": "#/$defs/current_spec"
+        }
+      ]
+    },
+    "dimensions": {
+      "type": "object",
+      "description": "Physical dimensions in micrometers",
+      "properties": {
+        "die_width_um": {
+          "type": "number",
+          "description": "Die width in micrometers"
+        },
+        "die_height_um": {
+          "type": "number",
+          "description": "Die height in micrometers"
+        }
+      }
+    },
+    "bump_spec": {
+      "type": "object",
+      "description": "Bump specifications for chiplet integration",
+      "properties": {
+        "bump_pitch_um": {
+          "type": "number",
+          "description": "Bump pitch in micrometers"
+        },
+        "substrate_type": {
+          "type": "string",
+          "enum": [
+            "organic",
+            "silicon",
+            "glass",
+            "ceramic"
+          ],
+          "description": "Substrate material type"
+        }
+      }
+    },
+    "mechanical_characteristics": {
+      "type": "object",
+      "description": "Combined mechanical characteristics",
+      "allOf": [
+        {
+          "$ref": "#/$defs/dimensions"
+        },
+        {
+          "$ref": "#/$defs/bump_spec"
+        }
+      ]
+    },
+    "compliance_checklist": {
+      "type": "object",
+      "description": "Standard compliance checklist items",
+      "properties": {
+        "known_good_die": {
+          "type": "boolean",
+          "description": "Whether die has been tested and verified as known-good"
+        },
+        "reticle_compatible": {
+          "type": "boolean",
+          "description": "Whether die is compatible with standard reticle formats"
+        },
+        "has_dft_hooks": {
+          "type": "boolean",
+          "description": "Whether die includes design-for-test hooks"
+        },
+        "test_vector_included": {
+          "type": "boolean",
+          "description": "Whether test vectors are included with the die"
+        },
+        "thermal_model_available": {
+          "type": "boolean",
+          "description": "Whether thermal model is available for analysis"
+        },
+        "power_model_available": {
+          "type": "boolean",
+          "description": "Whether power model is available for analysis"
+        },
+        "d2d_loopback_coverage": {
+          "type": "boolean",
+          "description": "Whether die-to-die loopback testing is covered"
+        }
+      }
+    },
+    "validation_status": {
+      "type": "object",
+      "description": "Validation status and tool information",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_validated",
+            "in_progress",
+            "validated",
+            "failed"
+          ],
+          "description": "Validation status"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when validation was completed"
+        },
+        "tool": {
+          "type": "string",
+          "description": "Tool used for validation"
+        }
+      }
+    },
+    "bow_signaling": {
+      "type": "object",
+      "description": "BoW signaling characteristics",
+      "properties": {
+        "signaling_class": {
+          "type": "string",
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "description": "BoW signaling class"
+        },
+        "tx_voltage": {
+          "type": "number",
+          "description": "Transmit voltage in volts"
+        },
+        "rx_voltage": {
+          "type": "number",
+          "description": "Receive voltage in volts"
+        },
+        "clocking_scheme": {
+          "type": "string",
+          "enum": [
+            "forwarded",
+            "embedded",
+            "recovered"
+          ],
+          "description": "Clock distribution scheme"
+        },
+        "link_training": {
+          "type": "boolean",
+          "description": "Whether link training is supported"
+        },
+        "protocol_layer": {
+          "type": "string",
+          "enum": [
+            "raw",
+            "packetized",
+            "streaming"
+          ],
+          "description": "Protocol layer type"
+        },
+        "serialization_factor": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Serialization factor"
+        }
+      }
+    },
+    "bow_timing": {
+      "type": "object",
+      "description": "BoW timing constraints",
+      "properties": {
+        "setup_time_ps": {
+          "type": "number",
+          "description": "Setup time in picoseconds"
+        },
+        "hold_time_ps": {
+          "type": "number",
+          "description": "Hold time in picoseconds"
+        },
+        "max_jitter_ps": {
+          "type": "number",
+          "description": "Maximum jitter in picoseconds"
+        },
+        "skew_tolerance_ps": {
+          "type": "number",
+          "description": "Skew tolerance in picoseconds"
+        }
+      }
+    },
+    "bow_compliance_features": {
+      "type": "object",
+      "description": "BoW compliance features",
+      "properties": {
+        "has_loopback": {
+          "type": "boolean",
+          "description": "Whether loopback testing is supported"
+        },
+        "supports_prbs": {
+          "type": "boolean",
+          "description": "Whether PRBS testing is supported"
+        },
+        "supports_inband_error_detect": {
+          "type": "boolean",
+          "description": "Whether in-band error detection is supported"
+        },
+        "supports_eye_monitoring": {
+          "type": "boolean",
+          "description": "Whether eye monitoring is supported"
+        },
+        "supports_jitter_tolerance": {
+          "type": "boolean",
+          "description": "Whether jitter tolerance testing is supported"
+        }
+      }
+    },
+    "power_domain": {
+      "type": "object",
+      "description": "Power domain configuration",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "voltage": {
+          "type": "number"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "logic",
+            "memory",
+            "analog",
+            "io",
+            "mixed"
+          ]
+        },
+        "isolation_required": {
+          "type": "boolean"
+        },
+        "retention_required": {
+          "type": "boolean"
+        },
+        "max_current_ma": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "voltage"
+      ]
+    },
+    "interposer_constraints": {
+      "type": "object",
+      "description": "Interposer design constraints",
+      "properties": {
+        "technology": {
+          "type": "string",
+          "enum": [
+            "silicon",
+            "organic",
+            "glass"
+          ],
+          "description": "Interposer technology type"
+        },
+        "routing_layers": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of routing layers required"
+        },
+        "minimum_pitch": {
+          "type": "number",
+          "description": "Minimum routing pitch in micrometers"
+        },
+        "die_spacing": {
+          "type": "number",
+          "description": "Minimum spacing between dies in millimeters"
+        }
+      }
+    },
+    "bump_constraints": {
+      "type": "object",
+      "description": "Bump map and connectivity constraints",
+      "properties": {
+        "pitch": {
+          "type": "number",
+          "description": "Bump pitch in micrometers"
+        },
+        "size": {
+          "type": "number",
+          "description": "Bump size in micrometers"
+        },
+        "array": {
+          "type": "string",
+          "enum": [
+            "full",
+            "peripheral",
+            "area"
+          ],
+          "description": "Bump array configuration"
+        },
+        "power_bumps": {
+          "type": "integer",
+          "description": "Number of power/ground bumps required"
+        },
+        "signal_bumps": {
+          "type": "integer",
+          "description": "Number of signal bumps required"
+        }
+      }
+    },
+    "thermal_constraints": {
+      "type": "object",
+      "description": "Thermal analysis constraints",
+      "properties": {
+        "max_power_per_die": {
+          "type": "number",
+          "description": "Maximum power per die in watts"
+        },
+        "junction_temperature": {
+          "type": "number",
+          "description": "Maximum junction temperature in Celsius"
+        },
+        "thermal_resistance": {
+          "type": "number",
+          "description": "Thermal resistance in degrees C per watt"
+        },
+        "cooling_requirements": {
+          "type": "string",
+          "description": "Cooling requirements description"
+        }
+      }
+    },
+    "chiplet_descriptor": {
+      "type": "object",
+      "description": "Core chiplet identification and process information",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique chiplet identifier"
+        },
+        "version": {
+          "type": "string",
+          "description": "Chiplet version string"
+        },
+        "foundry": {
+          "type": "string",
+          "description": "Manufacturing foundry (e.g., GF, TSMC, Samsung)"
+        },
+        "process_node_nm": {
+          "type": "number",
+          "description": "Process node in nanometers (e.g., 40, 65, 180)"
+        },
+        "pdk_id": {
+          "type": "string",
+          "description": "Process Design Kit identifier with version"
+        },
+        "die_size_mm": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Die dimensions [width, height] in millimeters"
+        },
+        "bump_pitch_um": {
+          "type": "number",
+          "description": "Microbump pitch in micrometers"
+        },
+        "voltage_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of voltage domains for power management"
+        }
+      }
+    },
+    "interface_specification": {
+      "type": "object",
+      "description": "Complete interface specification for die-to-die communication",
+      "properties": {
+        "role": {
+          "type": "string",
+          "description": "Interface role (e.g., die_to_die_0, memory_interface)"
+        },
+        "phy": {
+          "type": "object",
+          "description": "Physical layer interface specifications",
+          "properties": {
+            "standard": {
+              "type": "string",
+              "enum": [
+                "AIB",
+                "BoW",
+                "UCIe"
+              ],
+              "description": "Interface standard"
+            },
+            "version": {
+              "type": "string",
+              "description": "Standard version number"
+            },
+            "mode": {
+              "type": "string",
+              "description": "Signaling mode (e.g., parallel_source_sync)"
+            },
+            "lanes_tx": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Number of transmit lanes"
+            },
+            "lanes_rx": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Number of receive lanes"
+            },
+            "data_rate_gbps_per_lane": {
+              "type": "number",
+              "description": "Data rate per lane in Gbps"
+            },
+            "io_voltage": {
+              "type": "string",
+              "description": "I/O voltage level"
+            },
+            "termination": {
+              "type": "string",
+              "enum": [
+                "on_die",
+                "external"
+              ],
+              "description": "Termination scheme"
+            },
+            "training": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Training sequence requirements"
+            },
+            "loopback": {
+              "type": "boolean",
+              "description": "Loopback capability availability"
+            },
+            "error_detection": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Error detection mechanisms"
+            },
+            "power_pJ_per_bit": {
+              "type": "number",
+              "description": "Power per bit in picojoules"
+            },
+            "reach_mm": {
+              "type": "number",
+              "description": "Maximum reach in millimeters"
+            },
+            "bump_map_ref": {
+              "type": "string",
+              "description": "Reference to bump map artifact"
+            }
+          }
+        },
+        "link": {
+          "type": "object",
+          "description": "Link layer protocol specifications",
+          "properties": {
+            "protocol": {
+              "type": "string",
+              "enum": [
+                "PCIe",
+                "CXL",
+                "STREAMING",
+                "CUSTOM"
+              ],
+              "description": "Link protocol"
+            },
+            "width_bits": {
+              "type": "integer",
+              "description": "Total link width in bits"
+            },
+            "flow_control": {
+              "type": "string",
+              "description": "Flow control mechanism"
+            },
+            "replay": {
+              "type": "boolean",
+              "description": "Replay capability"
+            },
+            "fec": {
+              "type": "string",
+              "description": "Forward error correction"
+            },
+            "max_payload_bytes": {
+              "type": "integer",
+              "description": "Maximum payload size in bytes"
+            }
+          }
+        },
+        "management": {
+          "type": "object",
+          "description": "System management and discovery specifications",
+          "properties": {
+            "discovery": {
+              "type": "string",
+              "enum": [
+                "CDXML"
+              ],
+              "description": "Discovery protocol"
+            },
+            "endpoint_id": {
+              "type": "string",
+              "description": "Unique endpoint identifier"
+            },
+            "config_bus": {
+              "type": "string",
+              "description": "Configuration bus specification"
+            },
+            "firmware_update": {
+              "type": "object",
+              "description": "Firmware update mechanism",
+              "properties": {
+                "method": {
+                  "type": "string",
+                  "enum": [
+                    "in_band",
+                    "out_of_band"
+                  ],
+                  "description": "Update method"
+                },
+                "format": {
+                  "type": "string",
+                  "description": "Firmware format"
+                },
+                "secure_boot": {
+                  "type": "boolean",
+                  "description": "Secure boot capability"
+                },
+                "rot_block": {
+                  "type": "string",
+                  "description": "Root of trust block"
+                }
+              }
+            },
+            "telemetry": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Available telemetry data"
+            }
+          }
+        }
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "description": "Array of interface specifications for die-to-die communication",
+      "items": {
+        "$ref": "#/$defs/interface_specification"
+      }
+    },
+    "packaging": {
+      "type": "object",
+      "description": "Packaging and assembly specifications",
+      "properties": {
+        "assembly": {
+          "type": "string",
+          "enum": [
+            "organic_substrate",
+            "2.5D_interposer",
+            "fanout"
+          ],
+          "description": "Assembly type"
+        },
+        "substrate_stackup": {
+          "type": "string",
+          "description": "Substrate stackup reference"
+        },
+        "thermal": {
+          "type": "object",
+          "description": "Thermal characteristics",
+          "properties": {
+            "theta_ja_c_per_w": {
+              "type": "number",
+              "description": "Thermal resistance from junction to ambient"
+            },
+            "max_tj_c": {
+              "type": "number",
+              "description": "Maximum junction temperature in Celsius"
+            }
+          }
+        },
+        "power_delivery": {
+          "type": "object",
+          "description": "Power delivery network specifications",
+          "properties": {
+            "rails": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "imax_a": {
+                    "type": "number"
+                  },
+                  "dvdt_limit_mV_us": {
+                    "type": "number"
+                  },
+                  "seq": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "decap_guidance": {
+              "type": "string",
+              "description": "Decoupling capacitor guidance"
+            }
+          }
+        }
+      }
+    },
+    "enhanced_packaging": {
+      "type": "object",
+      "description": "Enhanced packaging specifications for mechanical and assembly teams",
+      "properties": {
+        "mechanical_constraints": {
+          "type": "object",
+          "description": "Mechanical and physical constraints",
+          "properties": {
+            "die_thickness_um": {
+              "type": "number"
+            },
+            "warpage_limit_um": {
+              "type": "number"
+            },
+            "co_planarity": {
+              "type": "string"
+            },
+            "die_size_tolerance": {
+              "type": "string"
+            },
+            "bump_height_um": {
+              "type": "number"
+            },
+            "bump_diameter_um": {
+              "type": "number"
+            },
+            "bump_pitch_tolerance": {
+              "type": "string"
+            }
+          }
+        },
+        "assembly_requirements": {
+          "type": "object",
+          "description": "Assembly and manufacturing requirements",
+          "properties": {
+            "pick_and_place_accuracy": {
+              "type": "string"
+            },
+            "reflow_profile": {
+              "type": "string"
+            },
+            "underfill_material": {
+              "type": "string"
+            },
+            "bonding_temperature": {
+              "type": "string"
+            },
+            "bonding_pressure": {
+              "type": "string"
+            }
+          }
+        },
+        "interposer_specifications": {
+          "type": "object",
+          "description": "Interposer and substrate specifications",
+          "properties": {
+            "interposer_material": {
+              "type": "string"
+            },
+            "interposer_thickness_um": {
+              "type": "number"
+            },
+            "routing_layers": {
+              "type": "integer"
+            },
+            "minimum_feature_size_um": {
+              "type": "number"
+            },
+            "via_diameter_um": {
+              "type": "number"
+            },
+            "metal_stack": {
+              "type": "string"
+            }
+          }
+        },
+        "thermal_management": {
+          "type": "object",
+          "description": "Thermal management specifications",
+          "properties": {
+            "thermal_interface_material": {
+              "type": "string"
+            },
+            "heat_spreader": {
+              "type": "string"
+            },
+            "thermal_vias": {
+              "type": "string"
+            },
+            "junction_to_case_resistance": {
+              "type": "string"
+            },
+            "case_to_ambient_resistance": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "security_lifecycle": {
+      "type": "object",
+      "description": "Security and lifecycle management specifications",
+      "properties": {
+        "secure_boot": {
+          "type": "object",
+          "description": "Secure boot capability and configuration",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "method": {
+              "type": "string"
+            },
+            "key_storage": {
+              "type": "string"
+            },
+            "verification": {
+              "type": "string"
+            }
+          }
+        },
+        "attestation": {
+          "type": "object",
+          "description": "Attestation and identity management",
+          "properties": {
+            "attestation_block": {
+              "type": "string"
+            },
+            "attestation_method": {
+              "type": "string"
+            },
+            "measurement_capability": {
+              "type": "boolean"
+            },
+            "quote_generation": {
+              "type": "boolean"
+            }
+          }
+        },
+        "firmware_authentication": {
+          "type": "object",
+          "description": "Firmware authentication mechanisms",
+          "properties": {
+            "method": {
+              "type": "string"
+            },
+            "key_management": {
+              "type": "string"
+            },
+            "version_control": {
+              "type": "string"
+            },
+            "integrity_checking": {
+              "type": "string"
+            }
+          }
+        },
+        "revocation_policy": {
+          "type": "object",
+          "description": "Revocation and lifecycle management",
+          "properties": {
+            "method": {
+              "type": "string"
+            },
+            "revocation_list": {
+              "type": "string"
+            },
+            "update_mechanism": {
+              "type": "string"
+            },
+            "rollback_protection": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "discovery_composition": {
+      "type": "object",
+      "description": "Discovery, composition, and system integration specifications",
+      "properties": {
+        "chiplet_uuid": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Globally unique chiplet identifier"
+        },
+        "dependencies": {
+          "type": "object",
+          "description": "External dependencies and requirements",
+          "properties": {
+            "power_rails": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "voltage": {
+                    "type": "string"
+                  },
+                  "current_max": {
+                    "type": "number"
+                  },
+                  "is_required": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "clock_sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "frequency_mhz": {
+                    "type": "number"
+                  },
+                  "jitter_ps_rms": {
+                    "type": "number"
+                  },
+                  "is_required": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "thermal_requirements": {
+              "type": "object",
+              "properties": {
+                "max_junction_temp_c": {
+                  "type": "number"
+                },
+                "thermal_resistance_c_per_w": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "capabilities": {
+          "type": "object",
+          "description": "Chiplet capabilities and provided services",
+          "properties": {
+            "interface_capabilities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "lanes": {
+                    "type": "integer"
+                  },
+                  "data_rate_gbps_per_lane": {
+                    "type": "number"
+                  },
+                  "voltage": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "compute_capabilities": {
+              "type": "object",
+              "properties": {
+                "core_type": {
+                  "type": "string"
+                },
+                "performance_dmips_mhz": {
+                  "type": "number"
+                },
+                "memory_interface": {
+                  "type": "string"
+                }
+              }
+            },
+            "security_capabilities": {
+              "type": "object",
+              "properties": {
+                "secure_boot": {
+                  "type": "boolean"
+                },
+                "attestation": {
+                  "type": "boolean"
+                },
+                "crypto_engines": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_validation": {
+      "type": "object",
+      "description": "Test, validation, and bring-up specifications",
+      "properties": {
+        "loopback_modes": {
+          "type": "object",
+          "description": "Available loopback testing modes",
+          "properties": {
+            "internal_loopback": {
+              "type": "boolean"
+            },
+            "external_loopback": {
+              "type": "boolean"
+            },
+            "pattern_generation": {
+              "type": "string"
+            },
+            "error_injection": {
+              "type": "string"
+            }
+          }
+        },
+        "prbs_support": {
+          "type": "object",
+          "description": "PRBS pattern generation and checking",
+          "properties": {
+            "patterns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "generation": {
+              "type": "string"
+            },
+            "checking": {
+              "type": "string"
+            },
+            "error_counting": {
+              "type": "string"
+            }
+          }
+        },
+        "bist_hooks": {
+          "type": "object",
+          "description": "Built-in self-test capabilities",
+          "properties": {
+            "memory_bist": {
+              "type": "string"
+            },
+            "logic_bist": {
+              "type": "string"
+            },
+            "analog_bist": {
+              "type": "string"
+            },
+            "boundary_scan": {
+              "type": "string"
+            }
+          }
+        },
+        "error_counters": {
+          "type": "object",
+          "description": "Error monitoring and counting capabilities",
+          "properties": {
+            "bit_errors": {
+              "type": "string"
+            },
+            "symbol_errors": {
+              "type": "string"
+            },
+            "crc_errors": {
+              "type": "string"
+            },
+            "parity_errors": {
+              "type": "string"
+            },
+            "timeout_errors": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "enhanced_compliance": {
+      "type": "object",
+      "description": "Enhanced compliance tracking with granular validation",
+      "properties": {
+        "cdxml_compliance": {
+          "type": "object",
+          "description": "CDXML compliance tracking and validation",
+          "properties": {
+            "version": {
+              "type": "string"
+            },
+            "protocol_support": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "electrical_validation": {
+              "type": "string"
+            },
+            "mechanical_validation": {
+              "type": "string"
+            },
+            "validation_tracking": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tool": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  },
+                  "result": {
+                    "type": "string"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "validation_details": {
+                    "type": "string"
+                  },
+                  "constraints_verified": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "aib_compliance": {
+          "type": "object",
+          "description": "AIB compliance tracking and validation",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "spec_version": {
+              "type": "string"
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "validation_tracking": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/validation_status"
+              }
+            }
+          }
+        },
+        "ucie_compliance": {
+          "type": "object",
+          "description": "UCIe compliance tracking and validation",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "spec_version": {
+              "type": "string"
+            },
+            "profile": {
+              "type": "string"
+            },
+            "protocol_modes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "validation_tracking": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/validation_status"
+              }
+            }
+          }
+        },
+        "overall_compliance_status": {
+          "type": "object",
+          "description": "Overall compliance status and summary",
+          "properties": {
+            "cdxml_status": {
+              "type": "string"
+            },
+            "aib_status": {
+              "type": "string"
+            },
+            "bow_status": {
+              "type": "string"
+            },
+            "ucie_status": {
+              "type": "string"
+            },
+            "last_validation_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "compliance_score": {
+              "type": "string"
+            },
+            "next_validation_due": {
+              "type": "string",
+              "format": "date"
+            },
+            "validation_team": {
+              "type": "string"
+            },
+            "certification_status": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "categories": {
+      "Analog & Mixed-Signal": {
+        "description": "Analog circuits, mixed-signal designs, and analog-to-digital interfaces",
+        "subcategories": [
+          "Bandgap References",
+          "Comparators",
+          "Oscillators",
+          "Temperature Sensors",
+          "Voltage Regulators"
+        ]
+      },
+      "Arithmetic Units": {
+        "description": "Mathematical computation units and arithmetic logic blocks",
+        "subcategories": [
+          "Basic",
+          "Custom DSP Cores",
+          "Fixed-Point",
+          "Floating-Point",
+          "Vector"
+        ]
+      },
+      "Base Libraries": {
+        "description": "Standard cell libraries and fundamental building blocks",
+        "subcategories": [
+          "Arbiters",
+          "Counters & Timers",
+          "Crossbars",
+          "Decoders",
+          "Flip-Flops & Latches",
+          "Muxes & Demuxes",
+          "Pipeline & Bypass Logic",
+          "Priority Encoders",
+          "Synchronizers"
+        ]
+      },
+      "Chiplet Integration": {
+        "description": "Multi-die integration, chiplet interfaces, and die-to-die communication",
+        "subcategories": [
+          "AIB Interfaces",
+          "BoW Interfaces",
+          "Die-to-Die Protocol IP",
+          "Interposer Models",
+          "UCIe Interfaces",
+          "Chiplet Wrappers"
+        ]
+      },
+      "Control Logic": {
+        "description": "Control and management logic blocks for system operation",
+        "subcategories": [
+          "Interrupt Controllers",
+          "Power Management Units",
+          "Reset & Clock Control",
+          "Sequencers",
+          "State Machines"
+        ]
+      },
+      "Converters": {
+        "description": "Analog-to-digital and digital-to-analog converters",
+        "subcategories": [
+          "ADC",
+          "Clock Domain Crossers",
+          "DAC",
+          "Level Shifters"
+        ]
+      },
+      "Interface Controllers": {
+        "description": "Communication interface IP blocks for serial and parallel protocols",
+        "subcategories": [
+          "High-Speed Interfaces",
+          "Parallel Interfaces",
+          "Serial Interfaces"
+        ]
+      },
+      "Memory Subsystems": {
+        "description": "Memory controllers, interfaces, and storage subsystems",
+        "subcategories": [
+          "Cache Subsystems",
+          "DRAM Controllers",
+          "FIFOs & Buffers",
+          "Flash Interfaces",
+          "Register Files",
+          "SRAM Controllers"
+        ]
+      },
+      "Miscellaneous": {
+        "description": "Utility and specialized IP blocks",
+        "subcategories": [
+          "Custom Accelerators",
+          "IP Wrappers & Glue Logic",
+          "LED Controllers",
+          "PWM Generators",
+          "Watchdog Timers"
+        ]
+      },
+      "Processing Cores": {
+        "description": "CPU cores, microcontrollers, and processing units",
+        "subcategories": [
+          "ARM-Compatible",
+          "Co-Processors",
+          "Custom ISAs",
+          "Microcontrollers",
+          "RISC-V",
+          "Vector Processors"
+        ]
+      },
+      "Security IP": {
+        "description": "Cryptographic engines, secure boot, and security primitives",
+        "subcategories": [
+          "Crypto Engines",
+          "Fuse Controllers",
+          "Secure Boot Blocks",
+          "Tamper Detection",
+          "True Random Number Generators (TRNG)"
+        ]
+      },
+      "Signal Processing": {
+        "description": "Digital signal processing blocks and algorithms",
+        "subcategories": [
+          "Codecs",
+          "Filters",
+          "Transforms"
+        ]
+      },
+      "Timing & Clocking": {
+        "description": "Clock generation, distribution, and timing management",
+        "subcategories": [
+          "Clock Gating",
+          "Clock Tree Models",
+          "DLL",
+          "Frequency Dividers",
+          "PLL"
+        ]
+      },
+      "Verification & Testing": {
+        "description": "Testbenches, verification IP, and testing infrastructure",
+        "subcategories": [
+          "Assertions",
+          "Driver/Monitor Agents",
+          "Formal Models",
+          "Scoreboards",
+          "Testbenches"
+        ]
+      }
+    }
+  },
   "allOf": [
     {
       "if": {
@@ -9297,42 +11497,51 @@
               "name": "SS_n",
               "direction": "output",
               "width": 1,
-              "description": "SPI slave select (active low)"
+              "description": "SPI slave select signal (active low)"
             }
           ]
         }
       ],
-      "template": "vyges-ip-template@1.0.0",
-      "target": [
-        "asic",
-        "fpga"
-      ],
-      "design_type": [
-        "digital"
-      ],
-      "maturity": "stable",
-      "description": "Configurable SPI controller with APB slave interface supporting multiple slave devices",
+      "template": "communication",
+      "target": "fpga",
+      "design_type": "digital",
+      "maturity": "production",
       "parameters": [
         {
-          "name": "DATA_WIDTH",
-          "type": "integer",
-          "default": 8,
-          "description": "SPI data width in bits",
-          "required": false
+          "parameter_info": {
+            "name": "CLOCK_DIV",
+            "type": "int",
+            "description": "Clock divider for SPI clock generation"
+          },
+          "constraints": {
+            "default": 8,
+            "range": {
+              "min": 2,
+              "max": 256
+            },
+            "is_required": false
+          },
+          "metadata": {
+            "units": "cycles"
+          }
         },
         {
-          "name": "CLOCK_POLARITY",
-          "type": "integer",
-          "default": 0,
-          "description": "SPI clock polarity (0 or 1)",
-          "required": false
-        },
-        {
-          "name": "CLOCK_PHASE",
-          "type": "integer",
-          "default": 0,
-          "description": "SPI clock phase (0 or 1)",
-          "required": false
+          "parameter_info": {
+            "name": "DATA_WIDTH",
+            "type": "int",
+            "description": "Data width for SPI transactions"
+          },
+          "constraints": {
+            "default": 8,
+            "range": {
+              "min": 1,
+              "max": 32
+            },
+            "is_required": true
+          },
+          "metadata": {
+            "units": "bits"
+          }
         }
       ],
       "categories": {
@@ -9340,26 +11549,17 @@
         "secondary": [
           "serial",
           "master"
-        ],
-        "tags": [
-          "spi",
-          "apb",
-          "communication",
-          "serial",
-          "master"
         ]
-      },
-      "created": "2024-01-15T10:30:00Z",
-      "updated": "2024-01-15T10:30:00Z"
+      }
     },
     {
       "name": "ddr4-controller",
       "x-version": "1.0.0",
-      "version": "2.1.0",
-      "license": "Apache-2.0",
+      "version": "1.0.0",
+      "license": "MIT",
       "interfaces": [
         {
-          "type": "axi4",
+          "type": "axi",
           "direction": "slave",
           "protocol": "AMBA AXI4",
           "signals": [
@@ -9376,6 +11576,36 @@
               "description": "AXI reset signal (active low)"
             },
             {
+              "name": "AWID",
+              "direction": "input",
+              "width": 4,
+              "description": "AXI write address ID"
+            },
+            {
+              "name": "AWADDR",
+              "direction": "input",
+              "width": 32,
+              "description": "AXI write address"
+            },
+            {
+              "name": "AWLEN",
+              "direction": "input",
+              "width": 8,
+              "description": "AXI write burst length"
+            },
+            {
+              "name": "AWSIZE",
+              "direction": "input",
+              "width": 3,
+              "description": "AXI write burst size"
+            },
+            {
+              "name": "AWBURST",
+              "direction": "input",
+              "width": 2,
+              "description": "AXI write burst type"
+            },
+            {
               "name": "AWVALID",
               "direction": "input",
               "width": 1,
@@ -9386,57 +11616,129 @@
               "direction": "output",
               "width": 1,
               "description": "AXI write address ready"
-            },
+            }
+          ]
+        },
+        {
+          "type": "ddr4",
+          "direction": "master",
+          "protocol": "DDR4",
+          "signals": [
             {
-              "name": "WVALID",
-              "direction": "input",
-              "width": 1,
-              "description": "AXI write data valid"
-            },
-            {
-              "name": "WREADY",
+              "name": "CK_t",
               "direction": "output",
               "width": 1,
-              "description": "AXI write data ready"
+              "description": "DDR4 clock (true)"
             },
             {
-              "name": "BVALID",
+              "name": "CK_c",
               "direction": "output",
               "width": 1,
-              "description": "AXI write response valid"
+              "description": "DDR4 clock (complement)"
             },
             {
-              "name": "BREADY",
-              "direction": "input",
+              "name": "CKE",
+              "direction": "output",
               "width": 1,
-              "description": "AXI write response ready"
+              "description": "DDR4 clock enable"
+            },
+            {
+              "name": "CS_n",
+              "direction": "output",
+              "width": 1,
+              "description": "DDR4 chip select (active low)"
+            },
+            {
+              "name": "ACT_n",
+              "direction": "output",
+              "width": 1,
+              "description": "DDR4 activate (active low)"
+            },
+            {
+              "name": "A",
+              "direction": "output",
+              "width": 17,
+              "description": "DDR4 address bus"
+            },
+            {
+              "name": "BA",
+              "direction": "output",
+              "width": 2,
+              "description": "DDR4 bank address"
+            },
+            {
+              "name": "BG",
+              "direction": "output",
+              "width": 2,
+              "description": "DDR4 bank group"
+            },
+            {
+              "name": "DQ",
+              "direction": "inout",
+              "width": 64,
+              "description": "DDR4 data bus"
+            },
+            {
+              "name": "DQS_t",
+              "direction": "inout",
+              "width": 8,
+              "description": "DDR4 data strobe (true)"
+            },
+            {
+              "name": "DQS_c",
+              "direction": "inout",
+              "width": 8,
+              "description": "DDR4 data strobe (complement)"
+            },
+            {
+              "name": "DM_n",
+              "direction": "output",
+              "width": 8,
+              "description": "DDR4 data mask (active low)"
             }
           ]
         }
       ],
-      "template": "vyges-ip-template@1.0.0",
-      "target": [
-        "asic"
-      ],
-      "design_type": [
-        "digital"
-      ],
-      "maturity": "stable",
-      "description": "High-performance DDR4 memory controller with AXI4 slave interface supporting DDR4-3200",
+      "template": "memory",
+      "target": "fpga",
+      "design_type": "digital",
+      "maturity": "production",
       "parameters": [
         {
-          "name": "DATA_WIDTH",
-          "type": "integer",
-          "default": 64,
-          "description": "DDR4 data bus width",
-          "required": false
+          "parameter_info": {
+            "name": "DATA_WIDTH",
+            "type": "int",
+            "description": "DDR4 data bus width"
+          },
+          "constraints": {
+            "default": 64,
+            "range": {
+              "min": 8,
+              "max": 72
+            },
+            "is_required": false
+          },
+          "metadata": {
+            "units": "bits"
+          }
         },
         {
-          "name": "ADDR_WIDTH",
-          "type": "integer",
-          "default": 32,
-          "description": "DDR4 address bus width",
-          "required": false
+          "parameter_info": {
+            "name": "ADDR_WIDTH",
+            "type": "int",
+            "description": "DDR4 address bus width"
+          },
+          "constraints": {
+            "default": 32,
+            "range": {
+              "min": 16,
+              "max": 64
+            },
+            "is_required": false
+          },
+          "metadata": {
+            "units": "bits"
+          }
         }
       ],
       "categories": {
@@ -9444,40 +11746,50 @@
         "secondary": [
           "controller",
           "high-speed"
-        ],
-        "tags": [
-          "ddr4",
-          "memory",
-          "controller",
-          "axi4",
-          "high-speed"
         ]
-      },
-      "performance": {
-        "throughput": {
-          "value": 25.6,
-          "unit": "GB/s",
-          "description": "Maximum memory bandwidth"
-        },
-        "frequency": {
-          "value": 1600,
-          "unit": "MHz",
-          "description": "Maximum operating frequency"
-        }
-      },
-      "created": "2024-01-15T10:30:00Z",
-      "updated": "2024-01-15T10:30:00Z"
+      }
     },
     {
       "name": "adc-converter",
       "x-version": "1.0.0",
-      "version": "1.2.0",
+      "version": "1.0.0",
       "license": "MIT",
       "interfaces": [
         {
+          "type": "spi",
+          "direction": "slave",
+          "protocol": "SPI",
+          "signals": [
+            {
+              "name": "SCLK",
+              "direction": "input",
+              "width": 1,
+              "description": "SPI clock signal"
+            },
+            {
+              "name": "MOSI",
+              "direction": "input",
+              "width": 1,
+              "description": "SPI master out slave in"
+            },
+            {
+              "name": "MISO",
+              "direction": "output",
+              "width": 1,
+              "description": "SPI master in slave out"
+            },
+            {
+              "name": "SS_n",
+              "direction": "input",
+              "width": 1,
+              "description": "SPI slave select signal (active low)"
+            }
+          ]
+        },
+        {
           "type": "analog",
           "direction": "input",
-          "protocol": "Single-ended",
+          "protocol": "Analog",
           "signals": [
             {
               "name": "VIN_P",
@@ -9490,59 +11802,56 @@
               "direction": "input",
               "width": 1,
               "description": "Negative analog input"
-            }
-          ]
-        },
-        {
-          "type": "digital",
-          "direction": "output",
-          "protocol": "Parallel",
-          "signals": [
-            {
-              "name": "DOUT",
-              "direction": "output",
-              "width": 12,
-              "description": "Digital output data"
             },
             {
-              "name": "VALID",
-              "direction": "output",
-              "width": 1,
-              "description": "Data valid signal"
-            },
-            {
-              "name": "CLK",
+              "name": "VREF",
               "direction": "input",
               "width": 1,
-              "description": "ADC clock signal"
+              "description": "Reference voltage"
             }
           ]
         }
       ],
-      "template": "vyges-ip-template@1.0.0",
-      "target": [
-        "asic"
-      ],
-      "design_type": [
-        "analog",
-        "mixed-signal"
-      ],
-      "maturity": "beta",
-      "description": "12-bit SAR ADC converter with configurable resolution and sampling rate",
+      "template": "analog",
+      "target": "asic",
+      "design_type": "mixed_signal",
+      "maturity": "production",
       "parameters": [
         {
-          "name": "RESOLUTION",
-          "type": "integer",
-          "default": 12,
-          "description": "ADC resolution in bits",
-          "required": false
+          "parameter_info": {
+            "name": "RESOLUTION",
+            "type": "int",
+            "description": "ADC resolution in bits"
+          },
+          "constraints": {
+            "default": 12,
+            "range": {
+              "min": 8,
+              "max": 24
+            },
+            "is_required": false
+          },
+          "metadata": {
+            "units": "bits"
+          }
         },
         {
-          "name": "SAMPLING_RATE",
-          "type": "integer",
-          "default": 1000000,
-          "description": "ADC sampling rate in samples per second",
-          "required": false
+          "parameter_info": {
+            "name": "SAMPLING_RATE",
+            "type": "int",
+            "description": "ADC sampling rate in samples per second"
+          },
+          "constraints": {
+            "default": 1000000,
+            "range": {
+              "min": 1000,
+              "max": 1000000000
+            },
+            "is_required": false
+          },
+          "metadata": {
+            "units": "samples_per_second"
+          }
         }
       ],
       "categories": {
@@ -9550,126 +11859,141 @@
         "secondary": [
           "converter",
           "data-acquisition"
-        ],
-        "tags": [
-          "adc",
-          "analog",
-          "converter",
-          "sar",
-          "mixed-signal"
         ]
-      },
-      "performance": {
-        "resolution": {
-          "value": 12,
-          "unit": "bits",
-          "description": "ADC resolution"
-        },
-        "snr": {
-          "value": 70,
-          "unit": "dB",
-          "description": "Signal-to-noise ratio"
-        }
-      },
-      "created": "2024-01-15T10:30:00Z",
-      "updated": "2024-01-15T10:30:00Z"
+      }
     },
     {
       "name": "ucie-interface",
       "x-version": "1.0.0",
       "version": "1.0.0",
-      "license": "Apache-2.0",
+      "license": "MIT",
       "interfaces": [
         {
           "type": "ucie",
-          "direction": "bidirectional",
+          "direction": "master",
           "protocol": "UCIe",
           "signals": [
             {
-              "name": "ucie_clk",
-              "direction": "input",
+              "name": "UCIe_CLK",
+              "direction": "output",
               "width": 1,
               "description": "UCIe clock signal"
             },
             {
-              "name": "ucie_rst_n",
-              "direction": "input",
-              "width": 1,
-              "description": "UCIe reset signal (active low)"
-            },
-            {
-              "name": "ucie_tx_data",
+              "name": "UCIe_TX_P",
               "direction": "output",
-              "width": 64,
-              "description": "UCIe transmit data"
+              "width": 16,
+              "description": "UCIe transmit data (positive)"
             },
             {
-              "name": "ucie_rx_data",
-              "direction": "input",
-              "width": 64,
-              "description": "UCIe receive data"
-            },
-            {
-              "name": "ucie_tx_valid",
+              "name": "UCIe_TX_N",
               "direction": "output",
-              "width": 1,
-              "description": "UCIe transmit valid"
+              "width": 16,
+              "description": "UCIe transmit data (negative)"
             },
             {
-              "name": "ucie_rx_valid",
+              "name": "UCIe_RX_P",
               "direction": "input",
-              "width": 1,
-              "description": "UCIe receive valid"
+              "width": 16,
+              "description": "UCIe receive data (positive)"
+            },
+            {
+              "name": "UCIe_RX_N",
+              "direction": "input",
+              "width": 16,
+              "description": "UCIe receive data (negative)"
             }
           ]
         }
       ],
-      "template": "vyges-ip-template@1.0.0",
-      "target": [
-        "asic"
-      ],
-      "design_type": [
-        "chiplet"
-      ],
-      "maturity": "alpha",
-      "description": "UCIe die-to-die interface controller for chiplet integration",
-      "chiplet": {
+      "template": "chiplet",
+      "target": "asic",
+      "design_type": "digital",
+      "maturity": "development",
+      "chipletIntegration": {
+        "phy": {
+          "standard": "UCIe",
+          "version": "1.1",
+          "mode": "serial",
+          "lanes": 32,
+          "lanes_tx": 16,
+          "lanes_rx": 16,
+          "data_rate_gbps_per_lane": 8.0,
+          "io_voltage": "0.8V",
+          "termination": "on_die",
+          "training": [
+            "deskew",
+            "prbs",
+            "eye_optimization"
+          ],
+          "loopback": true,
+          "error_detection": [
+            "crc",
+            "ecc"
+          ],
+          "power_pJ_per_bit": 0.5,
+          "reach_mm": 100
+        },
+        "link": {
+          "protocol": "UCIe",
+          "width_bits": 256,
+          "flow_control": "credit_based",
+          "retry_mechanism": true,
+          "max_payload_size": 512,
+          "latency_ns": 30
+        },
+        "management": {
+          "discovery": "UCIe_Discovery_v1",
+          "configuration": "memory_mapped",
+          "firmware_update": "secure_boot",
+          "monitoring": [
+            "temperature",
+            "voltage",
+            "performance",
+            "link_quality"
+          ]
+        },
+        "packaging": {
+          "substrate": "organic",
+          "interposer": "none",
+          "bump_pitch_um": 100,
+          "thermal_management": "microchannel"
+        },
         "compliance": {
-          "cdxml": {
-            "version": "cdxml-v0.2",
-            "compliance_status": "compliant",
-            "validation_date": "2024-01-15T10:30:00Z",
-            "validation_tools": [
-              "cdxml-validator",
-              "ocp-compliance-checker"
-            ]
+          "aib": {
+            "enabled": false,
+            "spec_version": "2.0",
+            "features": []
           },
-          "bow_specification": {
-            "spec_version": "2.0d.1",
-            "compliance_status": "not_applicable",
-            "notes": "UCIe uses different protocol than BoW"
+          "ucie": {
+            "enabled": true,
+            "spec_version": "1.1",
+            "profile": "LongReach",
+            "protocol_modes": [
+              "PCIe",
+              "CXL",
+              "STREAMING"
+            ]
           }
         },
-        "extensions": {
-          "meta": {
-            "chiplet_type": "interface",
-            "die_function": "communication",
-            "integration_level": "die_level"
-          },
-          "testing": {
-            "test_access": "boundary_scan",
-            "loopback_capability": true,
-            "prbs_generation": true
-          },
-          "lifecycle": {
-            "supply_chain": "trusted_fabricator",
-            "certification": "iso_9001",
-            "version_control": "semantic_versioning"
-          }
+        "migrationPath": {
+          "prepareForUCIe": true,
+          "targetStandard": "UCIe 2.0",
+          "migrationSteps": [
+            "Upgrade to UCIe 2.0 interface",
+            "Implement new protocol features",
+            "Update compliance validation"
+          ],
+          "compatibilityLayer": "None"
         }
       },
-      "created": "2024-01-15T10:30:00Z",
-      "updated": "2024-01-15T10:30:00Z"
+      "categories": {
+        "primary": "chiplet",
+        "secondary": [
+          "interface",
+          "high-speed"
+        ]
+      }
     }
   ]
 }
