@@ -9320,13 +9320,46 @@
             "passing",
             "failing",
             "partial",
-            "untested"
+            "untested",
+            "verified",
+            "pending"
           ],
           "description": "Overall test status",
           "examples": [
             "passing",
             "partial",
-            "untested"
+            "untested",
+            "verified"
+          ]
+        },
+        "has_uvm": {
+          "type": "boolean",
+          "description": "Whether UVM (Universal Verification Methodology) framework is used",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "has_formal": {
+          "type": "boolean",
+          "description": "Whether formal verification is included",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "testbench_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of testbench file paths relative to repository root",
+          "examples": [
+            [
+              "tb/spi_controller_tb.sv",
+              "tb/test_spi.py"
+            ],
+            []
           ]
         }
       },
@@ -9352,6 +9385,197 @@
             "VCS"
           ],
           "status": "partial"
+        }
+      ]
+    },
+    "dft": {
+      "type": "object",
+      "description": "Design-for-Test (DFT) capabilities and scan chain support",
+      "properties": {
+        "has_scan_mode": {
+          "type": "boolean",
+          "description": "Whether the IP includes scan mode support for manufacturing test",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "has_boundary_scan": {
+          "type": "boolean",
+          "description": "Whether the IP includes IEEE 1149.1 boundary scan (JTAG) support",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "scan_mode_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of RTL files that contain scan mode logic",
+          "examples": [
+            [
+              "soc_ifc_top.sv",
+              "clk_gate.sv"
+            ],
+            []
+          ]
+        },
+        "scan_chain_count": {
+          "type": "integer",
+          "description": "Number of scan chains in the design",
+          "minimum": 0,
+          "examples": [
+            4,
+            8,
+            0
+          ]
+        },
+        "atpg_ready": {
+          "type": "boolean",
+          "description": "Whether the design is ready for Automatic Test Pattern Generation (ATPG)",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of DFT capabilities",
+          "examples": [
+            "Full DFT support with scan mode for manufacturing test",
+            "No DFT support detected",
+            "Partial DFT support with manual scan insertion required"
+          ]
+        }
+      },
+      "examples": [
+        {
+          "has_scan_mode": true,
+          "has_boundary_scan": false,
+          "scan_mode_files": [
+            "soc_ifc_top.sv",
+            "clk_gate.sv"
+          ],
+          "scan_chain_count": 4,
+          "atpg_ready": true,
+          "description": "Full DFT support with scan mode for manufacturing test"
+        },
+        {
+          "has_scan_mode": false,
+          "has_boundary_scan": false,
+          "scan_mode_files": [],
+          "description": "No DFT support detected"
+        }
+      ]
+    },
+    "jtag": {
+      "type": "object",
+      "description": "JTAG debug and test access port capabilities",
+      "properties": {
+        "has_jtag": {
+          "type": "boolean",
+          "description": "Whether the IP includes JTAG TAP (Test Access Port) support",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "jtag_standard": {
+          "type": "string",
+          "enum": [
+            "IEEE 1149.1",
+            "IEEE 1149.6",
+            "RISC-V Debug",
+            "ARM CoreSight",
+            "custom",
+            "none"
+          ],
+          "description": "JTAG standard or protocol supported",
+          "examples": [
+            "IEEE 1149.1",
+            "RISC-V Debug",
+            "none"
+          ]
+        },
+        "jtag_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of files containing JTAG TAP or debug module logic",
+          "examples": [
+            [
+              "rvjtag_tap.v",
+              "dmi_wrapper.v"
+            ],
+            []
+          ]
+        },
+        "debug_features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of debug features accessible via JTAG",
+          "examples": [
+            [
+              "register_access",
+              "memory_access",
+              "breakpoints",
+              "single_step"
+            ],
+            [
+              "boundary_scan"
+            ],
+            []
+          ]
+        },
+        "ir_length": {
+          "type": "integer",
+          "description": "Length of JTAG instruction register in bits",
+          "minimum": 2,
+          "maximum": 32,
+          "examples": [
+            5,
+            4
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of JTAG capabilities",
+          "examples": [
+            "RISC-V Debug Module Interface via JTAG",
+            "No JTAG support detected",
+            "IEEE 1149.1 boundary scan for board-level test"
+          ]
+        }
+      },
+      "examples": [
+        {
+          "has_jtag": true,
+          "jtag_standard": "RISC-V Debug",
+          "jtag_files": [
+            "rvjtag_tap.v",
+            "dmi_wrapper.v",
+            "dmi_jtag_to_core_sync.v"
+          ],
+          "debug_features": [
+            "register_access",
+            "memory_access",
+            "breakpoints",
+            "single_step"
+          ],
+          "ir_length": 5,
+          "description": "RISC-V Debug Module Interface via JTAG"
+        },
+        {
+          "has_jtag": false,
+          "jtag_standard": "none",
+          "jtag_files": [],
+          "debug_features": [],
+          "description": "No JTAG support detected"
         }
       ]
     },
