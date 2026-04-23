@@ -1119,6 +1119,18 @@
               "UCIe"
             ]
           },
+          "protocol_level": {
+            "type": "string",
+            "enum": [
+              "signed",
+              "baseline"
+            ],
+            "description": "Security / integrity stance of this interface on its native bus protocol. 'signed' means the IP generates and checks the protocol's integrity fields itself (e.g. TL-UL rsp_intg via internal tlul_rsp_intg_gen; AXI user-field integrity). 'baseline' means the IP drives zeros for those fields and relies on the integrator (or a SoC-generator-inserted wrapper) to sign them when attached to a signed bus. Only applies to bus interfaces that define integrity fields (TL-UL, UCIe, select AXI configurations). Omit for protocols without signing spec (APB, SPI, GPIO, I2C, UART).",
+            "examples": [
+              "signed",
+              "baseline"
+            ]
+          },
           "width": {
             "type": "integer",
             "description": "Interface data bus width in bits (for bus interfaces)",
