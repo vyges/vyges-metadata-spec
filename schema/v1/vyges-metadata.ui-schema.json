@@ -2061,6 +2061,59 @@
           }
         }
       },
+      "dft": {
+        "widget": "object",
+        "help": "Design-for-Test (DFT) capabilities and scan chain support for manufacturing test",
+        "order": 6,
+        "width": "full",
+        "advanced": true,
+        "properties": {
+          "has_scan_mode": {
+            "widget": "checkbox",
+            "help": "Whether the IP includes scan mode support for manufacturing test",
+            "default": false,
+            "order": 1,
+            "width": "third"
+          },
+          "has_boundary_scan": {
+            "widget": "checkbox",
+            "help": "Whether the IP includes IEEE 1149.1 boundary scan (JTAG) support",
+            "default": false,
+            "order": 2,
+            "width": "third"
+          },
+          "atpg_ready": {
+            "widget": "checkbox",
+            "help": "Whether the design is ready for Automatic Test Pattern Generation (ATPG)",
+            "default": false,
+            "order": 3,
+            "width": "third"
+          },
+          "scan_chain_count": {
+            "widget": "number",
+            "help": "Number of scan chains in the design",
+            "minimum": 0,
+            "default": 0,
+            "order": 4,
+            "width": "third"
+          },
+          "scan_mode_files": {
+            "widget": "list",
+            "help": "List of RTL files that contain scan mode logic",
+            "placeholder": "e.g., soc_ifc_top.sv",
+            "order": 5,
+            "width": "full"
+          },
+          "description": {
+            "widget": "textarea",
+            "help": "Human-readable description of DFT capabilities",
+            "placeholder": "e.g., Full DFT support with scan mode for manufacturing test",
+            "order": 6,
+            "width": "full",
+            "rows": 3
+          }
+        }
+      },
       "automation": {
         "widget": "object",
         "help": "Automation requirements and capabilities",
@@ -2423,6 +2476,153 @@
                 "width": "third"
               }
             }
+          }
+        }
+      },
+      "test": {
+        "widget": "object",
+        "help": "Testing and verification status information",
+        "order": 5,
+        "width": "full",
+        "advanced": false,
+        "properties": {
+          "coverage": {
+            "widget": "checkbox",
+            "help": "Whether code coverage is enabled for this IP",
+            "default": false,
+            "order": 1,
+            "width": "third"
+          },
+          "status": {
+            "widget": "select",
+            "help": "Overall test status",
+            "required": true,
+            "options": [
+              {
+                "label": "Passing",
+                "value": "passing",
+                "description": "All tests pass successfully"
+              },
+              {
+                "label": "Failing",
+                "value": "failing",
+                "description": "Some tests are currently failing"
+              },
+              {
+                "label": "Partial",
+                "value": "partial",
+                "description": "Partial test coverage"
+              },
+              {
+                "label": "Untested",
+                "value": "untested",
+                "description": "No testing has been performed"
+              },
+              {
+                "label": "Verified",
+                "value": "verified",
+                "description": "Fully verified with comprehensive testing"
+              },
+              {
+                "label": "Pending",
+                "value": "pending",
+                "description": "Testing is in progress"
+              }
+            ],
+            "order": 2,
+            "width": "third"
+          },
+          "testbenches": {
+            "widget": "multiselect",
+            "help": "Testbench frameworks used (e.g., cocotb, UVM, SystemVerilog)",
+            "options": [
+              {
+                "label": "cocotb",
+                "value": "cocotb",
+                "description": "Python-based testbench framework"
+              },
+              {
+                "label": "UVM",
+                "value": "UVM",
+                "description": "Universal Verification Methodology"
+              },
+              {
+                "label": "SystemVerilog",
+                "value": "SystemVerilog",
+                "description": "Native SystemVerilog testbenches"
+              },
+              {
+                "label": "C++/Verilator",
+                "value": "C++/Verilator",
+                "description": "C++ testbenches with Verilator"
+              },
+              {
+                "label": "Formal",
+                "value": "Formal",
+                "description": "Formal verification testbenches"
+              },
+              {
+                "label": "VUnit",
+                "value": "VUnit",
+                "description": "VHDL/Verilog unit testing framework"
+              }
+            ],
+            "order": 3,
+            "width": "half"
+          },
+          "simulators": {
+            "widget": "multiselect",
+            "help": "Simulators used for testing",
+            "options": [
+              {
+                "label": "Verilator",
+                "value": "verilator",
+                "description": "Open-source Verilog/SystemVerilog simulator"
+              },
+              {
+                "label": "Icarus Verilog",
+                "value": "iverilog",
+                "description": "Open-source Verilog simulator"
+              },
+              {
+                "label": "ModelSim",
+                "value": "ModelSim",
+                "description": "Mentor Graphics HDL simulator"
+              },
+              {
+                "label": "VCS",
+                "value": "VCS",
+                "description": "Synopsys Verilog Compiler Simulator"
+              },
+              {
+                "label": "Xcelium",
+                "value": "Xcelium",
+                "description": "Cadence advanced simulator"
+              }
+            ],
+            "order": 4,
+            "width": "half"
+          },
+          "has_uvm": {
+            "widget": "checkbox",
+            "help": "Whether UVM (Universal Verification Methodology) framework is used",
+            "default": false,
+            "order": 5,
+            "width": "third"
+          },
+          "has_formal": {
+            "widget": "checkbox",
+            "help": "Whether formal verification is included",
+            "default": false,
+            "order": 6,
+            "width": "third"
+          },
+          "testbench_files": {
+            "widget": "list",
+            "help": "List of testbench file paths relative to repository root",
+            "placeholder": "e.g., tb/spi_controller_tb.sv",
+            "order": 7,
+            "width": "full"
           }
         }
       },
@@ -2939,6 +3139,122 @@
                 }
               }
             }
+          }
+        }
+      },
+      "jtag": {
+        "widget": "object",
+        "help": "JTAG debug and test access port capabilities",
+        "order": 7,
+        "width": "full",
+        "advanced": true,
+        "properties": {
+          "has_jtag": {
+            "widget": "checkbox",
+            "help": "Whether the IP includes JTAG TAP (Test Access Port) support",
+            "default": false,
+            "order": 1,
+            "width": "third"
+          },
+          "jtag_standard": {
+            "widget": "select",
+            "help": "JTAG standard or protocol supported",
+            "options": [
+              {
+                "label": "None",
+                "value": "none",
+                "description": "No JTAG support"
+              },
+              {
+                "label": "IEEE 1149.1",
+                "value": "IEEE 1149.1",
+                "description": "Standard boundary scan"
+              },
+              {
+                "label": "IEEE 1149.6",
+                "value": "IEEE 1149.6",
+                "description": "Advanced boundary scan for AC coupled systems"
+              },
+              {
+                "label": "RISC-V Debug",
+                "value": "RISC-V Debug",
+                "description": "RISC-V Debug Module Interface"
+              },
+              {
+                "label": "ARM CoreSight",
+                "value": "ARM CoreSight",
+                "description": "ARM debug architecture"
+              },
+              {
+                "label": "Custom",
+                "value": "custom",
+                "description": "Custom JTAG implementation"
+              }
+            ],
+            "default": "none",
+            "order": 2,
+            "width": "half"
+          },
+          "ir_length": {
+            "widget": "number",
+            "help": "Length of JTAG instruction register in bits (2-32)",
+            "minimum": 2,
+            "maximum": 32,
+            "order": 3,
+            "width": "third"
+          },
+          "debug_features": {
+            "widget": "multiselect",
+            "help": "Debug features accessible via JTAG",
+            "options": [
+              {
+                "label": "Register Access",
+                "value": "register_access",
+                "description": "Read/write CPU registers"
+              },
+              {
+                "label": "Memory Access",
+                "value": "memory_access",
+                "description": "Read/write memory"
+              },
+              {
+                "label": "Breakpoints",
+                "value": "breakpoints",
+                "description": "Hardware breakpoint support"
+              },
+              {
+                "label": "Single Step",
+                "value": "single_step",
+                "description": "Single-step execution"
+              },
+              {
+                "label": "Boundary Scan",
+                "value": "boundary_scan",
+                "description": "IEEE 1149.1 boundary scan"
+              },
+              {
+                "label": "Trace",
+                "value": "trace",
+                "description": "Instruction/data trace"
+              }
+            ],
+            "order": 4,
+            "width": "full"
+          },
+          "jtag_files": {
+            "widget": "list",
+            "help": "List of files containing JTAG TAP or debug module logic",
+            "placeholder": "e.g., rvjtag_tap.v",
+            "order": 5,
+            "width": "full"
+          },
+          "description": {
+            "widget": "textarea",
+            "help": "Human-readable description of JTAG capabilities",
+            "placeholder": "e.g., RISC-V Debug Module Interface via JTAG",
+            "order": 6,
+            "width": "full",
+            "rows": 3
           }
         }
       },

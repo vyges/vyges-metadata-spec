@@ -48,11 +48,22 @@
           ]
         },
         "contributions": {
-          "type": "boolean",
-          "description": "Is the project accepting external contributions?",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "description": "Whether the project accepts external contributions"
+            },
+            {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to contribution guidelines or pull requests page"
+            }
+          ],
+          "description": "Whether the project accepts contributions (boolean) or link to contribution guidelines (URI)",
           "examples": [
             true,
-            false
+            false,
+            "https://github.com/vyges-ip/opentitan-uart/pulls"
           ]
         },
         "chat": {
@@ -974,8 +985,20 @@
     },
     "branding": {
       "type": "object",
-      "description": "Optional branding metadata for provider attribution.",
+      "description": "Optional branding metadata for provider attribution and display.",
       "properties": {
+        "display_name": {
+          "type": "string",
+          "description": "Human-readable name for the IP block, used in block diagrams, documentation, and catalog listings. Should be concise (1-4 words), free of namespace prefixes or slug formatting.",
+          "examples": [
+            "SPI Host",
+            "UART",
+            "FFT Engine",
+            "Ibex CPU",
+            "PLIC",
+            "Clock Manager"
+          ]
+        },
         "provider": {
           "type": "string",
           "description": "Name of the company, organization, or individual maintaining the IP.",
@@ -1042,185 +1065,162 @@
     },
     "interfaces": {
       "type": "array",
-      "description": "One or more external interfaces this IP exposes",
+      "description": "One or more external interfaces this IP exposes. Each interface is a flat object with type, direction, protocol, width, description, and signals at the top level.",
       "items": {
         "type": "object",
         "required": [
           "type"
         ],
         "properties": {
-          "interface_types": {
-            "type": "object",
-            "description": "Interface type and direction configuration",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "bus",
-                  "io",
-                  "interrupt",
-                  "clock",
-                  "reset",
-                  "chiplet"
-                ],
-                "description": "Interface type category",
-                "examples": [
-                  "bus",
-                  "io",
-                  "interrupt",
-                  "chiplet"
-                ]
-              },
-              "direction": {
-                "type": "string",
-                "enum": [
-                  "input",
-                  "output",
-                  "inout"
-                ],
-                "description": "Signal direction: input (to IP), output (from IP), or inout (bidirectional)",
-                "examples": [
-                  "input",
-                  "output",
-                  "inout"
-                ]
-              }
-            }
+          "type": {
+            "type": "string",
+            "enum": [
+              "bus",
+              "io",
+              "interrupt",
+              "clock",
+              "reset",
+              "chiplet"
+            ],
+            "description": "Interface type category",
+            "examples": [
+              "bus",
+              "io",
+              "interrupt",
+              "chiplet"
+            ]
           },
-          "protocol_config": {
-            "type": "object",
-            "description": "Protocol and configuration details",
-            "properties": {
-              "protocol": {
-                "type": "string",
-                "description": "Bus protocol name, e.g. AXI4-Lite, APB, TileLink",
-                "examples": [
-                  "APB",
-                  "AXI4-Lite",
-                  "TileLink",
-                  "SPI",
-                  "I2C"
-                ]
-              },
-              "width": {
-                "type": "integer",
-                "description": "Interface width in bits (for bus interfaces)",
-                "examples": [
-                  32,
-                  64,
-                  128,
-                  8
-                ]
-              }
-            }
+          "direction": {
+            "type": "string",
+            "enum": [
+              "input",
+              "output",
+              "inout"
+            ],
+            "description": "Signal direction from the perspective of this IP: input (driven into IP), output (driven by IP), or inout (bidirectional)",
+            "examples": [
+              "input",
+              "output",
+              "inout"
+            ]
           },
-          "signal_definitions": {
-            "type": "object",
-            "description": "Detailed signal specifications",
-            "properties": {
-              "signals": {
-                "type": "array",
-                "description": "List of signals in this interface",
-                "items": {
-                  "type": "object",
-                  "required": [
-                    "name",
-                    "direction"
-                  ],
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "Signal name as it appears in the RTL",
-                      "examples": [
-                        "PCLK",
-                        "PRESETn",
-                        "PADDR",
-                        "PWDATA",
-                        "PRDATA"
-                      ]
-                    },
-                    "direction": {
-                      "type": "string",
-                      "enum": [
-                        "input",
-                        "output",
-                        "inout"
-                      ],
-                      "description": "Signal direction relative to the IP block",
-                      "examples": [
-                        "input",
-                        "output",
-                        "inout"
-                      ]
-                    },
-                    "width": {
-                      "type": "integer",
-                      "minimum": 1,
-                      "description": "Signal width in bits (1 for single-bit signals)",
-                      "examples": [
-                        1,
-                        8,
-                        32,
-                        64
-                      ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "enum": [
-                        "data",
-                        "control",
-                        "clock",
-                        "reset",
-                        "interrupt",
-                        "status"
-                      ],
-                      "description": "Signal category for better understanding",
-                      "examples": [
-                        "clock",
-                        "reset",
-                        "data",
-                        "control"
-                      ]
-                    },
-                    "description": {
-                      "type": "string",
-                      "description": "Human-readable description of the signal's purpose",
-                      "examples": [
-                        "APB clock signal",
-                        "APB reset signal",
-                        "APB address bus"
-                      ]
-                    },
-                    "active_level": {
-                      "type": "string",
-                      "enum": [
-                        "high",
-                        "low"
-                      ],
-                      "description": "Active level for control signals (e.g., reset, enable)",
-                      "examples": [
-                        "high",
-                        "low"
-                      ]
-                    }
-                  },
+          "protocol": {
+            "type": "string",
+            "description": "Bus or IO protocol name",
+            "examples": [
+              "APB",
+              "TL-UL",
+              "AXI4-Lite",
+              "AXI4",
+              "SPI",
+              "I2C",
+              "UART",
+              "GPIO",
+              "UCIe"
+            ]
+          },
+          "width": {
+            "type": "integer",
+            "description": "Interface data bus width in bits (for bus interfaces)",
+            "examples": [
+              32,
+              64,
+              128,
+              8
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of this interface's role and connectivity",
+            "examples": [
+              "TileLink Uncached Lightweight (TL-UL) slave port \u2014 connects to TL-UL crossbar device port",
+              "AMBA APB3/APB4 master port \u2014 connects to APB peripheral"
+            ]
+          },
+          "signals": {
+            "type": "array",
+            "description": "List of individual signals in this interface",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "direction"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Signal name as it appears in the RTL port declaration",
                   "examples": [
-                    {
-                      "name": "PCLK",
-                      "direction": "input",
-                      "type": "clock",
-                      "description": "APB clock signal"
-                    },
-                    {
-                      "name": "PRESETn",
-                      "direction": "input",
-                      "type": "reset",
-                      "active_level": "low",
-                      "description": "APB reset signal"
-                    }
+                    "clk_i",
+                    "rst_ni",
+                    "tl_a_valid_i",
+                    "apb_psel_o",
+                    "PCLK",
+                    "PRESETn"
                   ]
+                },
+                "direction": {
+                  "type": "string",
+                  "enum": [
+                    "input",
+                    "output",
+                    "inout"
+                  ],
+                  "description": "Signal direction relative to this IP block"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "data",
+                    "control",
+                    "clock",
+                    "reset",
+                    "interrupt",
+                    "status"
+                  ],
+                  "description": "Signal functional category"
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Signal width in bits (1 for single-bit signals)",
+                  "examples": [
+                    1,
+                    8,
+                    32,
+                    64
+                  ]
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Human-readable description of the signal's purpose"
+                },
+                "active_level": {
+                  "type": "string",
+                  "enum": [
+                    "high",
+                    "low"
+                  ],
+                  "description": "Active level for control signals (e.g., reset, enable)"
                 }
-              }
+              },
+              "examples": [
+                {
+                  "name": "clk_i",
+                  "direction": "input",
+                  "type": "clock",
+                  "width": 1,
+                  "description": "System clock"
+                },
+                {
+                  "name": "rst_ni",
+                  "direction": "input",
+                  "type": "reset",
+                  "active_level": "low",
+                  "width": 1,
+                  "description": "Active-low synchronous reset"
+                }
+              ]
             }
           }
         }
@@ -1228,104 +1228,97 @@
       "examples": [
         [
           {
-            "interface_types": {
-              "type": "bus",
-              "direction": "input"
-            },
-            "protocol_config": {
-              "protocol": "APB",
-              "width": 32
-            },
-            "signal_definitions": {
-              "signals": [
-                {
-                  "name": "PCLK",
-                  "direction": "input",
-                  "type": "clock",
-                  "description": "APB clock signal"
-                },
-                {
-                  "name": "PRESETn",
-                  "direction": "input",
-                  "type": "reset",
-                  "active_level": "low",
-                  "description": "APB reset signal"
-                }
-              ]
-            }
+            "type": "bus",
+            "direction": "input",
+            "protocol": "TL-UL",
+            "width": 32,
+            "description": "TileLink Uncached Lightweight (TL-UL) slave port \u2014 connects to TL-UL crossbar device port",
+            "signals": [
+              {
+                "name": "clk_i",
+                "direction": "input",
+                "type": "clock",
+                "width": 1,
+                "description": "System clock"
+              },
+              {
+                "name": "rst_ni",
+                "direction": "input",
+                "type": "reset",
+                "active_level": "low",
+                "width": 1,
+                "description": "Active-low synchronous reset"
+              },
+              {
+                "name": "tl_a_valid_i",
+                "direction": "input",
+                "type": "control",
+                "width": 1,
+                "description": "A channel valid"
+              },
+              {
+                "name": "tl_d_valid_o",
+                "direction": "output",
+                "type": "control",
+                "width": 1,
+                "description": "D channel valid"
+              }
+            ]
+          },
+          {
+            "type": "bus",
+            "direction": "output",
+            "protocol": "APB",
+            "width": 32,
+            "description": "AMBA APB3/APB4 master port \u2014 connects to APB peripheral",
+            "signals": [
+              {
+                "name": "apb_psel_o",
+                "direction": "output",
+                "type": "control",
+                "width": 1,
+                "description": "Peripheral select"
+              },
+              {
+                "name": "apb_prdata_i",
+                "direction": "input",
+                "type": "data",
+                "width": 32,
+                "description": "Read data from peripheral"
+              }
+            ]
           }
         ],
         [
           {
-            "interface_types": {
-              "type": "chiplet",
-              "direction": "inout"
-            },
-            "protocol_config": {
-              "protocol": "UCIe",
-              "width": 64
-            },
-            "signal_definitions": {
-              "signals": [
-                {
-                  "name": "ucie_clk",
-                  "direction": "input",
-                  "type": "clock",
-                  "description": "UCIe clock signal"
-                },
-                {
-                  "name": "ucie_rst_n",
-                  "direction": "input",
-                  "type": "reset",
-                  "active_level": "low",
-                  "description": "UCIe reset signal"
-                },
-                {
-                  "name": "ucie_tx_data",
-                  "direction": "output",
-                  "type": "data",
-                  "width": 64,
-                  "description": "UCIe transmit data"
-                },
-                {
-                  "name": "ucie_rx_data",
-                  "direction": "input",
-                  "type": "data",
-                  "width": 64,
-                  "description": "UCIe receive data"
-                }
-              ]
-            }
-          }
-        ],
-        [
-          {
-            "interface_types": {
-              "type": "io",
-              "direction": "inout"
-            },
-            "protocol_config": {
-              "protocol": "GPIO",
-              "width": 8
-            },
-            "signal_definitions": {
-              "signals": [
-                {
-                  "name": "gpio_in",
-                  "direction": "input",
-                  "type": "data",
-                  "width": 8,
-                  "description": "GPIO input signals"
-                },
-                {
-                  "name": "gpio_out",
-                  "direction": "output",
-                  "type": "data",
-                  "width": 8,
-                  "description": "GPIO output signals"
-                }
-              ]
-            }
+            "type": "io",
+            "direction": "inout",
+            "protocol": "GPIO",
+            "width": 8,
+            "description": "GPIO bidirectional port",
+            "signals": [
+              {
+                "name": "gpio_in",
+                "direction": "input",
+                "type": "data",
+                "width": 8,
+                "description": "GPIO input signals"
+              },
+              {
+                "name": "gpio_out",
+                "direction": "output",
+                "type": "data",
+                "width": 8,
+                "description": "GPIO output signals"
+              },
+              {
+                "name": "gpio_oe",
+                "direction": "output",
+                "type": "control",
+                "width": 8,
+                "description": "GPIO output enable"
+              }
+            ]
           }
         ]
       ]
@@ -2656,9 +2649,91 @@
         ]
       ]
     },
+    "dft": {
+      "type": "object",
+      "description": "Design-for-Test (DFT) capabilities and scan chain support",
+      "properties": {
+        "has_scan_mode": {
+          "type": "boolean",
+          "description": "Whether the IP includes scan mode support for manufacturing test",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "has_boundary_scan": {
+          "type": "boolean",
+          "description": "Whether the IP includes IEEE 1149.1 boundary scan (JTAG) support",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "scan_mode_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of RTL files that contain scan mode logic",
+          "examples": [
+            [
+              "soc_ifc_top.sv",
+              "clk_gate.sv"
+            ],
+            []
+          ]
+        },
+        "scan_chain_count": {
+          "type": "integer",
+          "description": "Number of scan chains in the design",
+          "minimum": 0,
+          "examples": [
+            4,
+            8,
+            0
+          ]
+        },
+        "atpg_ready": {
+          "type": "boolean",
+          "description": "Whether the design is ready for Automatic Test Pattern Generation (ATPG)",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of DFT capabilities",
+          "examples": [
+            "Full DFT support with scan mode for manufacturing test",
+            "No DFT support detected",
+            "Partial DFT support with manual scan insertion required"
+          ]
+        }
+      },
+      "examples": [
+        {
+          "has_scan_mode": true,
+          "has_boundary_scan": false,
+          "scan_mode_files": [
+            "soc_ifc_top.sv",
+            "clk_gate.sv"
+          ],
+          "scan_chain_count": 4,
+          "atpg_ready": true,
+          "description": "Full DFT support with scan mode for manufacturing test"
+        },
+        {
+          "has_scan_mode": false,
+          "has_boundary_scan": false,
+          "scan_mode_files": [],
+          "description": "No DFT support detected"
+        }
+      ]
+    },
     "integration": {
       "type": "object",
-      "description": "Integration examples and wrappers",
+      "description": "Integration examples, wrappers, and SoC generator hints for automated integration",
       "properties": {
         "examples": {
           "type": "array",
@@ -2673,44 +2748,319 @@
                   "fpga",
                   "asic"
                 ],
-                "description": "Target platform for the example",
-                "examples": [
-                  "simulation",
-                  "fpga",
-                  "asic"
-                ]
+                "description": "Target platform for the example"
               },
               "wrapper": {
                 "type": "string",
-                "description": "Path to wrapper file or module name",
-                "examples": [
-                  "examples/spi_wrapper.v",
-                  "examples/fpga_wrapper.v",
-                  "spi_top"
-                ]
+                "description": "Path to wrapper file or module name"
               },
               "tb": {
                 "type": "string",
-                "description": "Path to testbench file",
-                "examples": [
-                  "examples/spi_tb.v",
-                  "test/spi_integration_tb.py",
-                  "tb_spi.v"
+                "description": "Path to testbench file"
+              }
+            }
+          }
+        },
+        "soc_generator_hints": {
+          "type": "object",
+          "description": "Optional hints for Vyges SoC Generator to auto-generate wrappers. Without these, the IP can still be used manually \u2014 these hints enable zero-hand-maintained-RTL integration.",
+          "properties": {
+            "top_module": {
+              "type": "string",
+              "description": "Verilog/SystemVerilog top-level module name (may differ from IP slug)",
+              "examples": [
+                "fft_top",
+                "ibex_top",
+                "uart",
+                "spi_host_lite"
+              ]
+            },
+            "clock": {
+              "type": "object",
+              "description": "Primary clock port",
+              "properties": {
+                "port": {
+                  "type": "string",
+                  "description": "Clock input port name",
+                  "examples": [
+                    "clk_i",
+                    "pclk_i",
+                    "axi_aclk_i"
+                  ]
+                },
+                "additional_ports": {
+                  "type": "array",
+                  "description": "Additional clock ports that should be tied to the system clock",
+                  "items": {
+                    "type": "string"
+                  },
+                  "examples": [
+                    [
+                      "pclk_i",
+                      "axi_aclk_i"
+                    ]
+                  ]
+                }
+              }
+            },
+            "reset": {
+              "type": "object",
+              "description": "Primary reset port",
+              "properties": {
+                "port": {
+                  "type": "string",
+                  "description": "Reset input port name",
+                  "examples": [
+                    "rst_ni",
+                    "reset_n_i",
+                    "preset_n_i"
+                  ]
+                },
+                "polarity": {
+                  "type": "string",
+                  "enum": [
+                    "active_low",
+                    "active_high"
+                  ],
+                  "description": "Reset polarity",
+                  "default": "active_low"
+                },
+                "additional_ports": {
+                  "type": "array",
+                  "description": "Additional reset ports that should be tied to the system reset",
+                  "items": {
+                    "type": "string"
+                  },
+                  "examples": [
+                    [
+                      "preset_n_i",
+                      "axi_areset_n_i"
+                    ]
+                  ]
+                }
+              }
+            },
+            "bus_slave": {
+              "type": "object",
+              "description": "Bus slave interface port mapping. Tells the generator how to connect bus adapter outputs to this IP's slave ports.",
+              "properties": {
+                "protocol": {
+                  "type": "string",
+                  "description": "Bus protocol of the slave port",
+                  "examples": [
+                    "APB",
+                    "AXI4-Lite",
+                    "Wishbone"
+                  ]
+                },
+                "addr_width": {
+                  "type": "integer",
+                  "description": "Address width consumed by this IP (may be narrower than bus width)",
+                  "examples": [
+                    16,
+                    12,
+                    32
+                  ]
+                },
+                "ports": {
+                  "type": "object",
+                  "description": "Map of canonical bus signal names to IP port names. Canonical names follow the protocol spec (e.g., APB: psel, penable, pwrite, paddr, pwdata, prdata, pready, pslverr).",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "examples": [
+                    {
+                      "psel": "psel_i",
+                      "penable": "penable_i",
+                      "pwrite": "pwrite_i",
+                      "paddr": "paddr_i",
+                      "pwdata": "pwdata_i",
+                      "prdata": "prdata_o",
+                      "pready": "pready_o"
+                    }
+                  ]
+                }
+              }
+            },
+            "interrupts": {
+              "type": "array",
+              "description": "Interrupt output ports exported to top-level for PLIC wiring",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "port": {
+                    "type": "string",
+                    "description": "Interrupt output port name"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "level",
+                      "edge",
+                      "pulse"
+                    ],
+                    "description": "Interrupt signaling type",
+                    "default": "level"
+                  }
+                },
+                "required": [
+                  "port"
+                ]
+              },
+              "examples": [
+                [
+                  {
+                    "port": "fft_done_o",
+                    "type": "level"
+                  },
+                  {
+                    "port": "fft_error_o",
+                    "type": "level"
+                  }
+                ]
+              ]
+            },
+            "parameters": {
+              "type": "array",
+              "description": "Parameter mapping from soc-spec.yaml config to IP module parameters. Parameters with 'fixed: true' are not exposed in the spec \u2014 they use the default value.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Verilog parameter name on the IP module"
+                  },
+                  "maps_to": {
+                    "type": "string",
+                    "description": "Dot-path into the soc-spec.yaml peripheral config (e.g., 'config.FFT_MAX_LENGTH_LOG2'). Omit for fixed parameters.",
+                    "examples": [
+                      "config.FFT_MAX_LENGTH_LOG2",
+                      "config.DATA_WIDTH"
+                    ]
+                  },
+                  "default": {
+                    "description": "Default value if not specified in spec"
+                  },
+                  "fixed": {
+                    "type": "boolean",
+                    "description": "If true, parameter always uses default value and is not exposed in spec",
+                    "default": false
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Verilog parameter type",
+                    "examples": [
+                      "int unsigned",
+                      "int",
+                      "string",
+                      "logic"
+                    ],
+                    "default": "int unsigned"
+                  }
+                },
+                "required": [
+                  "name"
                 ]
               }
             },
-            "examples": [
-              {
-                "target": "simulation",
-                "wrapper": "examples/spi_wrapper.v",
-                "tb": "examples/spi_tb.v"
-              },
-              {
-                "target": "fpga",
-                "wrapper": "examples/fpga_wrapper.v",
-                "tb": "test/spi_integration_tb.py"
+            "unused_interfaces": {
+              "type": "array",
+              "description": "Interfaces that exist on the IP module but are not used in this integration. The generator ties them off with the specified values.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Human-readable name for this unused interface"
+                  },
+                  "protocol": {
+                    "type": "string",
+                    "description": "Protocol of the unused interface"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Why this interface is unused (documentation for future phases)",
+                    "examples": [
+                      "Phase 1: APB-only sample loading",
+                      "DMA not needed for sensor node"
+                    ]
+                  },
+                  "tieoff_ports": {
+                    "type": "array",
+                    "description": "Ports to tie off with constant values",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string",
+                          "description": "Verilog constant (e.g., \"1'b0\", \"32'b0\")"
+                        },
+                        "direction": {
+                          "type": "string",
+                          "enum": [
+                            "input",
+                            "output"
+                          ],
+                          "description": "Port direction \u2014 inputs get tied to value, outputs are left unconnected"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "direction"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "tieoff_ports"
+                ]
               }
-            ]
+            },
+            "sram": {
+              "type": "object",
+              "description": "SRAM macro requirements for ASIC hardening. Tells the generator how many banks, what macro, and how address decoding works.",
+              "properties": {
+                "macro": {
+                  "type": "string",
+                  "description": "SRAM macro cell name",
+                  "examples": [
+                    "sky130_sram_2kbyte_1rw1r_32x512_8"
+                  ]
+                },
+                "depth_from": {
+                  "type": "string",
+                  "description": "How total depth is derived from config parameters",
+                  "examples": [
+                    "2 * (1 << config.FFT_MAX_LENGTH_LOG2)"
+                  ]
+                },
+                "bank_depth": {
+                  "type": "integer",
+                  "description": "Depth of one SRAM bank in words",
+                  "examples": [
+                    512
+                  ]
+                },
+                "data_width": {
+                  "type": "integer",
+                  "description": "Data width in bits",
+                  "examples": [
+                    32
+                  ]
+                },
+                "wrapper_module": {
+                  "type": "string",
+                  "description": "Name of the generated SRAM wrapper module",
+                  "examples": [
+                    "fft_data_sram"
+                  ]
+                }
+              }
+            }
           }
         }
       },
@@ -2721,13 +3071,149 @@
               "target": "simulation",
               "wrapper": "examples/spi_wrapper.v",
               "tb": "examples/spi_tb.v"
-            },
-            {
-              "target": "fpga",
-              "wrapper": "examples/fpga_wrapper.v",
-              "tb": "test/spi_integration_tb.py"
             }
-          ]
+          ],
+          "soc_generator_hints": {
+            "top_module": "fft_top",
+            "clock": {
+              "port": "clk_i",
+              "additional_ports": [
+                "pclk_i",
+                "axi_aclk_i"
+              ]
+            },
+            "reset": {
+              "port": "reset_n_i",
+              "polarity": "active_low",
+              "additional_ports": [
+                "preset_n_i",
+                "axi_areset_n_i"
+              ]
+            },
+            "bus_slave": {
+              "protocol": "APB",
+              "addr_width": 16,
+              "ports": {
+                "psel": "psel_i",
+                "penable": "penable_i",
+                "pwrite": "pwrite_i",
+                "paddr": "paddr_i",
+                "pwdata": "pwdata_i",
+                "prdata": "prdata_o",
+                "pready": "pready_o"
+              }
+            },
+            "interrupts": [
+              {
+                "port": "fft_done_o",
+                "type": "level"
+              },
+              {
+                "port": "fft_error_o",
+                "type": "level"
+              }
+            ],
+            "parameters": [
+              {
+                "name": "FFT_MAX_LENGTH_LOG2",
+                "maps_to": "config.FFT_MAX_LENGTH_LOG2"
+              },
+              {
+                "name": "FFT_DATA_WIDTH",
+                "maps_to": "config.FFT_DATA_WIDTH"
+              },
+              {
+                "name": "FFT_TWIDDLE_WIDTH",
+                "maps_to": "config.FFT_TWIDDLE_WIDTH"
+              },
+              {
+                "name": "FFT_APB_ADDR_WIDTH",
+                "default": 16,
+                "fixed": true
+              },
+              {
+                "name": "FFT_AXI_ADDR_WIDTH",
+                "default": 32,
+                "fixed": true
+              },
+              {
+                "name": "FFT_AXI_DATA_WIDTH",
+                "default": 64,
+                "fixed": true
+              }
+            ],
+            "unused_interfaces": [
+              {
+                "name": "axi_data",
+                "protocol": "AXI",
+                "reason": "Phase 1: APB-only sample loading via Ibex firmware",
+                "tieoff_ports": [
+                  {
+                    "name": "axi_awaddr_i",
+                    "value": "32'b0",
+                    "direction": "input"
+                  },
+                  {
+                    "name": "axi_awvalid_i",
+                    "value": "1'b0",
+                    "direction": "input"
+                  },
+                  {
+                    "name": "axi_awready_o",
+                    "direction": "output"
+                  },
+                  {
+                    "name": "axi_wdata_i",
+                    "value": "64'b0",
+                    "direction": "input"
+                  },
+                  {
+                    "name": "axi_wvalid_i",
+                    "value": "1'b0",
+                    "direction": "input"
+                  },
+                  {
+                    "name": "axi_wready_o",
+                    "direction": "output"
+                  },
+                  {
+                    "name": "axi_araddr_i",
+                    "value": "32'b0",
+                    "direction": "input"
+                  },
+                  {
+                    "name": "axi_arvalid_i",
+                    "value": "1'b0",
+                    "direction": "input"
+                  },
+                  {
+                    "name": "axi_arready_o",
+                    "direction": "output"
+                  },
+                  {
+                    "name": "axi_rdata_o",
+                    "direction": "output"
+                  },
+                  {
+                    "name": "axi_rvalid_o",
+                    "direction": "output"
+                  },
+                  {
+                    "name": "axi_rready_i",
+                    "value": "1'b0",
+                    "direction": "input"
+                  }
+                ]
+              }
+            ],
+            "sram": {
+              "macro": "sky130_sram_2kbyte_1rw1r_32x512_8",
+              "depth_from": "2 * (1 << config.FFT_MAX_LENGTH_LOG2)",
+              "bank_depth": 512,
+              "data_width": 32,
+              "wrapper_module": "fft_data_sram"
+            }
+          }
         }
       ]
     },
@@ -8671,6 +9157,91 @@
         }
       ]
     },
+    "defines": {
+      "type": "array",
+      "description": "Global Verilog/SystemVerilog `define macros exported by this IP. Enables detection of cross-IP preprocessor namespace collisions during integration. Only global-scope defines need to be listed \u2014 file-local defines guarded by `ifdef are optional.",
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The `define macro name (without the leading backtick). Must carry the IP block prefix per Vyges naming conventions.",
+            "examples": [
+              "UART_DATA_WIDTH",
+              "FFT_NUM_POINTS",
+              "SPI_FIFO_DEPTH"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "description": "The macro value as it appears in RTL. Omit for parameterless defines used as flags.",
+            "examples": [
+              "8",
+              "32'h0000_1000",
+              "1"
+            ]
+          },
+          "defined_in": {
+            "type": "string",
+            "description": "Relative path to the file where this macro is defined.",
+            "examples": [
+              "rtl/uart_defines.vh",
+              "rtl/fft_pkg.sv"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "global",
+              "guarded"
+            ],
+            "description": "Whether this define is always active (global) or conditionally included via `ifdef guard.",
+            "default": "global"
+          },
+          "guard": {
+            "type": "string",
+            "description": "The `ifndef header guard name protecting this define, if any.",
+            "examples": [
+              "_UART_DEFINES_VH",
+              "_FFT_PKG_SV"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of the macro's purpose."
+          }
+        }
+      },
+      "examples": [
+        [
+          {
+            "name": "UART_DATA_WIDTH",
+            "value": "8",
+            "defined_in": "rtl/uart_defines.vh",
+            "scope": "global",
+            "guard": "_UART_DEFINES_VH",
+            "description": "Default data width for UART transactions"
+          },
+          {
+            "name": "UART_FIFO_DEPTH",
+            "value": "16",
+            "defined_in": "rtl/uart_defines.vh",
+            "scope": "global",
+            "guard": "_UART_DEFINES_VH",
+            "description": "TX/RX FIFO depth"
+          },
+          {
+            "name": "UART_SYNTHESIS",
+            "defined_in": "rtl/uart_defines.vh",
+            "scope": "guarded",
+            "description": "Synthesis mode flag \u2014 set by build system, not defined by default"
+          }
+        ]
+      ]
+    },
     "x-version": {
       "type": "string",
       "description": "Schema version for tracking purposes - indicates which version of the Vyges Metadata Schema this metadata file conforms to. This should be the same across all metadata files using the same schema version.",
@@ -9280,13 +9851,26 @@
           "items": {
             "type": "string"
           },
-          "description": "List of testbench frameworks used (e.g., cocotb, UVM, SystemVerilog)",
+          "description": "List of testbench frameworks used (e.g., cocotb, UVM, SystemVerilog, C++/Verilator, Formal)",
           "examples": [
             [
               "cocotb"
             ],
             [
               "UVM",
+              "SystemVerilog"
+            ],
+            [
+              "SystemVerilog",
+              "C++/Verilator"
+            ],
+            [
+              "UVM",
+              "SystemVerilog",
+              "Formal"
+            ],
+            [
+              "cocotb",
               "SystemVerilog"
             ],
             [
@@ -9375,209 +9959,164 @@
           "simulators": [
             "verilator"
           ],
-          "status": "passing"
+          "status": "passing",
+          "has_uvm": false,
+          "has_formal": false,
+          "testbench_files": [
+            "tb/test_spi.py"
+          ]
         },
         {
+          "coverage": true,
           "testbenches": [
-            "UVM"
+            "UVM",
+            "SystemVerilog",
+            "Formal"
           ],
           "simulators": [
             "VCS"
           ],
-          "status": "partial"
+          "status": "verified",
+          "has_uvm": true,
+          "has_formal": true,
+          "testbench_files": [
+            "tb/ecc_top_tb.sv",
+            "uvmf_ecc/uvmf_template_output/project_benches/ECC/tb/testbench/hdl_top.sv",
+            "formal/properties/fv_ecc_dsa_ctrl.sv"
+          ]
+        },
+        {
+          "coverage": false,
+          "testbenches": [
+            "cocotb",
+            "SystemVerilog"
+          ],
+          "simulators": [
+            "verilator",
+            "iverilog"
+          ],
+          "status": "verified",
+          "has_uvm": false,
+          "has_formal": false,
+          "testbench_files": [
+            "tb/test_hmac.py",
+            "tb/hmac_ctrl_tb.sv"
+          ]
         }
       ]
     },
-    "dft": {
-      "type": "object",
-      "description": "Design-for-Test (DFT) capabilities and scan chain support",
-      "properties": {
-        "has_scan_mode": {
-          "type": "boolean",
-          "description": "Whether the IP includes scan mode support for manufacturing test",
-          "examples": [
-            true,
-            false
-          ]
-        },
-        "has_boundary_scan": {
-          "type": "boolean",
-          "description": "Whether the IP includes IEEE 1149.1 boundary scan (JTAG) support",
-          "examples": [
-            true,
-            false
-          ]
-        },
-        "scan_mode_files": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of RTL files that contain scan mode logic",
-          "examples": [
-            [
-              "soc_ifc_top.sv",
-              "clk_gate.sv"
-            ],
-            []
-          ]
-        },
-        "scan_chain_count": {
-          "type": "integer",
-          "description": "Number of scan chains in the design",
-          "minimum": 0,
-          "examples": [
-            4,
-            8,
-            0
-          ]
-        },
-        "atpg_ready": {
-          "type": "boolean",
-          "description": "Whether the design is ready for Automatic Test Pattern Generation (ATPG)",
-          "examples": [
-            true,
-            false
-          ]
-        },
-        "description": {
-          "type": "string",
-          "description": "Human-readable description of DFT capabilities",
-          "examples": [
-            "Full DFT support with scan mode for manufacturing test",
-            "No DFT support detected",
-            "Partial DFT support with manual scan insertion required"
-          ]
-        }
-      },
+    "vyges_additions": {
+      "type": "array",
+      "description": "Vyges-authored files added on top of the upstream mirror. Each entry is a net-new file (no path collision with upstream) that lives under vyges-additions/ in the IP repo and is pulled alongside rtl/ by the Vyges SoC Generator during vendoring. Upstream-sync excludes vyges-additions/ from pulls. See vyges-additions/README.md inside each IP repo for the integration pattern.",
       "examples": [
-        {
-          "has_scan_mode": true,
-          "has_boundary_scan": false,
-          "scan_mode_files": [
-            "soc_ifc_top.sv",
-            "clk_gate.sv"
-          ],
-          "scan_chain_count": 4,
-          "atpg_ready": true,
-          "description": "Full DFT support with scan mode for manufacturing test"
-        },
-        {
-          "has_scan_mode": false,
-          "has_boundary_scan": false,
-          "scan_mode_files": [],
-          "description": "No DFT support detected"
+        [
+          {
+            "path": "vyges-additions/tlul_slave_rsp_intg_wrap.sv",
+            "kind": "rtl",
+            "description": "Signing wrapper for baseline TL-UL slaves attached to a signed bus."
+          }
+        ]
+      ],
+      "items": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Repo-relative path to the added file. Must begin with 'vyges-additions/'.",
+            "pattern": "^vyges-additions/",
+            "examples": [
+              "vyges-additions/tlul_slave_rsp_intg_wrap.sv",
+              "vyges-additions/tlul_master_cmd_intg_wrap.sv"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "description": "Artifact kind. 'rtl' files are treated as SystemVerilog/Verilog sources by the generator's vendor step.",
+            "enum": [
+              "rtl",
+              "header",
+              "constraint",
+              "doc",
+              "other"
+            ],
+            "default": "rtl"
+          },
+          "description": {
+            "type": "string",
+            "description": "One-line human-readable purpose of the file."
+          },
+          "depends_on": {
+            "type": "array",
+            "description": "Optional: other IPs or libraries this addition depends on. Used by the generator to order vendoring.",
+            "items": {
+              "type": "string",
+              "examples": [
+                "opentitan-prim",
+                "opentitan-tlul"
+              ]
+            }
+          }
         }
-      ]
+      }
     },
-    "jtag": {
-      "type": "object",
-      "description": "JTAG debug and test access port capabilities",
-      "properties": {
-        "has_jtag": {
-          "type": "boolean",
-          "description": "Whether the IP includes JTAG TAP (Test Access Port) support",
-          "examples": [
-            true,
-            false
-          ]
-        },
-        "jtag_standard": {
-          "type": "string",
-          "enum": [
-            "IEEE 1149.1",
-            "IEEE 1149.6",
-            "RISC-V Debug",
-            "ARM CoreSight",
-            "custom",
-            "none"
-          ],
-          "description": "JTAG standard or protocol supported",
-          "examples": [
-            "IEEE 1149.1",
-            "RISC-V Debug",
-            "none"
-          ]
-        },
-        "jtag_files": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of files containing JTAG TAP or debug module logic",
-          "examples": [
-            [
-              "rvjtag_tap.v",
-              "dmi_wrapper.v"
-            ],
-            []
-          ]
-        },
-        "debug_features": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of debug features accessible via JTAG",
-          "examples": [
-            [
-              "register_access",
-              "memory_access",
-              "breakpoints",
-              "single_step"
-            ],
-            [
-              "boundary_scan"
-            ],
-            []
-          ]
-        },
-        "ir_length": {
-          "type": "integer",
-          "description": "Length of JTAG instruction register in bits",
-          "minimum": 2,
-          "maximum": 32,
-          "examples": [
-            5,
-            4
-          ]
-        },
-        "description": {
-          "type": "string",
-          "description": "Human-readable description of JTAG capabilities",
-          "examples": [
-            "RISC-V Debug Module Interface via JTAG",
-            "No JTAG support detected",
-            "IEEE 1149.1 boundary scan for board-level test"
-          ]
-        }
-      },
+    "vyges_overlays": {
+      "type": "array",
+      "description": "Vyges-authored overrides that MASK a file in the upstream mirror. Each entry is a file under vyges-overlays/ whose same-name counterpart under rtl/ (or another upstream-imported path) is replaced at vendor time. Used for stubs (upstream files with deps we don't carry) and for build-compatibility fixes (e.g. Verilator/Vivado tool quirks). Upstream sync policy: pulls proceed, but any upstream change to a path in 'replaces' is flagged for human review because upstream may have fixed the original issue natively, making the overlay obsolete.",
       "examples": [
-        {
-          "has_jtag": true,
-          "jtag_standard": "RISC-V Debug",
-          "jtag_files": [
-            "rvjtag_tap.v",
-            "dmi_wrapper.v",
-            "dmi_jtag_to_core_sync.v"
-          ],
-          "debug_features": [
-            "register_access",
-            "memory_access",
-            "breakpoints",
-            "single_step"
-          ],
-          "ir_length": 5,
-          "description": "RISC-V Debug Module Interface via JTAG"
-        },
-        {
-          "has_jtag": false,
-          "jtag_standard": "none",
-          "jtag_files": [],
-          "debug_features": [],
-          "description": "No JTAG support detected"
+        [
+          {
+            "path": "vyges-overlays/uart_reg_top.sv",
+            "replaces": "rtl/uart_reg_top.sv",
+            "reason": "Vivado 2025.2 XOR-reduce incompat on racl_policies_i struct"
+          }
+        ]
+      ],
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "replaces"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Repo-relative path to the overlay file. Must begin with 'vyges-overlays/'.",
+            "pattern": "^vyges-overlays/",
+            "examples": [
+              "vyges-overlays/uart_reg_top.sv",
+              "vyges-overlays/spi_host_reg_top.sv"
+            ]
+          },
+          "replaces": {
+            "type": "string",
+            "description": "Repo-relative path of the upstream file this overlay masks at vendor time.",
+            "examples": [
+              "rtl/uart_reg_top.sv",
+              "rtl/spi_host_reg_top.sv"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Short explanation of why this overlay exists. Must be specific enough that a reviewer comparing against a fresh upstream pull can decide whether the overlay is still needed."
+          },
+          "kind": {
+            "type": "string",
+            "description": "Overlay category for reporting and triage.",
+            "enum": [
+              "stub",
+              "fixup",
+              "vyges-addition-shim",
+              "other"
+            ],
+            "default": "fixup"
+          }
         }
-      ]
+      }
     },
     "toolchain_support": {
       "type": "array",
@@ -9603,17 +10142,21 @@
     "maturity": {
       "type": "string",
       "enum": [
+        "draft",
+        "imported",
         "prototype",
         "alpha",
         "beta",
         "production",
         "deprecated"
       ],
-      "description": "Indicates readiness or lifecycle state of the IP",
+      "description": "Indicates readiness or lifecycle state of the IP. 'draft' = initial creation, 'imported' = vendored/upstream IP not yet fully characterized.",
       "examples": [
         "production",
         "beta",
-        "prototype"
+        "prototype",
+        "draft",
+        "imported"
       ]
     },
     "commercial": {
@@ -9718,6 +10261,88 @@
             "JP",
             "KR"
           ]
+        }
+      ]
+    },
+    "rtl_quality": {
+      "type": "object",
+      "description": "RTL integration quality indicators per Vyges conventions. Each boolean flag indicates whether the IP natively meets that standard (true) or requires a vyges-patch to fix (false).",
+      "properties": {
+        "module_prefixed": {
+          "type": "boolean",
+          "description": "All module names carry the IP block prefix to prevent namespace collisions when integrating multiple IPs.",
+          "default": false
+        },
+        "defines_prefixed": {
+          "type": "boolean",
+          "description": "All global `define macros carry the IP block prefix to prevent preprocessor namespace collisions.",
+          "default": false
+        },
+        "header_guards": {
+          "type": "boolean",
+          "description": "All `define/header files use `ifndef/`define/`endif include guards to prevent duplicate definitions.",
+          "default": false
+        },
+        "one_module_per_file": {
+          "type": "boolean",
+          "description": "Each .sv/.v file contains exactly one module, matching filename to module name.",
+          "default": false
+        },
+        "self_contained_includes": {
+          "type": "boolean",
+          "description": "Each RTL file `includes its own dependencies \u2014 no implicit compile-order or input.vc ordering required.",
+          "default": false
+        },
+        "no_translate_pragmas": {
+          "type": "boolean",
+          "description": "Uses `ifdef (with IP-prefixed define) instead of synthesis translate_off/on pragmas.",
+          "default": false
+        },
+        "lint_clean": {
+          "type": "boolean",
+          "description": "Each module compiles and lints standalone without warnings.",
+          "default": false
+        },
+        "no_casex": {
+          "type": "boolean",
+          "description": "Uses casez (with ?) instead of casex to prevent X-propagation simulation mismatches.",
+          "default": true
+        },
+        "width_clean": {
+          "type": "boolean",
+          "description": "No width violations \u2014 all constants and signals are explicitly sized.",
+          "default": false
+        },
+        "no_sv_keyword_conflicts": {
+          "type": "boolean",
+          "description": "No port or signal names that clash with SystemVerilog reserved words like do, byte, bit, int, ref.",
+          "default": true
+        }
+      },
+      "examples": [
+        {
+          "module_prefixed": true,
+          "defines_prefixed": true,
+          "header_guards": true,
+          "one_module_per_file": true,
+          "self_contained_includes": true,
+          "no_translate_pragmas": true,
+          "lint_clean": true,
+          "no_casex": true,
+          "width_clean": true,
+          "no_sv_keyword_conflicts": true
+        },
+        {
+          "module_prefixed": false,
+          "defines_prefixed": false,
+          "header_guards": false,
+          "one_module_per_file": true,
+          "self_contained_includes": false,
+          "no_translate_pragmas": true,
+          "lint_clean": false,
+          "no_casex": true,
+          "width_clean": false,
+          "no_sv_keyword_conflicts": true
         }
       ]
     },
@@ -9860,6 +10485,115 @@
           "asic",
           "fpga"
         ]
+      ]
+    },
+    "jtag": {
+      "type": "object",
+      "description": "JTAG debug and test access port capabilities",
+      "properties": {
+        "has_jtag": {
+          "type": "boolean",
+          "description": "Whether the IP includes JTAG TAP (Test Access Port) support",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "jtag_standard": {
+          "type": "string",
+          "enum": [
+            "IEEE 1149.1",
+            "IEEE 1149.6",
+            "RISC-V Debug",
+            "ARM CoreSight",
+            "custom",
+            "none"
+          ],
+          "description": "JTAG standard or protocol supported",
+          "examples": [
+            "IEEE 1149.1",
+            "RISC-V Debug",
+            "none"
+          ]
+        },
+        "jtag_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of files containing JTAG TAP or debug module logic",
+          "examples": [
+            [
+              "rvjtag_tap.v",
+              "dmi_wrapper.v"
+            ],
+            []
+          ]
+        },
+        "debug_features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of debug features accessible via JTAG",
+          "examples": [
+            [
+              "register_access",
+              "memory_access",
+              "breakpoints",
+              "single_step"
+            ],
+            [
+              "boundary_scan"
+            ],
+            []
+          ]
+        },
+        "ir_length": {
+          "type": "integer",
+          "description": "Length of JTAG instruction register in bits",
+          "minimum": 2,
+          "maximum": 32,
+          "examples": [
+            5,
+            4
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of JTAG capabilities",
+          "examples": [
+            "RISC-V Debug Module Interface via JTAG",
+            "No JTAG support detected",
+            "IEEE 1149.1 boundary scan for board-level test"
+          ]
+        }
+      },
+      "examples": [
+        {
+          "has_jtag": true,
+          "jtag_standard": "RISC-V Debug",
+          "jtag_files": [
+            "rvjtag_tap.v",
+            "dmi_wrapper.v",
+            "dmi_jtag_to_core_sync.v"
+          ],
+          "debug_features": [
+            "register_access",
+            "memory_access",
+            "breakpoints",
+            "single_step"
+          ],
+          "ir_length": 5,
+          "description": "RISC-V Debug Module Interface via JTAG"
+        },
+        {
+          "has_jtag": false,
+          "jtag_standard": "none",
+          "jtag_files": [],
+          "debug_features": [],
+          "description": "No JTAG support detected"
+        }
       ]
     },
     "demo": {
@@ -11427,6 +12161,9 @@
   "allOf": [
     {
       "if": {
+        "required": [
+          "target"
+        ],
         "properties": {
           "target": {
             "contains": {
@@ -11443,6 +12180,9 @@
     },
     {
       "if": {
+        "required": [
+          "target"
+        ],
         "properties": {
           "target": {
             "contains": {
@@ -11459,6 +12199,9 @@
     },
     {
       "if": {
+        "required": [
+          "design_type"
+        ],
         "properties": {
           "design_type": {
             "contains": {
@@ -11484,6 +12227,9 @@
     },
     {
       "if": {
+        "required": [
+          "design_type"
+        ],
         "properties": {
           "design_type": {
             "contains": {
@@ -11506,6 +12252,9 @@
     },
     {
       "if": {
+        "required": [
+          "design_type"
+        ],
         "properties": {
           "design_type": {
             "contains": {
@@ -11530,6 +12279,9 @@
     },
     {
       "if": {
+        "required": [
+          "design_type"
+        ],
         "properties": {
           "design_type": {
             "contains": {
@@ -11551,8 +12303,14 @@
     },
     {
       "if": {
+        "required": [
+          "automation"
+        ],
         "properties": {
           "automation": {
+            "required": [
+              "automation_level"
+            ],
             "properties": {
               "automation_level": {
                 "const": "enhanced"
@@ -11571,8 +12329,14 @@
     },
     {
       "if": {
+        "required": [
+          "automation"
+        ],
         "properties": {
           "automation": {
+            "required": [
+              "automation_level"
+            ],
             "properties": {
               "automation_level": {
                 "const": "full"
@@ -11594,8 +12358,14 @@
     },
     {
       "if": {
+        "required": [
+          "source"
+        ],
         "properties": {
           "source": {
+            "required": [
+              "containsEncryptedPayload"
+            ],
             "properties": {
               "containsEncryptedPayload": {
                 "const": true
@@ -11620,6 +12390,25 @@
     }
   ],
   "additionalProperties": false,
+  "patternProperties": {
+    "^\\$schema$": {
+      "type": "string",
+      "format": "uri"
+    },
+    "^upstream$": {
+      "type": "object"
+    },
+    "^_": {
+      "type": [
+        "string",
+        "object",
+        "array",
+        "boolean",
+        "number",
+        "null"
+      ]
+    }
+  },
   "examples": [
     {
       "name": "spi-controller",
