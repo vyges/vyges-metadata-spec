@@ -10,8 +10,8 @@
     "email": "https://github.com/vyges/vyges-metadata-spec/issues"
   },
   "x-author": "Shivaram Mysore",
-  "x-company": "Vyges Inc.",
-  "x-copyright": "Copyright \u00a9 2025 Vyges Inc. All rights reserved.",
+  "x-company": "TrustStix Inc.",
+  "x-copyright": "Copyright \u00a9 2025 TrustStix Inc. All rights reserved.",
   "x-documentation": "https://github.com/vyges/vyges-metadata-spec",
   "x-support": "https://github.com/vyges/vyges-metadata-spec/issues",
   "x-api-version": "v1",
@@ -1003,7 +1003,7 @@
           "type": "string",
           "description": "Name of the company, organization, or individual maintaining the IP.",
           "examples": [
-            "Vyges Inc.",
+            "Vyges",
             "Acme Semiconductor",
             "OpenHW Group"
           ]
@@ -1042,7 +1042,7 @@
       "additionalProperties": false,
       "examples": [
         {
-          "provider": "Vyges Inc.",
+          "provider": "Vyges",
           "logo": "https://vyges.com/images/logo.svg",
           "website": "https://vyges.com",
           "usage": "Attribution only"

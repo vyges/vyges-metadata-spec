@@ -204,6 +204,6 @@ This specification is licensed under the Apache License 2.0. See [LICENSE](LICEN
 
 ---
 
-**Maintained by**: [Vyges Inc.](https://vyges.com)  
+**Maintained by**: [Vyges](https://vyges.com)  
 **Specification Version**: 1.0.0  
 **Last Updated**: August 2025

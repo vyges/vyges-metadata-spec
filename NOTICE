@@ -1,36 +1,98 @@
 Vyges Metadata Specification
-Copyright 2025 Vyges Inc.
+Copyright 2025 TrustStix Inc.
 
-This product includes software developed by Vyges Inc. (https://vyges.com).
+This product includes software developed by TrustStix Inc. (https://vyges.com).
+
+Vyges™ is a product and operating name of TrustStix Inc., a California
+corporation.
 
 Contributors:
-- Shivaram Mysore (shivaram@vyges.com) - Primary author and maintainer
+- Shivaram Mysore (shivaram@vyges.com) – Primary author and maintainer
 
-This specification defines a standardized JSON Schema format for describing 
-reusable silicon IP blocks, enabling automated discovery, integration, and 
+This specification defines a standardized JSON Schema format for describing
+reusable silicon IP blocks, enabling automated discovery, integration, and
 management of hardware IP across different design flows and platforms.
 
 For more information about this project, visit:
 https://github.com/vyges/vyges-metadata-spec
 
-PATENT NOTICE:
-Vyges Inc. has filed provisional patent applications covering the Vyges 
-ecosystem architecture - the specific methodology for IP discovery, 
-metadata management, template integration, and automated workflow 
-orchestration.
 
-This patent filing does NOT affect:
-- Use of Vyges IP templates (Apache 2.0 licensed)
-- Use of Vyges-generated IP blocks (Apache 2.0 licensed)
-- Creation of your own IP blocks and metadata formats
-- Use of standard EDA tools and workflows
+PATENT NOTICE
 
-This patent filing DOES protect:
-- The specific Vyges architectural methodology
-- The integrated workflow from IP creation to deployment
-- The ecosystem design and integration approach
+TrustStix Inc., operating under the name Vyges ("Vyges"), has filed
+provisional patent applications covering aspects of the Vyges ecosystem
+architecture, including specific methods for metadata-driven IP discovery,
+workflow orchestration, and end-to-end silicon delivery.
+
+Nothing in this NOTICE limits or conditions the rights granted under the
+Apache License, Version 2.0.
+
+In particular, this patent filing does NOT affect:
+- Reading, implementing, or extending the Vyges Metadata Specification
+- Internal or commercial use of software implementing the Specification
+- Creation of independent tools, services, or IP using the Specification
+- Use of Vyges IP templates or Vyges-generated IP blocks distributed under
+  the Apache License, Version 2.0
+
+Vyges retains all rights in its patented methods and systems, to the extent
+not licensed under the Apache License, Version 2.0, as well as in:
+- Its hosted services, registries, and commercial offerings
+- Its trademarks, service marks, and certification programs
 
 For patent licensing inquiries: patents@vyges.com
 
-This NOTICE file is for informational purposes only and does not modify the 
-Apache License 2.0 under which this software is distributed. 
+
+COMMERCIAL SERVICES NOTICE
+
+Vyges operates certain commercial services and products, including but
+not limited to:
+- Public and private IP registries (VyCatalog)
+- IP licensing, packaging, and delivery infrastructure (VySeal)
+- Certified conformance and interoperability programs
+- End-to-end silicon products and systems
+
+Operation of Vyges-branded services, participation in Vyges-operated
+certification or licensing programs, or practice of Vyges-patented methods
+outside the scope of the Apache License may require a separate commercial
+agreement with Vyges.
+
+Independent implementations of the Vyges Metadata Specification — including
+commercial tools and services — are permitted under the Apache License,
+provided they do not:
+- Misrepresent affiliation with Vyges
+- Use Vyges trademarks in a manner likely to cause confusion
+- Claim Vyges certification or conformance without authorization
+
+For commercial inquiries: patents@vyges.com
+
+
+CONFORMANCE AND TRADEMARK NOTICE
+
+"Vyges", "VyCatalog", and related names are trademarks or service marks of
+TrustStix Inc.
+
+Claims of compatibility, conformance, or certification with the Vyges Metadata
+Specification — including descriptors such as "Vyges-compatible",
+"Vyges-conformant", "Vyges-certified", or "certified for VyCatalog
+interoperability" — require authorization from Vyges.
+
+Vyges operates, or may operate, a Conformance Program for the Vyges Metadata
+Specification (the "Vyges Conformance Program"), under which validation tools,
+test suites, and certification rights are made available pursuant to a
+separate written agreement. Certification is granted only upon successful validation against
+the applicable conformance criteria.
+
+Reading the Specification, implementing it internally, or building tools that
+consume Vyges-format metadata does not require participation in the
+Conformance Program. Commercial offerings that publicly claim Vyges
+conformance or certification do.
+
+Nothing in this notice restricts truthful, nominative references to the Vyges
+Metadata Specification where no endorsement, certification, or affiliation is
+implied.
+
+For conformance program inquiries: patents@vyges.com
+
+
+This NOTICE is for informational purposes only and does not modify or replace
+the Apache License, Version 2.0.

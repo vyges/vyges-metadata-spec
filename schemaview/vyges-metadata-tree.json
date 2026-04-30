@@ -1302,7 +1302,7 @@
       ],
       "examples": [
         {
-          "provider": "Vyges Inc.",
+          "provider": "Vyges",
           "logo": "https://vyges.com/images/logo.svg",
           "website": "https://vyges.com",
           "usage": "Attribution only"
@@ -1320,7 +1320,7 @@
           "description": "Name of the company, organization, or individual maintaining the IP.",
           "required": false,
           "examples": [
-            "Vyges Inc.",
+            "Vyges",
             "Acme Semiconductor"
           ]
         },

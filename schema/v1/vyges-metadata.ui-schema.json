@@ -6,8 +6,8 @@
   "description": "UI layout, grouping, and ordering information for Vyges IP metadata forms",
   "version": "1.0.0",
   "x-author": "Shivaram Mysore",
-  "x-company": "Vyges",
-  "x-copyright": "Copyright \u00a9 2025 Vyges. All rights reserved.",
+  "x-company": "TrustStix Inc.",
+  "x-copyright": "Copyright \u00a9 2025 TrustStix Inc. All rights reserved.",
   "type": "object",
   "required": [
     "ui",
