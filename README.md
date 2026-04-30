@@ -1,4 +1,4 @@
-# Vyges Metadata Specification
+# Vyges™ Metadata Specification
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Schema Version](https://img.shields.io/badge/Schema%20Version-1.0.0-green.svg)](https://github.com/vyges/vyges-metadata-spec)
