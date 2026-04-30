@@ -38,12 +38,13 @@
   "scripts": {
     "validate": "npm run validate:schema && npm run validate:examples",
     "validate:schema": "jsonlint schema/v1/vyges-metadata.schema.json",
-    "validate:examples": "for file in examples/*.json; do echo \"Validating $file...\"; ajv validate -s schema/v1/vyges-metadata.schema.json -d \"$file\" --all-errors; done",
+    "validate:examples": "node scripts/validate-examples.js",
     "test": "npm run validate",
     "lint": "jsonlint schema/v1/vyges-metadata.schema.json"
   },
   "devDependencies": {
     "ajv-cli": "^5.0.0",
+    "ajv-formats": "^3.0.1",
     "jsonlint": "^1.6.3"
   },
   "engines": {
