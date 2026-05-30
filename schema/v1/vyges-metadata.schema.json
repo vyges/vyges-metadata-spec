@@ -27,7 +27,6 @@
     "version",
     "license",
     "interfaces",
-    "template",
     "target",
     "design_type",
     "maturity"
@@ -108,10 +107,20 @@
           "email": {
             "type": "string",
             "format": "email",
-            "description": "Contact email address",
+            "deprecated": true,
+            "description": "Contact email address. Deprecated for new entries \u2014 prefer 'url' (a contact page) since exposed addresses attract abuse. Existing entries are not required to migrate.",
             "examples": [
               "shivaram@vyges.com",
               "john.doe@acme.com"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Contact URL (preferred over email). Typically a maintainer's contact form, organisation contact page, or profile.",
+            "examples": [
+              "https://vyges.com/contact",
+              "https://acme.com/contact"
             ]
           },
           "github": {
@@ -131,16 +140,16 @@
       "examples": [
         [
           {
-            "name": "Shivaram Mysore",
-            "email": "shivaram@vyges.com",
-            "github": "smysore"
+            "name": "Vyges",
+            "url": "https://vyges.com/contact",
+            "github": "vyges"
           }
         ],
         [
           {
-            "name": "John Doe",
-            "email": "john.doe@acme.com",
-            "github": "johndoe"
+            "name": "Acme Corp",
+            "url": "https://acme.com/contact",
+            "github": "acme-corp"
           },
           {
             "name": "Jane Smith",
@@ -461,19 +470,22 @@
       "description": "FPGA-specific configuration and requirements",
       "properties": {
         "toolchain": {
-          "type": "string",
-          "enum": [
-            "vivado",
-            "quartus",
-            "yosys",
-            "symbiflow"
-          ],
-          "description": "Primary FPGA toolchain used",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "FPGA toolchain(s) used. An array of toolchain names; capitalization follows author convention (e.g. 'Vivado', 'Quartus', 'Yosys', 'nextpnr').",
           "examples": [
-            "vivado",
-            "quartus",
-            "yosys",
-            "symbiflow"
+            [
+              "Vivado"
+            ],
+            [
+              "Yosys",
+              "nextpnr"
+            ],
+            [
+              "Quartus"
+            ]
           ]
         },
         "board": {
@@ -535,6 +547,22 @@
             "intel",
             "lattice",
             "microchip"
+          ]
+        },
+        "rtl_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "FPGA-target RTL files that replace the default rtl_files list when the SoC target is FPGA. Paths are relative to the IP root (same convention as the top-level rtl_files). When non-empty, build-script generators emit these files verbatim instead of globbing rtl/*.sv \u2014 used to swap a behavioural/ASIC implementation for a Xilinx/Intel/Lattice vendor-primitive variant that shares the same module name and port signature.",
+          "examples": [
+            [
+              "rtl/fpga/xadc_temp_apb_wrapper.sv"
+            ],
+            [
+              "rtl/fpga/xadc_sar_apb_wrapper.sv",
+              "rtl/fpga/xadc_mux.sv"
+            ]
           ]
         }
       },
@@ -1076,11 +1104,36 @@
             "type": "string",
             "enum": [
               "bus",
-              "io",
-              "interrupt",
               "clock",
               "reset",
-              "chiplet"
+              "interrupt",
+              "custom",
+              "control",
+              "signal",
+              "data",
+              "io",
+              "status",
+              "analog",
+              "gpio",
+              "digital",
+              "serial",
+              "audio",
+              "debug",
+              "packet",
+              "jtag",
+              "tieoff",
+              "entropy",
+              "keyvault",
+              "power",
+              "alert",
+              "sideload",
+              "register",
+              "trace",
+              "ground",
+              "chiplet",
+              "lifecycle",
+              "rng",
+              "pcr_vault"
             ],
             "description": "Interface type category",
             "examples": [
@@ -1095,13 +1148,19 @@
             "enum": [
               "input",
               "output",
-              "inout"
+              "inout",
+              "master",
+              "slave",
+              "both",
+              "bidirectional"
             ],
-            "description": "Signal direction from the perspective of this IP: input (driven into IP), output (driven by IP), or inout (bidirectional)",
+            "description": "Interface direction from the perspective of this IP. input/output/inout describe wire-level direction; master/slave describe bus role; both/bidirectional indicate a port that both drives and receives.",
             "examples": [
               "input",
               "output",
-              "inout"
+              "inout",
+              "master",
+              "slave"
             ]
           },
           "protocol": {
@@ -1132,13 +1191,18 @@
             ]
           },
           "width": {
-            "type": "integer",
-            "description": "Interface data bus width in bits (for bus interfaces)",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Interface data bus width in bits (for bus interfaces). Usually an integer; may be a string when the width is parameterized or variable (e.g. a parameter name like 'NUM_PINS' or the literal 'variable').",
             "examples": [
               32,
               64,
               128,
-              8
+              8,
+              "NUM_PINS",
+              "variable"
             ]
           },
           "description": {
@@ -1155,8 +1219,7 @@
             "items": {
               "type": "object",
               "required": [
-                "name",
-                "direction"
+                "name"
               ],
               "properties": {
                 "name": {
@@ -1188,19 +1251,24 @@
                     "clock",
                     "reset",
                     "interrupt",
-                    "status"
+                    "status",
+                    "address",
+                    "bus"
                   ],
-                  "description": "Signal functional category"
+                  "description": "Signal functional category. Optional; omit when the signal does not map cleanly to one of these categories rather than using an RTL datatype name."
                 },
                 "width": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "description": "Signal width in bits (1 for single-bit signals)",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "description": "Signal width in bits (1 for single-bit signals). May be a string when parameterized.",
                   "examples": [
                     1,
                     8,
                     32,
-                    64
+                    64,
+                    "DATA_WIDTH"
                   ]
                 },
                 "description": {
@@ -1348,13 +1416,15 @@
               "enum": [
                 "digital",
                 "analog",
-                "mixed-signal"
+                "mixed-signal",
+                "hard-macro"
               ],
-              "description": "ASIC design type",
+              "description": "ASIC design type. 'hard-macro' indicates a pre-hardened vendor drop-in (gds+lef+lib bundle) \u2014 these IPs do not participate in synthesis at the consumer SoC level; they're placed as opaque rectangles. See top-level 'delivery_pattern' and 'hardened_artifacts' fields for the structured artifact paths.",
               "examples": [
                 "digital",
                 "analog",
-                "mixed-signal"
+                "mixed-signal",
+                "hard-macro"
               ]
             },
             "pdks": {
@@ -1899,6 +1969,21 @@
         }
       ]
     },
+    "delivery_pattern": {
+      "type": "string",
+      "enum": [
+        "rtl_synthesizable",
+        "pre_hardened_macro",
+        "pre_hardened_with_wrapper"
+      ],
+      "default": "rtl_synthesizable",
+      "description": "How this IP integrates into a consumer SoC. 'rtl_synthesizable' (default) \u2014 IP ships RTL that participates in synthesis; the standard case for Vyges-authored and OpenTitan-mirror IPs. 'pre_hardened_macro' \u2014 vendor pre-hardened bundle (gds+lef+lib+optional hdl stub); placed in the consumer wrapper as an opaque rectangle, OpenLane never tries to synthesize or harden it (e.g., ChipFoundry CF_SRAM family, foundry IO cells, vendor analog blocks, customer NDA macros). 'pre_hardened_with_wrapper' \u2014 vendor macro wrapped by Vyges-authored bus adapter (e.g., TL-UL slave) and the adapter wrapper is hardened separately as its own opaque cell. Set 'asic.design_config.flavor' to 'hard-macro' alongside this when delivery_pattern is pre_hardened_*. See companion 'hardened_artifacts' field for the structured artifact manifest.",
+      "examples": [
+        "rtl_synthesizable",
+        "pre_hardened_macro",
+        "pre_hardened_with_wrapper"
+      ]
+    },
     "template": {
       "type": "string",
       "pattern": "^[a-zA-Z0-9._-]+@[0-9]+\\.[0-9]+\\.[0-9]+$",
@@ -2051,6 +2136,163 @@
             ],
             "generated_with": "vyges-cli"
           }
+        }
+      ]
+    },
+    "hardened_artifacts": {
+      "type": "object",
+      "description": "Structured manifest of hardened-macro artifacts. Required when delivery_pattern is 'pre_hardened_macro' or 'pre_hardened_with_wrapper'. The vendor_ips.py step in soc-generator reads this section to know what files to copy into the consumer SoC's install_path and how to wire the OpenLane MACROS entry (paths, lib corners, power pin connections, top power-pin layer for PDN preset selection). Replaces the loose 'hardened_files' path array used by some legacy mirrors.",
+      "required": [
+        "gds",
+        "lef"
+      ],
+      "properties": {
+        "gds": {
+          "type": "string",
+          "description": "Path to the macro GDS file, relative to the IP repo root.",
+          "examples": [
+            "gds/CF_SRAM_1024x32.gds",
+            "gds/sky130_fd_io_topcell.gds"
+          ]
+        },
+        "lef": {
+          "type": "string",
+          "description": "Path to the macro abstract LEF file, relative to the IP repo root.",
+          "examples": [
+            "lef/CF_SRAM_1024x32.lef"
+          ]
+        },
+        "lib_corners": {
+          "type": "object",
+          "description": "Per-corner Liberty timing files. Keys are corner names (typically <process>_<voltage>_<temperature>); values are paths relative to the IP repo root. At least one corner is expected; multi-corner is preferred.",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "examples": [
+            {
+              "tt_180V_25C": "lib/CF_SRAM_1024x32_tt_180V_25C.lib",
+              "ff_195V_100C": "lib/CF_SRAM_1024x32_ff_195V_100C.lib",
+              "ss_160V_100C": "lib/CF_SRAM_1024x32_ss_160V_100C.lib"
+            }
+          ]
+        },
+        "hdl_stub": {
+          "type": "string",
+          "description": "Path to the synthesis blackbox stub (declares ports, no behavior). Consumed during RTL synthesis of consumer SoCs so the macro instance resolves.",
+          "examples": [
+            "hdl/CF_SRAM_1024x32_stub.v"
+          ]
+        },
+        "hdl_full": {
+          "type": "string",
+          "description": "Optional: path to the full behavioral HDL (typical corner). Used for simulation only \u2014 never consumed in synthesis or layout. Omit for IPs that ship simulation models separately or only via encrypted formats.",
+          "examples": [
+            "hdl/CF_SRAM_1024x32.tt_180V_25C.v"
+          ]
+        },
+        "spice": {
+          "type": "string",
+          "description": "Optional: path to LVS-stub SPICE netlist. Consumed by Magic/Netgen LVS in the consumer SoC harden flow.",
+          "examples": [
+            "spice/CF_SRAM_1024x32.spice"
+          ]
+        },
+        "power_pins": {
+          "type": "object",
+          "description": "Macro power/ground pin convention. Used by vendor_ips.py to auto-emit FP_PDN_MACRO_HOOKS / PDN_MACRO_CONNECTIONS in the consumer wrapper config without hardcoding per-vendor knowledge in soc-generator.",
+          "required": [
+            "pwr",
+            "gnd"
+          ],
+          "properties": {
+            "pwr": {
+              "type": "string",
+              "description": "Primary power pin name on the macro (e.g., 'VPWR', 'vccd1', 'vpwra').",
+              "examples": [
+                "VPWR",
+                "vccd1",
+                "vpwra"
+              ]
+            },
+            "gnd": {
+              "type": "string",
+              "description": "Primary ground pin name on the macro.",
+              "examples": [
+                "VGND",
+                "vssd1",
+                "vgnd"
+              ]
+            },
+            "additional": {
+              "type": "array",
+              "description": "Additional power/well-tap pins that need to be connected to wrapper power nets (e.g., bulk taps vpb/vnb, secondary domains vpwrp/vpwrm). Each entry is a pin name; vendor_ips.py emits one MACRO_HOOKS line per additional pin pair.",
+              "items": {
+                "type": "string"
+              },
+              "examples": [
+                [
+                  "vpb",
+                  "vnb",
+                  "vpwrp",
+                  "vpwrm"
+                ]
+              ]
+            }
+          }
+        },
+        "top_power_pin_layer": {
+          "type": "string",
+          "description": "The metal layer on which the macro exposes its power pins. Critical for PDN preset selection: when the consumer wrapper places this macro, vendor_ips.py / soc-generator picks a PDN preset compatible with this layer (e.g., met2 \u2192 met2_met3_low_layer preset). Omit only when the macro doesn't have power pin constraints (rare).",
+          "enum": [
+            "li1",
+            "met1",
+            "met2",
+            "met3",
+            "met4",
+            "met5"
+          ],
+          "examples": [
+            "met2",
+            "met4"
+          ]
+        }
+      },
+      "examples": [
+        {
+          "gds": "gds/CF_SRAM_1024x32.gds",
+          "lef": "lef/CF_SRAM_1024x32.lef",
+          "lib_corners": {
+            "tt_180V_25C": "lib/CF_SRAM_1024x32_tt_180V_25C.lib",
+            "ff_195V_100C": "lib/CF_SRAM_1024x32_ff_195V_100C.lib",
+            "ss_160V_100C": "lib/CF_SRAM_1024x32_ss_160V_100C.lib"
+          },
+          "hdl_stub": "hdl/CF_SRAM_1024x32_stub.v",
+          "hdl_full": "hdl/CF_SRAM_1024x32.tt_180V_25C.v",
+          "power_pins": {
+            "pwr": "VPWR",
+            "gnd": "VGND",
+            "additional": [
+              "vpb",
+              "vnb",
+              "vpwrp",
+              "vpwrm",
+              "vpwra"
+            ]
+          },
+          "top_power_pin_layer": "met2"
+        },
+        {
+          "gds": "gds/sky130_fd_io_topcell.gds",
+          "lef": "lef/sky130_fd_io_topcell.lef",
+          "lib_corners": {
+            "tt_180V_25C": "lib/sky130_fd_io_topcell_tt_180V_25C.lib"
+          },
+          "hdl_stub": "hdl/sky130_fd_io_topcell_stub.v",
+          "power_pins": {
+            "pwr": "vccd1",
+            "gnd": "vssd1"
+          },
+          "top_power_pin_layer": "met4"
         }
       ]
     },
@@ -2641,7 +2883,21 @@
           "digital",
           "analog",
           "mixed-signal",
-          "hard-ip"
+          "hard-ip",
+          "peripheral",
+          "communication",
+          "memory",
+          "io",
+          "audio",
+          "interface",
+          "timer",
+          "pwm",
+          "crypto",
+          "block-cipher",
+          "watchdog",
+          "adc",
+          "openframe",
+          "harness-support"
         ]
       },
       "minItems": 1,
@@ -3034,7 +3290,7 @@
             },
             "sram": {
               "type": "object",
-              "description": "SRAM macro requirements for ASIC hardening. Tells the generator how many banks, what macro, and how address decoding works.",
+              "description": "Legacy nested-macro SRAM topology: the IP holds an internal wrapper module that instantiates SRAM macros. Use 'sram_bus' instead for new IP \u2014 the wrapper-bus pattern keeps macros at the SoC user_project_wrapper level for cleaner hardening.",
               "properties": {
                 "macro": {
                   "type": "string",
@@ -3072,6 +3328,119 @@
                   ]
                 }
               }
+            },
+            "sram_bus": {
+              "type": "object",
+              "description": "Wrapper-bus SRAM topology: the IP exposes an SRAM port bus on its top-level boundary, and the SoC integrator instantiates SRAM banks as siblings at the user_project_wrapper level. This is the preferred pattern \u2014 it keeps the IP free of PDK-specific macro instances and lets the floorplan place macros adjacent to the IP for clean horizontal routing into bank pins. The IP must guard the macro-aware logic with the 'define' compile-time switch and tie the bus off when the switch is undefined.",
+              "properties": {
+                "bank_count": {
+                  "type": "integer",
+                  "description": "Number of SRAM banks the SoC must instantiate as siblings of the IP",
+                  "examples": [
+                    2
+                  ]
+                },
+                "bank_depth": {
+                  "type": "integer",
+                  "description": "Depth of one SRAM bank in words",
+                  "examples": [
+                    1024
+                  ]
+                },
+                "data_width": {
+                  "type": "integer",
+                  "description": "Data width in bits",
+                  "examples": [
+                    32
+                  ]
+                },
+                "macro_hint": {
+                  "type": "string",
+                  "description": "Suggested SRAM macro cell name for the SoC integrator. The IP itself is macro-agnostic \u2014 any macro matching bank_depth x data_width works.",
+                  "examples": [
+                    "CF_SRAM_1024x32",
+                    "sky130_sram_2kbyte_1rw1r_32x512_8"
+                  ]
+                },
+                "define": {
+                  "type": "string",
+                  "description": "Verilog compile-time define that activates the wrapper-bus mode. Must be passed to the synthesizer via VERILOG_DEFINES when targeting ASIC.",
+                  "examples": [
+                    "FFT_USE_SRAM_MACRO"
+                  ]
+                },
+                "pin_cluster_edge": {
+                  "type": "string",
+                  "enum": [
+                    "N",
+                    "S",
+                    "E",
+                    "W"
+                  ],
+                  "description": "Floorplan edge on which the SRAM bus pins should cluster. The SoC integrator places SRAM banks adjacent to this edge.",
+                  "default": "N"
+                },
+                "bus_ports": {
+                  "type": "array",
+                  "description": "Per-port descriptors for the SRAM bus exposed at the IP top. The SoC generator uses this list to wire the IP to sibling SRAM banks.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Port name on the IP top"
+                      },
+                      "direction": {
+                        "type": "string",
+                        "enum": [
+                          "input",
+                          "output"
+                        ],
+                        "description": "Port direction (from the IP's perspective)"
+                      },
+                      "width": {
+                        "type": "integer",
+                        "description": "Port width in bits",
+                        "default": 1
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "clk",
+                          "addr",
+                          "wdata",
+                          "ben",
+                          "rwb",
+                          "en",
+                          "rdata",
+                          "other"
+                        ],
+                        "description": "Canonical bus role; 'rdata' may have a per-bank index encoded in the name (e.g., sram_rdata0_i, sram_rdata1_i)"
+                      },
+                      "bank": {
+                        "type": "integer",
+                        "description": "Bank index this port belongs to (only meaningful for per-bank rdata ports). Omit for shared ports.",
+                        "examples": [
+                          0,
+                          1
+                        ]
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "direction",
+                      "width"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "bank_count",
+                "bank_depth",
+                "data_width",
+                "define",
+                "bus_ports"
+              ]
             }
           }
         }
@@ -3218,12 +3587,65 @@
                 ]
               }
             ],
-            "sram": {
-              "macro": "sky130_sram_2kbyte_1rw1r_32x512_8",
-              "depth_from": "2 * (1 << config.FFT_MAX_LENGTH_LOG2)",
-              "bank_depth": 512,
+            "sram_bus": {
+              "bank_count": 2,
+              "bank_depth": 1024,
               "data_width": 32,
-              "wrapper_module": "fft_data_sram"
+              "macro_hint": "CF_SRAM_1024x32",
+              "define": "FFT_USE_SRAM_MACRO",
+              "pin_cluster_edge": "N",
+              "bus_ports": [
+                {
+                  "name": "sram_clk_o",
+                  "direction": "output",
+                  "width": 1,
+                  "role": "clk"
+                },
+                {
+                  "name": "sram_rwb_o",
+                  "direction": "output",
+                  "width": 1,
+                  "role": "rwb"
+                },
+                {
+                  "name": "sram_en_o",
+                  "direction": "output",
+                  "width": 2,
+                  "role": "en"
+                },
+                {
+                  "name": "sram_addr_o",
+                  "direction": "output",
+                  "width": 10,
+                  "role": "addr"
+                },
+                {
+                  "name": "sram_wdata_o",
+                  "direction": "output",
+                  "width": 32,
+                  "role": "wdata"
+                },
+                {
+                  "name": "sram_ben_o",
+                  "direction": "output",
+                  "width": 32,
+                  "role": "ben"
+                },
+                {
+                  "name": "sram_rdata0_i",
+                  "direction": "input",
+                  "width": 32,
+                  "role": "rdata",
+                  "bank": 0
+                },
+                {
+                  "name": "sram_rdata1_i",
+                  "direction": "input",
+                  "width": 32,
+                  "role": "rdata",
+                  "bank": 1
+                }
+              ]
             }
           }
         }
@@ -3235,10 +3657,25 @@
       "items": {
         "type": "object",
         "required": [
-          "name",
-          "version"
+          "name"
         ],
         "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the dependent IP or library (flat form). Matches the flat dependencies[].name used across the corpus alongside the nested dependency_info form."
+          },
+          "version": {
+            "type": "string",
+            "description": "Required version range, when known (flat form, optional)."
+          },
+          "type": {
+            "type": "string",
+            "description": "Dependency kind (flat form), e.g. ip, library, tool, package."
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of the dependency (flat form)."
+          },
           "dependency_info": {
             "type": "object",
             "description": "Basic dependency information and requirements",
@@ -7223,6 +7660,33 @@
           "type"
         ],
         "properties": {
+          "name": {
+            "type": "string",
+            "description": "Parameter name as used in the RTL (flat form). Matches the existing flat-form parameters[].name used by validate_instance_metadata.py.",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "int",
+              "bool",
+              "string",
+              "real",
+              "bit",
+              "enum",
+              "float",
+              "int unsigned",
+              "logic"
+            ],
+            "description": "Parameter data type (flat form). Covers the abstract types (int, bool, string, real, float, enum) plus the common SystemVerilog scalar types used in RTL parameter declarations (bit, logic, 'int unsigned'). The richer nested parameter_info.type entry below carries the same enum and remains available for authors who want to use the nested structure."
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description (flat form)."
+          },
+          "default": {
+            "description": "Default value (flat form). Type matches 'type'."
+          },
           "parameter_info": {
             "type": "object",
             "description": "Basic parameter information and type",
@@ -7243,7 +7707,12 @@
                   "int",
                   "bool",
                   "string",
-                  "real"
+                  "real",
+                  "bit",
+                  "enum",
+                  "float",
+                  "int unsigned",
+                  "logic"
                 ],
                 "description": "Parameter data type",
                 "examples": [
@@ -9483,8 +9952,11 @@
       ]
     },
     "categories": {
-      "type": "array",
-      "description": "Catalog categories and subcategories for IP classification",
+      "type": [
+        "array",
+        "object"
+      ],
+      "description": "Catalog categories and subcategories for IP classification. Canonical form is an array of {main_category, sub_category} objects (validated below when an array is supplied). A free-form object form ({primary, secondary, tags}) is also accepted for authors who classify with a primary/secondary taxonomy.",
       "$defs": {
         "categories": {
           "Analog & Mixed-Signal": {
@@ -9705,6 +10177,63 @@
         ]
       ]
     },
+    "registers": {
+      "type": "array",
+      "description": "Software-visible register map for the IP. Each entry declares one memory-mapped register with its byte offset relative to the IP's base address, access mode, and a human-readable description. Consumed by soc-generator/firmware_header_generator.py to emit C/ASM/Rust header defines so firmware can reach every register without manually copying offsets from RTL. Optional; IPs without software-visible registers (e.g. base libraries, crossbars, protocol adapters) omit this field.",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "offset",
+          "access",
+          "description"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Register name in SCREAMING_SNAKE_CASE. Matches the identifier used in reg_pkg.sv (OpenTitan convention) or the case-decode symbol (Vyges-lite convention). Emitted verbatim as the suffix in {INSTANCE_PREFIX}_{NAME} firmware defines.",
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "examples": [
+              "CTRL",
+              "STATUS",
+              "INTR_ENABLE",
+              "FFT_LENGTH"
+            ]
+          },
+          "offset": {
+            "type": "string",
+            "description": "Byte offset from the IP instance base address, as a 0x-prefixed hex literal. Emitted verbatim into generated firmware defines as {PREFIX}_{NAME} = ({PREFIX}_BASE + <offset>U).",
+            "pattern": "^0x[0-9A-Fa-f]+$",
+            "examples": [
+              "0x00",
+              "0x04",
+              "0x200",
+              "0x0020"
+            ]
+          },
+          "access": {
+            "type": "string",
+            "description": "Software access mode for the register. RW = read/write; RO = read-only (hardware-updated); WO = write-only (typically a FIFO push or action trigger).",
+            "enum": [
+              "RW",
+              "RO",
+              "WO"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "Short human-readable summary of the register's purpose and relevant bitfields. Appears as an inline comment in the generated firmware header so driver authors do not need to cross-reference RTL for simple access patterns.",
+            "examples": [
+              "Interrupt enable",
+              "FIFO control",
+              "Control (NCO + TX/RX enable)",
+              "enable[0], continuous_mode[1]"
+            ]
+          }
+        }
+      }
+    },
     "verification": {
       "type": "object",
       "description": "Legacy verification metadata (use 'test' and 'flows' sections instead)",
@@ -9851,19 +10380,27 @@
       "description": "Testing and verification status information",
       "properties": {
         "coverage": {
-          "type": "boolean",
-          "description": "Whether code coverage is enabled for this IP",
+          "type": [
+            "boolean",
+            "string",
+            "object"
+          ],
+          "description": "Code-coverage information. Accepts a boolean (coverage enabled?), a short string summary (e.g. a coverage percentage or qualitative note), or an object with structured coverage figures.",
           "examples": [
             true,
-            false
+            false,
+            "functional"
           ]
         },
         "testbenches": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": [
+              "string",
+              "object"
+            ]
           },
-          "description": "List of testbench frameworks used (e.g., cocotb, UVM, SystemVerilog, C++/Verilator, Formal)",
+          "description": "List of testbenches. Each entry is either a framework name string (e.g. cocotb, UVM, SystemVerilog) or an object describing a specific testbench (name, path, framework, simulators, description).",
           "examples": [
             [
               "cocotb"
@@ -9918,9 +10455,12 @@
             "partial",
             "untested",
             "verified",
-            "pending"
+            "pending",
+            "upstream_passing",
+            "vendor_characterized",
+            "skeleton"
           ],
-          "description": "Overall test status",
+          "description": "Overall test status. 'upstream_passing' indicates the IP relies on the upstream project's passing test suite; 'vendor_characterized' indicates vendor-supplied characterization; 'skeleton' indicates a scaffolded but not-yet-populated testbench.",
           "examples": [
             "passing",
             "partial",
@@ -10160,7 +10700,11 @@
         "alpha",
         "beta",
         "production",
-        "deprecated"
+        "deprecated",
+        "rtl_verified",
+        "stable",
+        "experimental",
+        "development"
       ],
       "description": "Indicates readiness or lifecycle state of the IP. 'draft' = initial creation, 'imported' = vendored/upstream IP not yet fully characterized.",
       "examples": [
@@ -12174,148 +12718,6 @@
     {
       "if": {
         "required": [
-          "target"
-        ],
-        "properties": {
-          "target": {
-            "contains": {
-              "const": "fpga"
-            }
-          }
-        }
-      },
-      "then": {
-        "required": [
-          "fpga"
-        ]
-      }
-    },
-    {
-      "if": {
-        "required": [
-          "target"
-        ],
-        "properties": {
-          "target": {
-            "contains": {
-              "const": "asic"
-            }
-          }
-        }
-      },
-      "then": {
-        "required": [
-          "asic"
-        ]
-      }
-    },
-    {
-      "if": {
-        "required": [
-          "design_type"
-        ],
-        "properties": {
-          "design_type": {
-            "contains": {
-              "const": "analog"
-            }
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "asic": {
-            "required": [
-              "flavor",
-              "pdks",
-              "tools",
-              "analog_models",
-              "symbol_views",
-              "layout_views"
-            ]
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "required": [
-          "design_type"
-        ],
-        "properties": {
-          "design_type": {
-            "contains": {
-              "const": "digital"
-            }
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "asic": {
-            "required": [
-              "flavor",
-              "pdks",
-              "synthesis_tool"
-            ]
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "required": [
-          "design_type"
-        ],
-        "properties": {
-          "design_type": {
-            "contains": {
-              "const": "mixed-signal"
-            }
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "asic": {
-            "required": [
-              "flavor",
-              "pdks",
-              "digital_partition",
-              "analog_partition",
-              "co_simulation"
-            ]
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "required": [
-          "design_type"
-        ],
-        "properties": {
-          "design_type": {
-            "contains": {
-              "const": "hard-ip"
-            }
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "fpga": {
-            "required": [
-              "hard_ip",
-              "vendor"
-            ]
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "required": [
           "automation"
         ],
         "properties": {
@@ -12408,6 +12810,9 @@
       "format": "uri"
     },
     "^upstream$": {
+      "type": "object"
+    },
+    "^(architecture|artifacts|trust)$": {
       "type": "object"
     },
     "^_": {

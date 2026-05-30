@@ -29,7 +29,7 @@
     "automation_level": "basic"
   },
   "fpga": {
-    "toolchain": "vivado",
+    "toolchain": ["Vivado"],
     "board": "generic-fpga-board"
   }
 } 

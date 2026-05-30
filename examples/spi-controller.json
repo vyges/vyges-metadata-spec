@@ -57,7 +57,7 @@
     "clock_freq_mhz": 100
   },
   "fpga": {
-    "toolchain": "vivado",
+    "toolchain": ["Vivado"],
     "board": "arty-a7",
     "cfu_playground_compatible": true,
     "constraints": ["fpga/constraints/arty.xdc"]
