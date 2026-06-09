@@ -1064,9 +1064,6 @@
           ]
         }
       },
-      "required": [
-        "provider"
-      ],
       "additionalProperties": false,
       "examples": [
         {
@@ -4818,6 +4815,19 @@
         "Proprietary"
       ]
     },
+    "rtl_files": {
+      "type": "array",
+      "description": "RTL source files for this IP, as paths relative to the IP root.",
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        [
+          "rtl/tc_clk.sv",
+          "rtl/tc_pwr.sv"
+        ]
+      ]
+    },
     "flows": {
       "type": "object",
       "description": "Design flow verification status for different tools and processes",
@@ -7650,6 +7660,13 @@
         "openhw/cva6"
       ]
     },
+    "owner": {
+      "type": "string",
+      "description": "Organization or individual that owns this IP (the company or author).",
+      "examples": [
+        "Vyges Inc."
+      ]
+    },
     "parameters": {
       "type": "array",
       "description": "Parameterizable configuration fields",
@@ -9951,6 +9968,16 @@
         "2024-01-15T16:20:00Z"
       ]
     },
+    "top_module": {
+      "type": "string",
+      "description": "Name of the top-level RTL module a consumer instantiates for this IP. Ground-truthed against the RTL by `vyges metadata reconcile`; emitted by `vyges metadata create`.",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+      "examples": [
+        "gpio_lite",
+        "fft_top",
+        "uart_core"
+      ]
+    },
     "categories": {
       "type": [
         "array",
@@ -10214,11 +10241,19 @@
           },
           "access": {
             "type": "string",
-            "description": "Software access mode for the register. RW = read/write; RO = read-only (hardware-updated); WO = write-only (typically a FIFO push or action trigger).",
+            "description": "Software access mode for the register. RW = read/write; RO = read-only (hardware-updated); WO = write-only (FIFO push / action trigger); W1C/W1S = write-1-to-clear/set; RC/RS = read-to-clear/set; WC/WS = write-to-clear/set; RW1C/RW1S = read/write with write-1-to-clear/set.",
             "enum": [
               "RW",
               "RO",
-              "WO"
+              "WO",
+              "W1C",
+              "W1S",
+              "RC",
+              "RS",
+              "WC",
+              "WS",
+              "RW1C",
+              "RW1S"
             ]
           },
           "description": {
@@ -10373,6 +10408,16 @@
             "status": "passed"
           }
         }
+      ]
+    },
+    "category": {
+      "type": "string",
+      "description": "Primary catalog category for this IP (single value). See also `categories` for the structured multi-category form.",
+      "examples": [
+        "peripheral",
+        "accelerator",
+        "infrastructure",
+        "analog"
       ]
     },
     "test": {
