@@ -6,8 +6,7 @@
   "x-version": "1.0.0",
   "contact": {
     "name": "Vyges Community",
-    "url": "https://github.com/vyges/vyges-metadata-spec",
-    "email": "https://github.com/vyges/vyges-metadata-spec/issues"
+    "url": "https://github.com/vyges/vyges-metadata-spec"
   },
   "x-author": "Shivaram Mysore",
   "x-company": "TrustStix Inc.",
@@ -1212,7 +1211,7 @@
           },
           "signals": {
             "type": "array",
-            "description": "List of individual signals in this interface",
+            "description": "Signals belonging to THIS interface only. For a bus interface list its protocol/data signals (e.g. tl_i/tl_o for TL-UL, psel/penable/paddr/\u2026 for APB); clock and reset are modeled as separate interfaces of type 'clock' and 'reset' and must NOT be duplicated into a bus interface's signals.",
             "items": {
               "type": "object",
               "required": [
@@ -1305,11 +1304,10 @@
       "examples": [
         [
           {
-            "type": "bus",
+            "type": "clock",
             "direction": "input",
-            "protocol": "TL-UL",
-            "width": 32,
-            "description": "TileLink Uncached Lightweight (TL-UL) slave port \u2014 connects to TL-UL crossbar device port",
+            "protocol": "standard",
+            "description": "System clock \u2014 drives all synchronous logic, including the bus interfaces below",
             "signals": [
               {
                 "name": "clk_i",
@@ -1317,7 +1315,15 @@
                 "type": "clock",
                 "width": 1,
                 "description": "System clock"
-              },
+              }
+            ]
+          },
+          {
+            "type": "reset",
+            "direction": "input",
+            "protocol": "active-low",
+            "description": "Active-low synchronous reset",
+            "signals": [
               {
                 "name": "rst_ni",
                 "direction": "input",
@@ -1325,7 +1331,16 @@
                 "active_level": "low",
                 "width": 1,
                 "description": "Active-low synchronous reset"
-              },
+              }
+            ]
+          },
+          {
+            "type": "bus",
+            "direction": "input",
+            "protocol": "TL-UL",
+            "width": 32,
+            "description": "TileLink Uncached Lightweight (TL-UL) slave port \u2014 connects to TL-UL crossbar device port. Clock and reset are the separate interfaces above, not signals here.",
+            "signals": [
               {
                 "name": "tl_a_valid_i",
                 "direction": "input",
@@ -2295,7 +2310,7 @@
     },
     "sourceFiles": {
       "type": "array",
-      "description": "List of source RTL files constituting the IP block.",
+      "description": "List of source files constituting the IP block. Each entry is FLAT: path/type/owner/version/license identify the file, `block` groups it logically, and `vendor` records origin. (Earlier revisions declared file_metadata/organization/vendor_info wrapper objects while `required` named the flat keys, so neither shape validated cleanly; the flat form is what the schema requires and what IP in the wild uses.)",
       "items": {
         "type": "object",
         "required": [
@@ -2306,42 +2321,51 @@
           "license"
         ],
         "properties": {
-          "file_metadata": {
-            "type": "object",
-            "description": "Basic file information and metadata",
-            "properties": {
-              "path": {
-                "type": "string",
-                "description": "Relative path to the file."
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "rtl",
-                  "testbench",
-                  "constraint",
-                  "doc",
-                  "header"
-                ],
-                "description": "File category."
-              },
-              "owner": {
-                "type": "string",
-                "description": "Maintainer or owner of this file."
-              },
-              "version": {
-                "type": "string",
-                "description": "Version or commit identifier of the file."
-              },
-              "license": {
-                "type": "string",
-                "description": "SPDX license identifier for this file."
-              }
-            }
+          "path": {
+            "type": "string",
+            "description": "Relative path to the file."
           },
-          "vendor_info": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "rtl",
+              "testbench",
+              "constraint",
+              "doc",
+              "header"
+            ],
+            "description": "File category."
+          },
+          "owner": {
+            "type": "string",
+            "description": "Maintainer or owner of this file."
+          },
+          "version": {
+            "type": "string",
+            "description": "Version or commit identifier of the file."
+          },
+          "license": {
+            "type": "string",
+            "description": "SPDX license identifier for this file."
+          },
+          "description": {
+            "type": "string",
+            "description": "Short description of what this file contains or does."
+          },
+          "block": {
+            "type": "string",
+            "description": "Logical block name or namespace this file belongs to. Used for organization and to avoid naming conflicts between different functional blocks within the same IP.",
+            "examples": [
+              "spi",
+              "uart",
+              "memory",
+              "clock",
+              "reset"
+            ]
+          },
+          "vendor": {
             "type": "object",
-            "description": "Vendor information for the IP",
+            "description": "Vendor or origin information for this file.",
             "properties": {
               "name": {
                 "type": "string",
@@ -2415,25 +2439,9 @@
             "required": [
               "name"
             ]
-          },
-          "organization": {
-            "type": "object",
-            "description": "File organization and logical grouping",
-            "properties": {
-              "block": {
-                "type": "string",
-                "description": "Logical block name or namespace this file belongs to. Used for organization and to avoid naming conflicts between different functional blocks within the same IP.",
-                "examples": [
-                  "spi",
-                  "uart",
-                  "memory",
-                  "clock",
-                  "reset"
-                ]
-              }
-            }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "examples": [
         {
@@ -2913,6 +2921,61 @@
           "analog"
         ]
       ]
+    },
+    "vyges_overlays": {
+      "type": "array",
+      "description": "Vyges-authored overrides that MASK a file in the upstream mirror. Each entry is a file under vyges-overlays/ whose same-name counterpart under rtl/ (or another upstream-imported path) is replaced at vendor time. Used for stubs (upstream files with deps we don't carry) and for build-compatibility fixes (e.g. Verilator/Vivado tool quirks). Upstream sync policy: pulls proceed, but any upstream change to a path in 'replaces' is flagged for human review because upstream may have fixed the original issue natively, making the overlay obsolete.",
+      "examples": [
+        [
+          {
+            "path": "vyges-overlays/uart_reg_top.sv",
+            "replaces": "rtl/uart_reg_top.sv",
+            "reason": "Vivado 2025.2 XOR-reduce incompat on racl_policies_i struct"
+          }
+        ]
+      ],
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "replaces"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Repo-relative path to the overlay file. Must begin with 'vyges-overlays/'.",
+            "pattern": "^vyges-overlays/",
+            "examples": [
+              "vyges-overlays/uart_reg_top.sv",
+              "vyges-overlays/spi_host_reg_top.sv"
+            ]
+          },
+          "replaces": {
+            "type": "string",
+            "description": "Repo-relative path of the upstream file this overlay masks at vendor time.",
+            "examples": [
+              "rtl/uart_reg_top.sv",
+              "rtl/spi_host_reg_top.sv"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Short explanation of why this overlay exists. Must be specific enough that a reviewer comparing against a fresh upstream pull can decide whether the overlay is still needed."
+          },
+          "kind": {
+            "type": "string",
+            "description": "Overlay category for reporting and triage.",
+            "enum": [
+              "stub",
+              "fixup",
+              "vyges-addition-shim",
+              "other"
+            ],
+            "default": "fixup"
+          }
+        }
+      }
     },
     "dft": {
       "type": "object",
@@ -3672,6 +3735,49 @@
           "description": {
             "type": "string",
             "description": "Human-readable description of the dependency (flat form)."
+          },
+          "interface": {
+            "type": "string",
+            "description": "Name of THIS IP's interfaces[].name that this dependency satisfies or binds to (e.g. the bus host this IP attaches to). Lets the SoC generator auto-wire the dependency instead of name-matching. Flat form, optional."
+          },
+          "scope": {
+            "type": "array",
+            "description": "Build phases in which this dependency is required. Absent means 'rtl' (always needed). A sim-only dependency is excluded from synthesis/hardening filelists. Flat form, optional.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "rtl",
+                "sim",
+                "synth",
+                "firmware"
+              ]
+            },
+            "examples": [
+              [
+                "rtl"
+              ],
+              [
+                "sim"
+              ],
+              [
+                "rtl",
+                "synth"
+              ]
+            ]
+          },
+          "fileset": {
+            "type": "string",
+            "description": "Which named fileset of the dependency to consume (see the top-level filesets property). Defaults to the dependency's 'rtl' fileset. Flat form, optional.",
+            "default": "rtl"
+          },
+          "link": {
+            "type": "string",
+            "enum": [
+              "compile",
+              "include",
+              "integrate"
+            ],
+            "description": "How the dependency is incorporated. 'compile' = merged into this IP's compile unit (e.g. a cell library like common_cells); 'include' = headers/incdir only; 'integrate' = instantiated as a submodule. Fetch location is recorded separately under source_management. Flat form, optional."
           },
           "dependency_info": {
             "type": "object",
@@ -5005,7 +5111,7 @@
     },
     "chiplet": {
       "type": "object",
-      "description": "Comprehensive chiplet metadata specification with CDXML/BoW/AIB/UCIe compliance, security lifecycle management, discovery composition, test validation, and advanced packaging specifications",
+      "description": "Vyges chiplet metadata. `chipletIntegration` is the OCP-spec-compliant surface (phy, link, management, packaging, compliance, migrationPath) and is the preferred place for spec fields. This `chiplet` section predates that alignment and remains the home for Vyges extensions beyond the spec \u2014 notably `chiplet.extensions.*` \u2014 plus security_lifecycle, discovery_composition, test_validation, compatibility_rules and composition_engine, which have no counterpart in the spec surface. Comprehensive chiplet metadata specification with CDXML/BoW/AIB/UCIe compliance, security lifecycle management, discovery composition, test validation, and advanced packaging specifications",
       "$defs": {
         "voltage_spec": {
           "type": "object",
@@ -5611,9 +5717,13 @@
               "enum": [
                 "organic_substrate",
                 "2.5D_interposer",
-                "fanout"
+                "fanout",
+                "3D_stacked",
+                "2.5d_interposer",
+                "3d_stacked",
+                "fan_out"
               ],
-              "description": "Assembly type"
+              "description": "Assembly type. Values are the OCP-aligned vocabulary shared with `chipletIntegration.packaging.assembly`; the lowercase/underscore spellings (`3d_stacked`, `2.5d_interposer`, `fan_out`) are accepted aliases retained so existing metadata stays valid, and should not be used in new metadata."
             },
             "substrate_stackup": {
               "type": "string",
@@ -6198,7 +6308,7 @@
       "properties": {
         "compliance": {
           "type": "object",
-          "description": "Standards compliance foundation (CDXML/BoW) - required for interoperability",
+          "description": "Legacy chiplet compliance (use 'chipletIntegration.compliance' instead \u2014 it carries the OCP/CDXML-aligned fields). Standards compliance foundation (CDXML/BoW) - required for interoperability",
           "required": [
             "cdxml",
             "bow_specification"
@@ -6576,12 +6686,15 @@
                 "package_type": {
                   "type": "string",
                   "enum": [
+                    "organic_substrate",
+                    "2.5D_interposer",
+                    "fanout",
+                    "3D_stacked",
                     "2.5d_interposer",
                     "3d_stacked",
-                    "organic_substrate",
                     "fan_out"
                   ],
-                  "description": "Package type for chiplet integration"
+                  "description": "Package type for chiplet integration. Values are the OCP-aligned vocabulary shared with `chipletIntegration.packaging.assembly`; the lowercase/underscore spellings (`3d_stacked`, `2.5d_interposer`, `fan_out`) are accepted aliases retained so existing metadata stays valid, and should not be used in new metadata."
                 },
                 "supply_chain_tracking": {
                   "type": "boolean",
@@ -6664,16 +6777,20 @@
         },
         "packaging": {
           "type": "object",
-          "description": "Packaging and assembly specifications",
+          "description": "Legacy chiplet packaging (use 'chipletIntegration.packaging' instead \u2014 it carries the OCP-aligned fields). Packaging and assembly specifications",
           "properties": {
             "assembly": {
               "type": "string",
               "enum": [
                 "organic_substrate",
                 "2.5D_interposer",
-                "fanout"
+                "fanout",
+                "3D_stacked",
+                "2.5d_interposer",
+                "3d_stacked",
+                "fan_out"
               ],
-              "description": "Assembly type"
+              "description": "Assembly type. Values are the OCP-aligned vocabulary shared with `chipletIntegration.packaging.assembly`; the lowercase/underscore spellings (`3d_stacked`, `2.5d_interposer`, `fan_out`) are accepted aliases retained so existing metadata stays valid, and should not be used in new metadata."
             },
             "substrate_stackup": {
               "type": "string",
@@ -7767,6 +7884,7 @@
                 "type": "object",
                 "properties": {
                   "min": {
+                    "type": "number",
                     "description": "Minimum allowed value",
                     "examples": [
                       2,
@@ -7775,6 +7893,7 @@
                     ]
                   },
                   "max": {
+                    "type": "number",
                     "description": "Maximum allowed value",
                     "examples": [
                       256,
@@ -7783,6 +7902,7 @@
                     ]
                   },
                   "step": {
+                    "type": "number",
                     "description": "Step size for numeric parameters",
                     "examples": [
                       1,
@@ -9185,9 +9305,12 @@
                 "organic_substrate",
                 "2.5D_interposer",
                 "fanout",
-                "3D_stacked"
+                "3D_stacked",
+                "2.5d_interposer",
+                "3d_stacked",
+                "fan_out"
               ],
-              "description": "Assembly type for chiplet integration",
+              "description": "Assembly type for chiplet integration. Values are the OCP-aligned vocabulary shared with `chipletIntegration.packaging.assembly`; the lowercase/underscore spellings (`3d_stacked`, `2.5d_interposer`, `fan_out`) are accepted aliases retained so existing metadata stays valid, and should not be used in new metadata.",
               "examples": [
                 "2.5D_interposer",
                 "organic_substrate"
@@ -10267,7 +10390,43 @@
             ]
           }
         }
-      }
+      },
+      "examples": [
+        [
+          {
+            "name": "CTRL",
+            "offset": "0x00",
+            "access": "RW",
+            "description": "Control register (enable[0], continuous_mode[1])"
+          },
+          {
+            "name": "STATUS",
+            "offset": "0x04",
+            "access": "RO",
+            "description": "Status register (busy[0], done[1], error[2])"
+          },
+          {
+            "name": "INTR_STATE",
+            "offset": "0x08",
+            "access": "RW1C",
+            "description": "Interrupt state; write 1 to clear a pending interrupt"
+          }
+        ],
+        [
+          {
+            "name": "FFT_LENGTH",
+            "offset": "0x00",
+            "access": "RW",
+            "description": "Transform length in samples (power of two)"
+          },
+          {
+            "name": "DATA_FIFO",
+            "offset": "0x10",
+            "access": "WO",
+            "description": "Input sample FIFO; each write pushes one sample"
+          }
+        ]
+      ]
     },
     "verification": {
       "type": "object",
@@ -10602,6 +10761,232 @@
         }
       ]
     },
+    "filesets": {
+      "type": "object",
+      "description": "Named, ordered, tool-scoped groupings of source files for build/flow consumption (RTL elaboration, simulation, synthesis, hardening, FPGA). Additive over rtl_files and sourceFiles: filesets[].files reference paths (the same paths that may also appear in rtl_files/sourceFiles, which remain the per-file provenance record). When this property is absent, consuming tools synthesize a default fileset set from rtl_files (as the 'rtl' fileset) and sourceFiles (by file type). Keys are fileset names; the names 'rtl', 'sim', 'synth', 'constraint', 'fpga', 'gate', 'formal', and 'firmware' are reserved/canonical, but custom names are allowed.",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "type",
+          "files"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "rtl",
+              "sim",
+              "synth",
+              "constraint",
+              "fpga",
+              "gate",
+              "formal",
+              "firmware"
+            ],
+            "description": "Role of this fileset, which determines which flow consumes it. 'rtl' = synthesizable design sources; 'sim' = testbench/verification sources; 'synth' = synthesis-only overrides/wrappers; 'constraint' = timing/physical constraints (SDC/XDC); 'fpga' = FPGA-only sources; 'gate' = post-synthesis gate-level netlist; 'formal' = formal-verification sources; 'firmware' = C/assembly/linker sources built for an embedded core."
+          },
+          "files": {
+            "type": "array",
+            "description": "Source file paths relative to the IP root. Order is significant ONLY for non-conforming sources (or package/header files that must precede their users). When the IP follows the self-compilable conventions (rtl_quality.one_module_per_file + self_contained_includes + header_guards), order is NOT required: consumers should resolve via the library/include search path (see libdirs/libext/incdirs) per Snyder's 'Ten Edits' so only needed cells are loaded. Paths should also appear in rtl_files/sourceFiles where per-file provenance (owner/version/license) is recorded.",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              [
+                "rtl/uart_pkg.sv",
+                "rtl/uart_fifo.sv",
+                "rtl/uart_core.sv",
+                "rtl/uart_top.sv"
+              ]
+            ]
+          },
+          "libdirs": {
+            "type": "array",
+            "description": "Verilog library search directories (relative to IP root) from which the compiler auto-loads a cell only when an instantiated module needs it. Maps to -y / -v + +libext+. The library-search model (Snyder edit 2.2) lets a consumer avoid any hand-maintained ordered input.vc, but requires one_module_per_file with filename==module.",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              [
+                "rtl"
+              ],
+              [
+                "rtl/cells"
+              ]
+            ]
+          },
+          "libext": {
+            "type": "array",
+            "description": "File extensions searched within libdirs (maps to +libext+). Defaults to the language's conventional extensions when omitted.",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              [
+                ".sv",
+                ".v"
+              ]
+            ]
+          },
+          "incdirs": {
+            "type": "array",
+            "description": "Include directories for this fileset, relative to the IP root. Passed to tools as +incdir+ (Verilog) or -I. Files MUST `include their headers by BASENAME only (no directory in the `include path) per Snyder edit 2.6, so the consumer selects the directory via incdirs. NOTE: include basenames are part of the cross-IP collision surface (see 'provides').",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              [
+                "rtl"
+              ],
+              [
+                "rtl/include",
+                "rtl"
+              ]
+            ]
+          },
+          "provides": {
+            "type": "array",
+            "description": "Public names this fileset EXPORTS into the global namespace: module/cell names, package names, global parameters/localparams, and any header basenames shipped on the include path. Used by the SoC generator to detect cross-IP namespace COLLISIONS when composing the dependency graph. NOTE: this captures the RTL namespace only; the SoC-wide uniqueness check ALSO unions the dedicated arrays \u2014 register symbols from registers[] (and the firmware #define macros generated from them), configurable parameters[], and `define macros from defines[]. Register and parameter definitions in particular MUST be unique across the full set of IPs in the SoC (the primary Snyder 'Ten Edits' takeaway). This is a DECLARED/cached surface: for first-party IP it may be authored; for THIRD-PARTY IP (where rtl_quality flags are typically false and cannot be trusted) the authoritative surface is derived by SCANNING the RTL, and any declared value here is only a hint. Names should carry the IP block prefix (rtl_quality.module_prefixed / defines_prefixed) so collisions cannot occur; when they do not, a Vyges prefixing overlay (vyges_overlays) is the remediation.",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              [
+                "uart_pkg",
+                "uart_fifo",
+                "uart_core",
+                "uart_top"
+              ]
+            ]
+          },
+          "defines": {
+            "type": "object",
+            "description": "Preprocessor `define macros active when compiling this fileset, as name -> value (use the empty string for parameterless flag defines). Keys MUST carry the IP block prefix per Vyges naming conventions (namespace isolation), consistent with the top-level defines[] array.",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            },
+            "examples": [
+              {
+                "UART_FIFO_DEPTH": 16,
+                "UART_SYNTH": ""
+              }
+            ]
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "systemverilog-2017",
+              "systemverilog-2012",
+              "verilog-2005",
+              "vhdl-2008",
+              "vhdl-1993"
+            ],
+            "description": "Source language and standard for this fileset. Enables a tool driver to select the correct compile flags."
+          },
+          "top": {
+            "type": "string",
+            "description": "Top-level module/entity for this fileset when it differs from the IP's top_module (e.g. a testbench top in a 'sim' fileset, or a wrapper in an 'fpga' fileset)."
+          },
+          "scope": {
+            "type": "array",
+            "description": "Build targets this fileset applies to. Absent or empty means all targets. Lets a single IP carry target-specific sources (e.g. an FPGA-only clock wrapper) without polluting the ASIC filelist.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "asic",
+                "fpga",
+                "chiplet",
+                "sim"
+              ]
+            },
+            "examples": [
+              [
+                "fpga"
+              ],
+              [
+                "asic",
+                "chiplet"
+              ]
+            ]
+          },
+          "depends": {
+            "type": "array",
+            "description": "Names that must be compiled before this fileset: either another fileset of THIS IP (by its key) or a dependency IP (by its dependencies[].name). Used to compute compile order across the inter-IP dependency graph.",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              [
+                "rtl"
+              ],
+              [
+                "rtl",
+                "pulp-platform/common_cells"
+              ]
+            ]
+          }
+        }
+      },
+      "examples": [
+        {
+          "rtl": {
+            "type": "rtl",
+            "language": "systemverilog-2017",
+            "files": [
+              "rtl/uart_pkg.sv",
+              "rtl/uart_fifo.sv",
+              "rtl/uart_core.sv",
+              "rtl/uart_top.sv"
+            ],
+            "libdirs": [
+              "rtl"
+            ],
+            "libext": [
+              ".sv"
+            ],
+            "incdirs": [
+              "rtl"
+            ],
+            "defines": {
+              "UART_FIFO_DEPTH": 16
+            },
+            "provides": [
+              "uart_pkg",
+              "uart_fifo",
+              "uart_core",
+              "uart_top"
+            ]
+          },
+          "sim": {
+            "type": "sim",
+            "top": "tb_uart_top",
+            "scope": [
+              "sim"
+            ],
+            "files": [
+              "tb/tb_uart_top.sv"
+            ],
+            "depends": [
+              "rtl"
+            ]
+          },
+          "constraint": {
+            "type": "constraint",
+            "scope": [
+              "asic"
+            ],
+            "files": [
+              "constraints/uart.sdc"
+            ]
+          }
+        }
+      ]
+    },
     "vyges_additions": {
       "type": "array",
       "description": "Vyges-authored files added on top of the upstream mirror. Each entry is a net-new file (no path collision with upstream) that lives under vyges-additions/ in the IP repo and is pulled alongside rtl/ by the Vyges SoC Generator during vendoring. Upstream-sync excludes vyges-additions/ from pulls. See vyges-additions/README.md inside each IP repo for the integration pattern.",
@@ -10660,60 +11045,109 @@
         }
       }
     },
-    "vyges_overlays": {
+    "clock_domains": {
       "type": "array",
-      "description": "Vyges-authored overrides that MASK a file in the upstream mirror. Each entry is a file under vyges-overlays/ whose same-name counterpart under rtl/ (or another upstream-imported path) is replaced at vendor time. Used for stubs (upstream files with deps we don't carry) and for build-compatibility fixes (e.g. Verilator/Vivado tool quirks). Upstream sync policy: pulls proceed, but any upstream change to a path in 'replaces' is flagged for human review because upstream may have fixed the original issue natively, making the overlay obsolete.",
-      "examples": [
-        [
-          {
-            "path": "vyges-overlays/uart_reg_top.sv",
-            "replaces": "rtl/uart_reg_top.sv",
-            "reason": "Vivado 2025.2 XOR-reduce incompat on racl_policies_i struct"
-          }
-        ]
-      ],
+      "description": "The IP's clock domains. `interfaces[]` says which clocks exist; this says how they relate \u2014 the period each is intended to run at, and which reset belongs to it. A multi-clock IP whose flow config names only one CLOCK_PORT leaves every register on the other domains untimed, and a missing clock does not make timing fail, it makes timing pass. This is the declaration a constraint linter checks an SDC against. It does not replace the SDC, which stays canonical for timing.",
       "items": {
         "type": "object",
         "required": [
-          "path",
-          "replaces"
+          "name",
+          "clock"
         ],
-        "additionalProperties": false,
         "properties": {
-          "path": {
+          "name": {
             "type": "string",
-            "description": "Repo-relative path to the overlay file. Must begin with 'vyges-overlays/'.",
-            "pattern": "^vyges-overlays/",
+            "description": "Domain name, used to reference this domain from clock_domain_relations",
             "examples": [
-              "vyges-overlays/uart_reg_top.sv",
-              "vyges-overlays/spi_host_reg_top.sv"
+              "core",
+              "apb",
+              "axi"
             ]
           },
-          "replaces": {
+          "clock": {
             "type": "string",
-            "description": "Repo-relative path of the upstream file this overlay masks at vendor time.",
+            "description": "The clock port driving this domain. Must name a signal declared in interfaces[].signals[] with type 'clock'.",
             "examples": [
-              "rtl/uart_reg_top.sv",
-              "rtl/spi_host_reg_top.sv"
+              "clk_i",
+              "pclk_i",
+              "axi_aclk_i"
             ]
           },
-          "reason": {
+          "reset": {
             "type": "string",
-            "description": "Short explanation of why this overlay exists. Must be specific enough that a reviewer comparing against a fresh upstream pull can decide whether the overlay is still needed."
+            "description": "The reset port for this domain. Omit for a domain with no reset.",
+            "examples": [
+              "reset_n_i",
+              "preset_n_i",
+              "axi_areset_n_i"
+            ]
           },
-          "kind": {
+          "reset_polarity": {
             "type": "string",
-            "description": "Overlay category for reporting and triage.",
             "enum": [
-              "stub",
-              "fixup",
-              "vyges-addition-shim",
-              "other"
+              "active_low",
+              "active_high"
             ],
-            "default": "fixup"
+            "description": "Asserted level of the domain's reset"
+          },
+          "reset_style": {
+            "type": "string",
+            "enum": [
+              "asynchronous",
+              "synchronous"
+            ],
+            "description": "Whether the reset is applied asynchronously (a clear/preset pin) or synchronously (through the data path). Only an asynchronous reset can cause the deassertion race a reset-domain-crossing check looks for."
+          },
+          "period_ns": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Intended clock period in nanoseconds",
+            "examples": [
+              25.0,
+              40.0
+            ]
+          },
+          "period_source": {
+            "type": "string",
+            "enum": [
+              "specified",
+              "assumed",
+              "derived"
+            ],
+            "description": "Where period_ns comes from. 'specified' \u2014 a real requirement of the IP. 'assumed' \u2014 a placeholder chosen conservatively because the IP does not state one; an integrator should override it. 'derived' \u2014 computed from another domain. A schema that cannot tell a specification from a guess invites the guess to be quoted as a specification later, which is why this field is not optional in spirit even though it is in schema.",
+            "examples": [
+              "specified",
+              "assumed"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "What this domain is for"
           }
         }
-      }
+      },
+      "examples": [
+        [
+          {
+            "name": "core",
+            "clock": "clk_i",
+            "reset": "reset_n_i",
+            "reset_polarity": "active_low",
+            "reset_style": "asynchronous",
+            "period_ns": 25.0,
+            "period_source": "specified"
+          },
+          {
+            "name": "apb",
+            "clock": "pclk_i",
+            "reset": "preset_n_i",
+            "reset_polarity": "active_low",
+            "reset_style": "asynchronous",
+            "period_ns": 25.0,
+            "period_source": "assumed"
+          }
+        ]
+      ]
     },
     "toolchain_support": {
       "type": "array",
@@ -11086,6 +11520,63 @@
           "asic",
           "fpga"
         ]
+      ]
+    },
+    "clock_domain_relations": {
+      "type": "object",
+      "description": "How the domains in clock_domains relate to one another. Absent means unstated, not 'synchronous' \u2014 a consumer should not infer a relationship that was never declared.",
+      "properties": {
+        "asynchronous_groups": {
+          "type": "array",
+          "description": "Groups of mutually asynchronous domains, by clock_domains[].name. Domains in DIFFERENT groups are unrelated: paths between them have no meaningful launch/capture edge relation and must not be timed as if they had one. This is the metadata equivalent of SDC `set_clock_groups -asynchronous`.",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "examples": [
+            [
+              [
+                "core"
+              ],
+              [
+                "apb"
+              ],
+              [
+                "axi"
+              ]
+            ]
+          ]
+        },
+        "crossings_synchronized": {
+          "type": "boolean",
+          "description": "The IP's own claim about whether crossings between asynchronous domains carry synchronisers. This is an assertion by the IP author \u2014 checkable by a CDC/RDC tool and falsifiable by one. It is NOT evidence, and a true value does not constitute CDC sign-off. Stating false is more useful than silence: an integrator who reads it will supply the synchronisers."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Anything an integrator needs to know about the domain structure that the fields above cannot express",
+          "examples": [
+            "No CDC synchronisers between domains; the integrator must provide them."
+          ]
+        }
+      },
+      "examples": [
+        {
+          "asynchronous_groups": [
+            [
+              "core"
+            ],
+            [
+              "apb"
+            ],
+            [
+              "axi"
+            ]
+          ],
+          "crossings_synchronized": false,
+          "notes": "No CDC synchronisers between domains; the integrator must provide them."
+        }
       ]
     },
     "jtag": {
@@ -12031,9 +12522,13 @@
           "enum": [
             "organic_substrate",
             "2.5D_interposer",
-            "fanout"
+            "fanout",
+            "3D_stacked",
+            "2.5d_interposer",
+            "3d_stacked",
+            "fan_out"
           ],
-          "description": "Assembly type"
+          "description": "Assembly type. Values are the OCP-aligned vocabulary shared with `chipletIntegration.packaging.assembly`; the lowercase/underscore spellings (`3d_stacked`, `2.5d_interposer`, `fan_out`) are accepted aliases retained so existing metadata stays valid, and should not be used in new metadata."
         },
         "substrate_stackup": {
           "type": "string",
@@ -12774,7 +13269,8 @@
               "automation_level": {
                 "const": "enhanced"
               }
-            }
+            },
+            "type": "object"
           }
         }
       },
@@ -12800,7 +13296,8 @@
               "automation_level": {
                 "const": "full"
               }
-            }
+            },
+            "type": "object"
           }
         }
       },
@@ -12829,7 +13326,8 @@
               "containsEncryptedPayload": {
                 "const": true
               }
-            }
+            },
+            "type": "object"
           }
         }
       },
@@ -12842,7 +13340,8 @@
                   "const": "encrypted_ip"
                 }
               }
-            }
+            },
+            "type": "object"
           }
         }
       }
@@ -12879,7 +13378,7 @@
       "license": "MIT",
       "interfaces": [
         {
-          "type": "apb",
+          "type": "bus",
           "direction": "slave",
           "protocol": "AMBA APB",
           "signals": [
@@ -12946,7 +13445,7 @@
           ]
         },
         {
-          "type": "spi",
+          "type": "serial",
           "direction": "master",
           "protocol": "SPI",
           "signals": [
@@ -12977,9 +13476,13 @@
           ]
         }
       ],
-      "template": "communication",
-      "target": "fpga",
-      "design_type": "digital",
+      "template": "vyges-ip-template@1.0.0",
+      "target": [
+        "fpga"
+      ],
+      "design_type": [
+        "digital"
+      ],
       "maturity": "production",
       "parameters": [
         {
@@ -12998,7 +13501,9 @@
           },
           "metadata": {
             "units": "cycles"
-          }
+          },
+          "name": "CLOCK_DIV",
+          "type": "int"
         },
         {
           "parameter_info": {
@@ -13016,7 +13521,9 @@
           },
           "metadata": {
             "units": "bits"
-          }
+          },
+          "name": "DATA_WIDTH",
+          "type": "int"
         }
       ],
       "categories": {
@@ -13034,7 +13541,7 @@
       "license": "MIT",
       "interfaces": [
         {
-          "type": "axi",
+          "type": "bus",
           "direction": "slave",
           "protocol": "AMBA AXI4",
           "signals": [
@@ -13095,7 +13602,7 @@
           ]
         },
         {
-          "type": "ddr4",
+          "type": "bus",
           "direction": "master",
           "protocol": "DDR4",
           "signals": [
@@ -13174,9 +13681,13 @@
           ]
         }
       ],
-      "template": "memory",
-      "target": "fpga",
-      "design_type": "digital",
+      "template": "vyges-ip-template@1.0.0",
+      "target": [
+        "fpga"
+      ],
+      "design_type": [
+        "digital"
+      ],
       "maturity": "production",
       "parameters": [
         {
@@ -13195,7 +13706,9 @@
           },
           "metadata": {
             "units": "bits"
-          }
+          },
+          "name": "DATA_WIDTH",
+          "type": "int"
         },
         {
           "parameter_info": {
@@ -13213,7 +13726,9 @@
           },
           "metadata": {
             "units": "bits"
-          }
+          },
+          "name": "ADDR_WIDTH",
+          "type": "int"
         }
       ],
       "categories": {
@@ -13231,7 +13746,7 @@
       "license": "MIT",
       "interfaces": [
         {
-          "type": "spi",
+          "type": "serial",
           "direction": "slave",
           "protocol": "SPI",
           "signals": [
@@ -13287,9 +13802,13 @@
           ]
         }
       ],
-      "template": "analog",
-      "target": "asic",
-      "design_type": "mixed_signal",
+      "template": "vyges-ip-template@1.0.0",
+      "target": [
+        "asic"
+      ],
+      "design_type": [
+        "mixed-signal"
+      ],
       "maturity": "production",
       "parameters": [
         {
@@ -13308,7 +13827,9 @@
           },
           "metadata": {
             "units": "bits"
-          }
+          },
+          "name": "RESOLUTION",
+          "type": "int"
         },
         {
           "parameter_info": {
@@ -13326,7 +13847,9 @@
           },
           "metadata": {
             "units": "samples_per_second"
-          }
+          },
+          "name": "SAMPLING_RATE",
+          "type": "int"
         }
       ],
       "categories": {
@@ -13344,7 +13867,7 @@
       "license": "MIT",
       "interfaces": [
         {
-          "type": "ucie",
+          "type": "chiplet",
           "direction": "master",
           "protocol": "UCIe",
           "signals": [
@@ -13381,9 +13904,13 @@
           ]
         }
       ],
-      "template": "chiplet",
-      "target": "asic",
-      "design_type": "digital",
+      "template": "vyges-ip-template@1.0.0",
+      "target": [
+        "asic"
+      ],
+      "design_type": [
+        "digital"
+      ],
       "maturity": "development",
       "chipletIntegration": {
         "phy": {
@@ -13393,7 +13920,7 @@
           "lanes": 32,
           "lanes_tx": 16,
           "lanes_rx": 16,
-          "data_rate_gbps_per_lane": 8.0,
+          "data_rate_gbps_per_lane": 8,
           "io_voltage": "0.8V",
           "termination": "on_die",
           "training": [
@@ -13410,17 +13937,20 @@
           "reach_mm": 100
         },
         "link": {
-          "protocol": "UCIe",
+          "protocol": "STREAMING",
           "width_bits": 256,
-          "flow_control": "credit_based",
+          "flow_control": "credit",
           "retry_mechanism": true,
           "max_payload_size": 512,
           "latency_ns": 30
         },
         "management": {
-          "discovery": "UCIe_Discovery_v1",
+          "discovery": "custom",
           "configuration": "memory_mapped",
-          "firmware_update": "secure_boot",
+          "firmware_update": {
+            "method": "in_band",
+            "format": "CSIP-v1"
+          },
           "monitoring": [
             "temperature",
             "voltage",
